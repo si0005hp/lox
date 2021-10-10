@@ -5,6 +5,7 @@ set(CMAKE_CXX_FLAGS "-g -std=c++2a -Wall")
 
 
 set(LOX_SRC_DIR "${PROJECT_SOURCE_DIR}/src")
+# file(GLOB lox_src_files ${LOX_SRC_DIR}/*/*.cpp)
 file(GLOB lox_src_files ${LOX_SRC_DIR}/*.cpp)
 add_library(lox_lib ${lox_src_files})
 

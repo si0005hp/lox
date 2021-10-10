@@ -22,5 +22,5 @@ macro(package_add_test TESTNAME)
   set_target_properties(${TESTNAME} PROPERTIES FOLDER tests)
 endmacro()
 
-file(GLOB lox_test_files *.cpp)
+file(GLOB lox_test_files **/*.cpp)
 package_add_test(lox_test ${lox_test_files})

@@ -15,7 +15,6 @@ clean:
 test: build
 	$(MAKE) -C $(BUILD_DIR) -j lox_test
 	./build/test/lox_test
-	cd test/files && ./run.sh
 
 format:
 	find src test -type f -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | xargs clang-format -i
