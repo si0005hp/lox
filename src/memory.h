@@ -1,15 +1,15 @@
 #pragma once
 
-#include <stdlib.h>
-#include <unistd.h>
+// #include <stdlib.h>
+#include <cstdlib>
 
 namespace lox {
 
   class Memory {
   public:
     template <typename T>
-    static T* allocate(size_t size) {
-      return static_cast<T*>(allocate(size));
+    static T* allocate() {
+      return static_cast<T*>(allocate(sizeof(T)));
     }
 
     template <typename T>
@@ -29,10 +29,10 @@ namespace lox {
       totalBytesAllocated_ += newSize - oldSize;
 
       if (newSize == 0) {
-        free(p);
+        std::free(p);
         return NULL;
       }
-      return realloc(p, newSize);
+      return std::realloc(p, newSize);
     }
 
   private:

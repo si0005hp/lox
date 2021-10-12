@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "./lib/vector.h"
+#include "lexer.h"
 
 using namespace lox;
 
@@ -45,6 +46,12 @@ int main(int argc, char const* argv[]) {
   }
 
   std::cout << buf << std::endl;
+
+  Lexer lexer(buf);
+  Token* token;
+  while ((token = lexer.readToken())->type != TOKEN_EOF) {
+    std::cout << token->start << std::endl;
+  }
 
   delete buf;
 
