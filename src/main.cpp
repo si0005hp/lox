@@ -6,6 +6,7 @@
 
 #include "./lib/vector.h"
 #include "lexer.h"
+#include "parser.h"
 
 using namespace lox;
 
@@ -48,6 +49,7 @@ int main(int argc, char const* argv[]) {
   std::cout << buf << std::endl;
 
   Lexer lexer(buf);
+  Parser parser(lexer);
   Token* token;
   while ((token = lexer.readToken())->type != TOKEN_EOF) {
     std::cout << token->start << std::endl;

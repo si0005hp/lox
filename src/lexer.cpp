@@ -26,8 +26,7 @@ namespace lox {
     , line_(1) {}
 
   Lexer::~Lexer() {
-    for (int i = 0; i < tokens_.size(); i++)
-      freeToken(tokens_[i]);
+    for (int i = 0; i < tokens_.size(); i++) freeToken(tokens_[i]);
   }
 
   Token* Lexer::readToken() {
@@ -174,8 +173,7 @@ namespace lox {
   }
 
   void Lexer::advanceWhile(std::function<bool()> cond) {
-    while (cond())
-      advance();
+    while (cond()) advance();
   }
 
   bool Lexer::match(char c) {
