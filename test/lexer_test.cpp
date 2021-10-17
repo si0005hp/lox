@@ -57,6 +57,12 @@ TEST_F(LexerTest, string) {
   readTokenTest(TOKEN_STRING, "\"foo\"", 5, 1, "\"foo\"");
 }
 
+TEST_F(LexerTest, syntheticToken) {
+  Lexer lexer("");
+  Token* token = lexer.syntheticToken(TOKEN_TRUE, "true");
+  ASSERT_TOKEN(TOKEN_TRUE, "true", 4, -1);
+}
+
 TEST_F(LexerTest, destructor) {
   Vector<Token*> tokens;
 

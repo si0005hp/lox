@@ -7,6 +7,7 @@ namespace lox {
 
   class Memory {
   public:
+    // https://github.com/v8/v8/blob/9.7.37/src/zone/zone.h#L107
     template <typename T>
     static T* allocate() {
       return static_cast<T*>(allocate(sizeof(T)));
@@ -25,6 +26,7 @@ namespace lox {
       return reallocate(p, 0, 0);
     }
 
+    // TODO: Should we use operator new/delete instead of realloc/free?
     static void* reallocate(void* p, size_t oldSize, size_t newSize) {
       totalBytesAllocated_ += newSize - oldSize;
 
@@ -33,6 +35,10 @@ namespace lox {
         return NULL;
       }
       return std::realloc(p, newSize);
+    }
+
+    static size_t totalBytesAllocated() {
+      return totalBytesAllocated_;
     }
 
   private:

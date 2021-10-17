@@ -22,6 +22,21 @@ namespace lox {
       ensureCapacity(capacity);
     }
 
+    Vector(const Vector<T>& vec)
+      : count_(0)
+      , capacity_(0)
+      , items_(NULL) {
+      pushAll(vec);
+    }
+
+    Vector(std::initializer_list<T> items)
+      : count_(0)
+      , capacity_(0)
+      , items_(NULL) {
+      ensureCapacity(items.size());
+      for (auto item : items) items_[count_++] = item;
+    }
+
     ~Vector() {
       clear();
     }
@@ -38,9 +53,14 @@ namespace lox {
     }
 
     void clear() {
-      Memory::deallocate(items_);
+      Memory::reallocate(items_, sizeof(T) * count_, 0);
       count_ = 0;
       capacity_ = 0;
+    }
+
+    void pushAll(const Vector<T>& vec) {
+      ensureCapacity(count_ + vec.count_);
+      for (int i = 0; i < vec.count_; i++) items_[count_++] = vec[i];
     }
 
     T removeAt(int index) {
@@ -74,6 +94,15 @@ namespace lox {
 
     const T& operator[](int index) const {
       return get(index);
+    }
+
+    Vector& operator=(const Vector& other) {
+      if (&other == this) return *this;
+
+      clear();
+      pushAll(other);
+
+      return *this;
     }
 
   private:

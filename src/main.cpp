@@ -46,15 +46,10 @@ int main(int argc, char const* argv[]) {
     exit(-1);
   }
 
-  std::cout << buf << std::endl;
-
   Lexer lexer(buf);
   Parser parser(lexer);
-  Token* token;
-  while ((token = lexer.readToken())->type != TOKEN_EOF) {
-    std::cout << token->start << std::endl;
-  }
 
+  parser.parse();
   delete buf;
 
   return 0;

@@ -207,4 +207,9 @@ namespace lox {
     Memory::reallocate(token, sizeof(Token), 0);
   }
 
+  Token* Lexer::syntheticToken(TokenType type, const char* text) {
+    Token* token = newToken();
+    return new (token) Token(type, text, std::strlen(text), -1);
+  }
+
 }; // namespace lox

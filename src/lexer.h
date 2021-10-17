@@ -73,6 +73,7 @@ namespace lox {
     ~Lexer();
 
     Token* readToken();
+    Token* syntheticToken(TokenType type, const char* text);
 
   private:
     void skipWhitespace();
