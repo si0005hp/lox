@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "./lib/vector.h"
+#include "compiler.h"
 #include "lexer.h"
 #include "parser.h"
 
@@ -50,6 +51,9 @@ int main(int argc, char const* argv[]) {
   Parser parser(lexer);
 
   parser.parse();
+
+  Compiler compiler;
+
   delete buf;
 
   return 0;
