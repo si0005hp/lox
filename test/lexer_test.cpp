@@ -14,7 +14,7 @@ using namespace lox;
   ASSERT_EQ(_line, token->line);
 
 class LexerTest : public TestBase {
-public:
+ public:
   void readTokenTest(TokenType type, const char* start, int length, int line, const char* source) {
     Lexer lexer(source);
     Token* token = lexer.readToken();

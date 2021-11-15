@@ -8,14 +8,14 @@
 namespace lox {
 
   class Parser {
-  public:
+   public:
     Parser(Lexer& lexer);
     ~Parser();
 
     Vector<Stmt*> parse();
     Expr* expression();
 
-  private:
+   private:
     Stmt* declaration();
     Stmt* classDeclaration();
     Stmt* funcDeclaration();
@@ -60,7 +60,7 @@ namespace lox {
     template <typename T, typename... Args>
     T* newAstNode(Args&&... args);
 
-  private:
+   private:
     Lexer& lexer_;
     Vector<Ast*> astNodes_;
     size_t astBytesAllocated_;

@@ -6,7 +6,7 @@
 namespace lox {
 
   class Memory {
-  public:
+   public:
     // https://github.com/v8/v8/blob/9.7.37/src/zone/zone.h#L107
     template <typename T>
     static T* allocate() {
@@ -41,7 +41,7 @@ namespace lox {
       return totalBytesAllocated_;
     }
 
-  private:
+   private:
     inline static size_t totalBytesAllocated_ = 0;
   };
 

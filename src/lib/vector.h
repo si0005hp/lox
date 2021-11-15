@@ -9,7 +9,7 @@ namespace lox {
 
   template <class T>
   class Vector {
-  public:
+   public:
     Vector()
       : count_(0)
       , capacity_(0)
@@ -105,7 +105,7 @@ namespace lox {
       return *this;
     }
 
-  private:
+   private:
     const T& get(int index) const {
       index = absIndex(index);
       ASSERT_INDEX(index, count_);

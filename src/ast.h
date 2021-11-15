@@ -48,7 +48,7 @@ namespace lox {
   struct Expr : public Ast {
     template <class R>
     class Visitor {
-    public:
+     public:
       virtual R visit(const Assign* expr) = 0;
       virtual R visit(const Binary* expr) = 0;
       virtual R visit(const Call* expr) = 0;
@@ -212,7 +212,7 @@ namespace lox {
   struct Stmt : public Ast {
     template <class R>
     class Visitor {
-    public:
+     public:
       virtual R visit(const Block* stmt) = 0;
       virtual R visit(const Class* stmt) = 0;
       virtual R visit(const Expression* stmt) = 0;

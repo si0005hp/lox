@@ -6,7 +6,7 @@ namespace lox {
 
   template <class T, int Size>
   class Queue {
-  public:
+   public:
     Queue()
       : head_(0)
       , count_(0) {}
@@ -53,7 +53,7 @@ namespace lox {
       return items_[wrap(head_ - count_ + index)];
     }
 
-  private:
+   private:
     inline int wrap(int index) const {
       return (index + Size) % Size;
     }

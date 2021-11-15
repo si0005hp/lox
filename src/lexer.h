@@ -68,14 +68,14 @@ namespace lox {
   };
 
   class Lexer {
-  public:
+   public:
     Lexer(const char* source);
     ~Lexer();
 
     Token* readToken();
     Token* syntheticToken(TokenType type, const char* text);
 
-  private:
+   private:
     void skipWhitespace();
     char peek(int ahead = 0) const;
     bool isDone() const;
@@ -95,7 +95,7 @@ namespace lox {
     Token* newToken();
     void freeToken(Token* token);
 
-  private:
+   private:
     const char* source_;
     Vector<Token*> tokens_;
 

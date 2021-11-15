@@ -8,7 +8,7 @@
 using namespace lox;
 
 class ParserTest : public TestBase {
-public:
+ public:
   void TearDown() {
     if (lexer != NULL) delete lexer;
     if (parser != NULL) delete parser;
@@ -25,7 +25,7 @@ public:
     ASSERT_EQ(*expectedValue, *lit->value->start);
   }
 
-public:
+ public:
   Lexer* lexer;
   Parser* parser;
 };
