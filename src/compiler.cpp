@@ -1,6 +1,32 @@
 #include "compiler.h"
 
+#include "lexer.h"
+#include "op_code.h"
+#include "parser.h"
+
 namespace lox {
+
+  Compiler::Compiler(VM& vm, FunctionType type)
+    : vm_(vm)
+    , type_(type) {
+    function_ = vm.allocateObj<ObjFunction>(0, nullptr);
+  }
+
+  // TODO: temporal
+  Compiler::~Compiler() {
+    Memory::deallocate(function_);
+  }
+
+  ObjFunction* Compiler::compile(const char* source) {
+    Lexer lexer(source);
+    Parser parser(lexer);
+
+    Vector<Stmt*> stmts = parser.parse();
+    if (parser.hadError()) return NULL;
+
+    return NULL;
+  }
+
   void Compiler::visit(const Assign* expr) {}
   void Compiler::visit(const Binary* expr) {}
   void Compiler::visit(const Call* expr) {}

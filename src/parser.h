@@ -15,6 +15,10 @@ namespace lox {
     Vector<Stmt*> parse();
     Expr* expression();
 
+    bool hadError() const {
+      return hadError_;
+    }
+
    private:
     Stmt* declaration();
     Stmt* classDeclaration();

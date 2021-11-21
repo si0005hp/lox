@@ -20,7 +20,13 @@ namespace lox {
   };
 
   struct ObjFunction : public Obj {
+    ObjFunction(int arity, ObjString* name)
+      : arity(arity)
+      , upvalueCount(0)
+      , name(name) {}
+
     int arity;
+    int upvalueCount;
     Chunk chunk;
     ObjString* name;
   };

@@ -4,10 +4,7 @@
 #include <fstream>
 #include <iostream>
 
-#include "./lib/vector.h"
-#include "compiler.h"
-#include "lexer.h"
-#include "parser.h"
+#include "vm.h"
 
 using namespace lox;
 
@@ -47,12 +44,8 @@ int main(int argc, char const* argv[]) {
     exit(-1);
   }
 
-  Lexer lexer(buf);
-  Parser parser(lexer);
-
-  parser.parse();
-
-  Compiler compiler;
+  VM vm;
+  vm.interpret(buf);
 
   delete buf;
 

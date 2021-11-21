@@ -1,12 +1,27 @@
 #pragma once
 
 #include "ast.h"
+#include "value/object.h"
+#include "vm.h"
 
 namespace lox {
+
+  enum FunctionType {
+    TYPE_FUNCTION,
+    TYPE_INITIALIZER,
+    TYPE_METHOD,
+    TYPE_SCRIPT
+  };
 
   class Compiler
     : public Expr::Visitor<void>
     , public Stmt::Visitor<void> {
+
+   public:
+    Compiler(VM& vm, FunctionType type);
+    ~Compiler();
+
+    ObjFunction* compile(const char* source);
 
     virtual void visit(const Assign* expr);
     virtual void visit(const Binary* expr);
@@ -30,6 +45,12 @@ namespace lox {
     virtual void visit(const Return* stmt);
     virtual void visit(const Var* stmt);
     virtual void visit(const While* stmt);
+
+   private:
+    VM& vm_;
+
+    ObjFunction* function_;
+    FunctionType type_;
   };
 
 }; // namespace lox
