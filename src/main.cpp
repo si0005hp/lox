@@ -10,7 +10,7 @@ using namespace lox;
 
 static bool readFile(const char* path, char** bufp) {
   FILE* file = fopen(path, "rb");
-  if (file == NULL) {
+  if (file == nullptr) {
     return false;
   }
 
@@ -19,7 +19,7 @@ static bool readFile(const char* path, char** bufp) {
   rewind(file);
 
   *bufp = static_cast<char*>(::operator new(fileSize + 1));
-  if (*bufp == NULL) {
+  if (*bufp == nullptr) {
     return false;
   }
 
@@ -39,7 +39,7 @@ int main(int argc, char const* argv[]) {
     exit(-1);
   }
 
-  char* buf = NULL;
+  char* buf = nullptr;
   if (!readFile(argv[1], &buf)) {
     exit(-1);
   }

@@ -19,7 +19,7 @@ namespace lox {
     }
 
     static void* allocate(size_t size) {
-      return reallocate(NULL, 0, size);
+      return reallocate(nullptr, 0, size);
     }
 
     static void* deallocate(void* p) {
@@ -32,7 +32,7 @@ namespace lox {
 
       if (newSize == 0) {
         std::free(p);
-        return NULL;
+        return nullptr;
       }
       return std::realloc(p, newSize);
     }

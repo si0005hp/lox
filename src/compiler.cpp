@@ -22,9 +22,9 @@ namespace lox {
     Parser parser(lexer);
 
     Vector<Stmt*> stmts = parser.parse();
-    if (parser.hadError()) return NULL;
+    if (parser.hadError()) return nullptr;
 
-    return NULL;
+    return nullptr;
   }
 
   void Compiler::visit(const Assign* expr) {}

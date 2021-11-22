@@ -13,26 +13,26 @@ namespace lox {
     Vector()
       : count_(0)
       , capacity_(0)
-      , items_(NULL) {}
+      , items_(nullptr) {}
 
     Vector(int capacity)
       : count_(0)
       , capacity_(0)
-      , items_(NULL) {
+      , items_(nullptr) {
       ensureCapacity(capacity);
     }
 
     Vector(const Vector<T>& vec)
       : count_(0)
       , capacity_(0)
-      , items_(NULL) {
+      , items_(nullptr) {
       pushAll(vec);
     }
 
     Vector(std::initializer_list<T> items)
       : count_(0)
       , capacity_(0)
-      , items_(NULL) {
+      , items_(nullptr) {
       ensureCapacity(items.size());
       for (auto item : items) items_[count_++] = item;
     }

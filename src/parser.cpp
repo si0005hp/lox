@@ -47,7 +47,7 @@ namespace lox {
 
     if (hadError_) {
       synchronize();
-      return NULL;
+      return nullptr;
     }
     return decl;
   }
@@ -55,7 +55,7 @@ namespace lox {
   Stmt* Parser::classDeclaration() {
     Token* name = consume(TOKEN_IDENTIFIER, "Expect class name.");
 
-    Variable* superclass = NULL;
+    Variable* superclass = nullptr;
     if (match(TOKEN_LESS)) {
       consume(TOKEN_IDENTIFIER, "Expect superclass name.");
       superclass = newAstNode<Variable>(last_);
@@ -97,7 +97,7 @@ namespace lox {
 
   Stmt* Parser::varDeclaration() {
     Token* name = consume(TOKEN_IDENTIFIER, "Expect variable name.");
-    Expr* initializer = match(TOKEN_EQUAL) ? expression() : NULL;
+    Expr* initializer = match(TOKEN_EQUAL) ? expression() : nullptr;
     consume(TOKEN_SEMICOLON, "Expect ';' after variable declaration.");
     return newAstNode<Var>(name, initializer);
   }
@@ -118,30 +118,30 @@ namespace lox {
     /* for-initializer */
     Stmt* initializer;
     if (match(TOKEN_SEMICOLON)) {
-      initializer = NULL;
+      initializer = nullptr;
     } else if (match(TOKEN_VAR)) {
       initializer = varDeclaration();
     } else {
       initializer = expressionStatement();
     }
     /* for-condition */
-    Expr* cond = lookAhead(TOKEN_SEMICOLON) ? NULL : expression();
+    Expr* cond = lookAhead(TOKEN_SEMICOLON) ? nullptr : expression();
     consume(TOKEN_SEMICOLON, "Expect ';' after loop condition.");
     /* for-increment */
-    Expr* incr = lookAhead(TOKEN_RIGHT_PAREN) ? NULL : expression();
+    Expr* incr = lookAhead(TOKEN_RIGHT_PAREN) ? nullptr : expression();
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
 
     /* body */
     Stmt* body = statement();
 
-    if (incr != NULL) {
+    if (incr != nullptr) {
       Vector<Stmt*> stmts{body, newAstNode<Expression>(incr)};
       body = newAstNode<Block>(stmts);
     }
-    if (cond == NULL) cond = newAstNode<Literal>(lexer_.syntheticToken(TOKEN_TRUE, "true"));
+    if (cond == nullptr) cond = newAstNode<Literal>(lexer_.syntheticToken(TOKEN_TRUE, "true"));
     body = newAstNode<While>(cond, body);
 
-    if (initializer != NULL) {
+    if (initializer != nullptr) {
       Vector<Stmt*> stmts{initializer, body};
       body = newAstNode<Block>(stmts);
     }
@@ -154,7 +154,7 @@ namespace lox {
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
 
     Stmt* thenBody = statement();
-    Stmt* elseBody = match(TOKEN_ELSE) ? statement() : NULL;
+    Stmt* elseBody = match(TOKEN_ELSE) ? statement() : nullptr;
     return newAstNode<If>(cond, thenBody, elseBody);
   }
 
@@ -165,7 +165,7 @@ namespace lox {
   }
 
   Stmt* Parser::returnStatement() {
-    Expr* value = lookAhead(TOKEN_SEMICOLON) ? NULL : expression();
+    Expr* value = lookAhead(TOKEN_SEMICOLON) ? nullptr : expression();
     consume(TOKEN_SEMICOLON, "Expect ';' after return value.");
     return newAstNode<Return>(value);
   }
@@ -336,7 +336,7 @@ namespace lox {
     }
 
     error("Expect expression.");
-    return NULL;
+    return nullptr;
   }
 
   bool Parser::match(TokenType type) {
@@ -379,7 +379,7 @@ namespace lox {
     if (lookAhead(type)) return consume();
 
     error(format);
-    return NULL;
+    return nullptr;
   }
 
   const Token& Parser::current() {
