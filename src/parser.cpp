@@ -443,15 +443,4 @@ namespace lox {
       consume();
     }
   }
-
-  template <typename T, typename... Args>
-  T* Parser::newAstNode(Args&&... args) {
-    T* node = Memory::allocate<T>();
-    new (node) T(std::forward<Args>(args)...);
-
-    astNodes_.push(node); // Save ast node to keep ownership
-    astBytesAllocated_ += sizeof(T);
-
-    return node;
-  }
 }; // namespace lox

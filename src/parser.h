@@ -57,8 +57,18 @@ namespace lox {
     void errorAt(const Token& token, const char* format, ...);
     void synchronize();
 
+    // https://stackoverflow.com/a/1111470
+    // Templated code implementation should never be in a .cpp file
     template <typename T, typename... Args>
-    T* newAstNode(Args&&... args);
+    T* newAstNode(Args&&... args) {
+      T* node = Memory::allocate<T>();
+      new (node) T(std::forward<Args>(args)...);
+
+      astNodes_.push(node); // Save ast node to keep ownership
+      astBytesAllocated_ += sizeof(T);
+
+      return node;
+    }
 
    private:
     Lexer& lexer_;
