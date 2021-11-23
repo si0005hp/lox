@@ -14,11 +14,6 @@ namespace lox {
     function_ = vm.allocateObj<ObjFunction>(0, nullptr);
   }
 
-  // TODO: temporal
-  Compiler::~Compiler() {
-    Memory::deallocate<ObjFunction>(function_);
-  }
-
   ObjFunction* Compiler::compile(const char* source) {
     Lexer lexer(source);
     Parser parser(lexer);

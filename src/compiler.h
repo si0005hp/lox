@@ -19,7 +19,6 @@ namespace lox {
 
    public:
     Compiler(VM& vm, FunctionType type);
-    ~Compiler();
 
     ObjFunction* compile(const char* source);
 

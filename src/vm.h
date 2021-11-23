@@ -15,6 +15,8 @@ namespace lox {
 
   class VM {
    public:
+    ~VM();
+
     InterpretResult interpret(const char* source);
 
     template <typename T, typename... Args>
@@ -26,6 +28,9 @@ namespace lox {
       objects_ = obj;
       return obj;
     }
+
+   private:
+    void freeObject();
 
    private:
     Obj* objects_;
