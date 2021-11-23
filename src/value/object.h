@@ -6,7 +6,7 @@
 
 namespace lox {
   struct Obj {
-    ~Obj() {}
+    virtual ~Obj() {}
 
     void* operator new(size_t s) {
       return Memory::allocate(s);
