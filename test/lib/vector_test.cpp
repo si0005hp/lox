@@ -23,6 +23,15 @@ TEST_F(VectorTest, construct_multiple_args) {
   ASSERT_EQ(3, v[2]);
 }
 
+TEST_F(VectorTest, copy_construct) {
+  Vector<int> v{1, 2, 3};
+  Vector<int> v2(v);
+
+  ASSERT_EQ(1, v2[0]);
+  ASSERT_EQ(2, v2[1]);
+  ASSERT_EQ(3, v2[2]);
+}
+
 TEST_F(VectorTest, operator_subscript) {
   Vector<int> v;
   for (int i = 1; i <= 3; i++) {
