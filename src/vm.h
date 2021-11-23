@@ -32,6 +32,7 @@ namespace lox {
 
    private:
     void freeObject();
+    void run(Chunk& chunk);
 
    private:
     Obj* objects_;

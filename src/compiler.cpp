@@ -28,7 +28,7 @@ namespace lox {
     function_->chunk.write(OP_RETURN, 123);
     Disassembler::disassembleChunk(function_->chunk, "test");
 
-    return nullptr;
+    return function_;
   }
 
   void Compiler::visit(const Assign* expr) {}

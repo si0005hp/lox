@@ -1,7 +1,9 @@
 #include "vm.h"
 
+#include "chunk.h"
 #include "compiler.h"
 #include "memory.h"
+#include "value/value.h"
 
 namespace lox {
 
@@ -15,8 +17,10 @@ namespace lox {
 
   InterpretResult VM::interpret(const char* source) {
     Compiler compiler(*this, TYPE_SCRIPT);
-    compiler.compile(source);
+    ObjFunction* function = compiler.compile(source);
+    if (function == nullptr) return INTERPRET_COMPILE_ERROR;
 
+    run(function->chunk);
     return INTERPRET_OK;
   }
 
@@ -28,4 +32,6 @@ namespace lox {
       obj = next;
     }
   }
+
+  void VM::run(Chunk& chunk) {}
 } // namespace lox
