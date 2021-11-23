@@ -1,8 +1,13 @@
 #include "vm.h"
 
 #include "compiler.h"
+#include "memory.h"
 
 namespace lox {
+
+  VM::VM() {
+    Memory::initialize(this);
+  }
 
   VM::~VM() {
     freeObject();

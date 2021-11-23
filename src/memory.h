@@ -3,10 +3,19 @@
 // #include <stdlib.h>
 #include <cstdlib>
 
+// #include "vm.h"
+
 namespace lox {
+
+  // TODO
+  class VM;
 
   class Memory {
    public:
+    static void initialize(VM* vm) {
+      vm_ = vm;
+    }
+
     // https://github.com/v8/v8/blob/9.7.37/src/zone/zone.h#L107
     template <typename T>
     static T* allocate() {
@@ -50,6 +59,7 @@ namespace lox {
 
    private:
     inline static size_t totalBytesAllocated_ = 0;
+    inline static VM* vm_;
   };
 
 }; // namespace lox

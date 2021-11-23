@@ -15,6 +15,7 @@ namespace lox {
 
   class VM {
    public:
+    VM();
     ~VM();
 
     InterpretResult interpret(const char* source);
