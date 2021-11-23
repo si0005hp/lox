@@ -4,6 +4,7 @@
 
 #include "chunk.h"
 #include "op_code.h"
+#include "value/value.h"
 
 namespace lox {
 
@@ -88,7 +89,7 @@ namespace lox {
     static int constantInstruction(const char* name, Chunk& chunk, int offset) {
       uint8_t constant = chunk.getCode(offset + 1);
       printf("%-16s %4d '", name, constant);
-      // printValue(chunk->constants.values[constant));
+      printValue(chunk.getConstant(constant));
       printf("'\n");
       return offset + 2;
     }
@@ -97,7 +98,7 @@ namespace lox {
       uint8_t constant = chunk.getCode(offset + 1);
       uint8_t argCount = chunk.getCode(offset + 2);
       printf("%-16s (%d args) %4d '", name, argCount, constant);
-      // printValue(chunk->constants.values[constant));
+      printValue(chunk.getConstant(constant));
       printf("'\n");
       return offset + 3;
     }
@@ -118,6 +119,10 @@ namespace lox {
       jump |= chunk.getCode(offset + 2);
       printf("%-16s %4d -> %d\n", name, offset, offset + 3 + sign * jump);
       return offset + 3;
+    }
+
+    static void printValue(Value value) {
+      printf("%s\n", value.toCString());
     }
   };
 

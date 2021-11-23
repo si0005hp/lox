@@ -26,4 +26,12 @@ namespace lox {
     return ptr_ == NIL_VAL;
   }
 
+  // TODO
+  const char* Value::toCString() const {
+    if (isNumber()) return asNumber().toCString();
+    if (isBool()) return asBool().toCString();
+    if (isNil()) return Nil().toCString();
+    return "";
+  }
+
 } // namespace lox

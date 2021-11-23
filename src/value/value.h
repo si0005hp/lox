@@ -1,5 +1,9 @@
 #pragma once
 
+#include <cstring>
+#include <iomanip>
+#include <string>
+
 #include "../common.h"
 
 namespace lox {
@@ -34,6 +38,8 @@ namespace lox {
       return ptr_;
     }
 
+    const char* toCString() const;
+
    private:
     uint64_t ptr_;
   };
@@ -52,6 +58,13 @@ namespace lox {
 
     double value() const {
       return value_;
+    }
+
+    const char* toCString() const {
+      // TODO
+      std::ostringstream oss;
+      oss << std::noshowpoint << value_;
+      return oss.str().c_str();
     }
 
    private:
@@ -92,9 +105,22 @@ namespace lox {
       return value_;
     }
 
+    const char* toCString() const {
+      return value_ ? "true" : "false";
+    }
+
    private:
     bool value_;
   };
 
-  class Nil {};
+  class Nil {
+   public:
+    Value asValue() const {
+      return NIL_VAL;
+    }
+
+    const char* toCString() const {
+      return "nil";
+    }
+  };
 } // namespace lox
