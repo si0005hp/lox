@@ -1,8 +1,10 @@
 #include "compiler.h"
 
+#include "debug.h"
 #include "lexer.h"
 #include "op_code.h"
 #include "parser.h"
+#include "value/value.h"
 
 namespace lox {
 
@@ -23,6 +25,13 @@ namespace lox {
 
     Vector<Stmt*> stmts = parser.parse();
     if (parser.hadError()) return nullptr;
+
+    int constant = function_->chunk.addConstant(Number(2.3).asValue());
+    function_->chunk.write(OP_CONSTANT, 123);
+    function_->chunk.write(constant, 123);
+
+    function_->chunk.write(OP_RETURN, 123);
+    Disassembler::disassembleChunk(function_->chunk, "test");
 
     return nullptr;
   }

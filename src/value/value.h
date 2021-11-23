@@ -61,7 +61,7 @@ namespace lox {
     }
 
     const char* toCString() const {
-      // TODO
+      // TODO: This causes "Uninitialised value was created by a stack allocation".
       std::ostringstream oss;
       oss << std::noshowpoint << value_;
       return oss.str().c_str();
