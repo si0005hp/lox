@@ -13,6 +13,11 @@ namespace lox {
     INTERPRET_RUNTIME_ERROR
   };
 
+  struct CallFrame {
+    int ip = 0;
+    ObjFunction* function = nullptr;
+  };
+
   class VM {
    public:
     VM();
@@ -32,9 +37,34 @@ namespace lox {
 
    private:
     void freeObjects();
-    void run(Chunk& chunk);
+    InterpretResult run(ObjFunction* function);
+
+    instruction readByte() {
+      return currentChunk().getCode(currentFrame().ip++);
+    }
+
+    Value readConstant() {
+      return currentChunk().getConstant(readByte());
+    }
+
+    CallFrame& currentFrame() {
+      return frame_;
+    };
+
+    const CallFrame& currentFrame() const {
+      return frame_;
+    };
+
+    ObjFunction* currentFn() const {
+      return currentFrame().function;
+    };
+
+    const Chunk& currentChunk() const {
+      return currentFn()->chunk;
+    };
 
    private:
     Obj* objects_;
+    CallFrame frame_; // TODO: tmp
   };
 } // namespace lox

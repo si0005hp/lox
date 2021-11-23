@@ -25,4 +25,8 @@
 #define ASSERT(condition, message) ;
 #define ASSERT_INDEX(index, max) ;
 
+//< Debug flags
+#define DEBUG_TRACE_EXECUTION
+//> Debug flags
+
 #endif

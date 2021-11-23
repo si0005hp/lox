@@ -2,7 +2,9 @@
 
 #include "chunk.h"
 #include "compiler.h"
+#include "debug.h"
 #include "memory.h"
+#include "op_code.h"
 #include "value/value.h"
 
 namespace lox {
@@ -21,8 +23,7 @@ namespace lox {
     ObjFunction* function = compiler.compile(source);
     if (function == nullptr) return INTERPRET_COMPILE_ERROR;
 
-    run(function->chunk);
-    return INTERPRET_OK;
+    return run(function);
   }
 
   void VM::freeObjects() {
@@ -34,5 +35,25 @@ namespace lox {
     }
   }
 
-  void VM::run(Chunk& chunk) {}
+  InterpretResult VM::run(ObjFunction* function) {
+    frame_.function = function;
+
+    instruction inst;
+    while (true) {
+#ifdef DEBUG_TRACE_EXECUTION
+      Disassembler::disassembleInstruction(currentChunk(), currentFrame().ip);
+#endif
+
+      switch (inst = readByte()) {
+        case OP_CONSTANT: {
+          Value constant = readConstant();
+          printf("%s", constant.toCString());
+          printf("\n");
+          break;
+        }
+
+        case OP_RETURN: return INTERPRET_OK;
+      }
+    }
+  }
 } // namespace lox
