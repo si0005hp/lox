@@ -12,7 +12,7 @@ namespace lox {
   }
 
   VM::~VM() {
-    freeObject();
+    freeObjects();
   }
 
   InterpretResult VM::interpret(const char* source) {
@@ -24,7 +24,7 @@ namespace lox {
     return INTERPRET_OK;
   }
 
-  void VM::freeObject() {
+  void VM::freeObjects() {
     Obj* obj = objects_;
     while (obj != nullptr) {
       Obj* next = obj->next;
