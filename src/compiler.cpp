@@ -14,7 +14,7 @@ namespace lox {
 
   // TODO: temporal
   Compiler::~Compiler() {
-    Memory::deallocate(function_);
+    Memory::deallocate<ObjFunction>(function_);
   }
 
   ObjFunction* Compiler::compile(const char* source) {

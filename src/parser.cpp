@@ -17,8 +17,7 @@ namespace lox {
 
   Parser::~Parser() {
     for (int i = 0; i < astNodes_.size(); i++) {
-      astNodes_[i]->~Ast(); // TODO
-      Memory::deallocate(astNodes_[i]);
+      Memory::deallocate<Ast>(astNodes_[i]);
       // TODO: Recover allocated bytes
     }
   }

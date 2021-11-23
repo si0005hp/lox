@@ -26,6 +26,13 @@ namespace lox {
       return reallocate(p, 0, 0);
     }
 
+    // TODO: temporal
+    template <typename T>
+    static void* deallocate(T* p) {
+      p->~T();
+      return reallocate(p, 0, 0);
+    }
+
     // TODO: Should we use operator new/delete instead of realloc/free?
     static void* reallocate(void* p, size_t oldSize, size_t newSize) {
       totalBytesAllocated_ += newSize - oldSize;
