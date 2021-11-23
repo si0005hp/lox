@@ -7,7 +7,8 @@
 
 namespace lox {
 
-  VM::VM() {
+  VM::VM()
+    : objects_(nullptr) {
     Memory::initialize(this);
   }
 
