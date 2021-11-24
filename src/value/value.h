@@ -19,12 +19,20 @@ namespace lox {
 #define TRUE_VAL ((uint64_t)(QNAN | TAG_TRUE))
 #define NIL_VAL ((uint64_t)(QNAN | TAG_NIL))
 
+// TODO: valid?
+#define TAG_UNINITIALIZED 0
+#define UNINITIALIZED ((uint64_t)(QNAN | TAG_UNINITIALIZED))
+
   class Number;
   class Bool;
 
   class Value {
    public:
-    Value(uint64_t ptr);
+    Value()
+      : ptr_(UNINITIALIZED){};
+
+    Value(uint64_t ptr)
+      : ptr_(ptr) {}
 
     bool isNumber() const;
     Number asNumber() const;
@@ -33,6 +41,8 @@ namespace lox {
     Bool asBool() const;
 
     bool isNil() const;
+
+    bool isObj() const;
 
     uint64_t ptr() const {
       return ptr_;

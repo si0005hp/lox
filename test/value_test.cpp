@@ -14,6 +14,14 @@ TEST_F(ValueTest, Value_toCString) {
   ASSERT_TRUE(stringEquals("nil", Nil().asValue().toCString(), 3));
 }
 
+TEST_F(ValueTest, Value_NULL_ADDRESS) {
+  Value uninitialized;
+  ASSERT_FALSE(uninitialized.isNumber());
+  ASSERT_FALSE(uninitialized.isBool());
+  ASSERT_FALSE(uninitialized.isNil());
+  ASSERT_FALSE(uninitialized.isObj());
+}
+
 TEST_F(ValueTest, Number_conv) {
   Number one(1);
   Value v = one.asValue();

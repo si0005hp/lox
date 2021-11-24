@@ -3,9 +3,6 @@
 namespace lox {
 
   /* Value */
-  Value::Value(uint64_t ptr)
-    : ptr_(ptr) {}
-
   bool Value::isNumber() const {
     return (ptr_ & QNAN) != QNAN;
   }
@@ -24,6 +21,10 @@ namespace lox {
 
   bool Value::isNil() const {
     return ptr_ == NIL_VAL;
+  }
+
+  bool Value::isObj() const {
+    return (ptr_ & (QNAN | SIGN_BIT)) == (QNAN | SIGN_BIT);
   }
 
   // TODO
