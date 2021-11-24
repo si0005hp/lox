@@ -38,6 +38,7 @@ namespace lox {
    private:
     void freeObjects();
     InterpretResult run(ObjFunction* function);
+    void traceStack();
 
     instruction readByte() {
       return currentChunk().getCode(currentFrame().ip++);
@@ -63,8 +64,20 @@ namespace lox {
       return currentFn()->chunk;
     };
 
+    void push(Value value) {
+      stack_[stackTop_++] = value;
+    }
+
+    Value pop() {
+      stackTop_--;
+      return stack_[stackTop_];
+    }
+
    private:
     Obj* objects_;
     CallFrame frame_; // TODO: tmp
+
+    std::array<Value, 256> stack_;
+    int stackTop_ = 0;
   };
 } // namespace lox

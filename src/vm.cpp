@@ -41,19 +41,29 @@ namespace lox {
     instruction inst;
     while (true) {
 #ifdef DEBUG_TRACE_EXECUTION
+      traceStack();
       Disassembler::disassembleInstruction(currentChunk(), currentFrame().ip);
 #endif
 
       switch (inst = readByte()) {
         case OP_CONSTANT: {
           Value constant = readConstant();
-          printf("%s", constant.toCString());
-          printf("\n");
+          push(constant);
           break;
         }
-
-        case OP_RETURN: return INTERPRET_OK;
+        case OP_RETURN: {
+          printf("%s\n", pop().toCString());
+          return INTERPRET_OK;
+        }
       }
     }
+  }
+
+  void VM::traceStack() {
+    printf("          ");
+    for (int i = 0; i < stackTop_; i++) {
+      printf("[ %s ]", stack_[i].toCString());
+    }
+    printf("\n");
   }
 } // namespace lox
