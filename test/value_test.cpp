@@ -33,6 +33,17 @@ TEST_F(ValueTest, Number_toCString) {
   ASSERT_TRUE(stringEquals("2", Number(2).toCString(), 1));
 }
 
+TEST_F(ValueTest, Number_operator_unary_minus) {
+  Number n(2);
+  ASSERT_EQ(-2, -n.value());
+}
+
+TEST_F(ValueTest, Number_operator_binary_plus) {
+  Number n(2);
+  Number m(5);
+  ASSERT_EQ(7, (n + m).value());
+}
+
 TEST_F(ValueTest, Bool_conv) {
   Bool t(true);
   Bool f(false);

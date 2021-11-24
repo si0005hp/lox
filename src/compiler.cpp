@@ -21,9 +21,15 @@ namespace lox {
     Vector<Stmt*> stmts = parser.parse();
     if (parser.hadError()) return nullptr;
 
-    int constant = function_->chunk.addConstant(Number(2.3).asValue());
+    int constant = function_->chunk.addConstant(Number(-2.3).asValue());
     function_->chunk.write(OP_CONSTANT, 123);
     function_->chunk.write(constant, 123);
+
+    constant = function_->chunk.addConstant(Number(4.5).asValue());
+    function_->chunk.write(OP_CONSTANT, 123);
+    function_->chunk.write(constant, 123);
+
+    function_->chunk.write(OP_ADD, 123);
 
     function_->chunk.write(OP_RETURN, 123);
     Disassembler::disassembleChunk(function_->chunk, "test");

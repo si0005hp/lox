@@ -77,6 +77,27 @@ namespace lox {
       return oss.str().c_str();
     }
 
+   public:
+    Number operator-() const {
+      return Number(-value_);
+    }
+
+    Number operator+(Number other) const {
+      return Number(value_ + other.value_);
+    }
+
+    Number operator-(Number other) const {
+      return Number(value_ - other.value_);
+    }
+
+    Number operator*(Number other) const {
+      return Number(value_ * other.value_);
+    }
+
+    Number operator/(Number other) const {
+      return Number(value_ / other.value_);
+    }
+
    private:
     typedef union {
       uint64_t ptr;

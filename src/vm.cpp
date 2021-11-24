@@ -45,10 +45,25 @@ namespace lox {
       Disassembler::disassembleInstruction(currentChunk(), currentFrame().ip);
 #endif
 
+#define BINARY_OP(op)            \
+  do {                           \
+    Number b = pop().asNumber(); \
+    Number a = pop().asNumber(); \
+    push((a op b).asValue());    \
+  } while (false)
+
       switch (inst = readByte()) {
         case OP_CONSTANT: {
           Value constant = readConstant();
           push(constant);
+          break;
+        }
+        case OP_ADD: BINARY_OP(+); break;
+        case OP_SUBTRACT: BINARY_OP(-); break;
+        case OP_MULTIPLY: BINARY_OP(*); break;
+        case OP_DIVIDE: BINARY_OP(/); break;
+        case OP_NEGATE: {
+          push((-pop().asNumber()).asValue());
           break;
         }
         case OP_RETURN: {
