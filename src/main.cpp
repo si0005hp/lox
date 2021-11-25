@@ -10,25 +10,19 @@ using namespace lox;
 
 static bool readFile(const char* path, char** bufp) {
   FILE* file = fopen(path, "rb");
-  if (file == nullptr) {
-    return false;
-  }
+  if (file == nullptr) return false;
 
   fseek(file, 0L, SEEK_END);
   size_t fileSize = ftell(file);
   rewind(file);
 
   *bufp = static_cast<char*>(::operator new(fileSize + 1));
-  if (*bufp == nullptr) {
-    return false;
-  }
+  if (*bufp == nullptr) return false;
 
   size_t bytesRead = fread(*bufp, sizeof(char), fileSize, file);
-  if (bytesRead < fileSize) {
-    return false;
-  }
-  (*bufp)[bytesRead] = '\0';
+  if (bytesRead < fileSize) return false;
 
+  (*bufp)[bytesRead] = '\0';
   fclose(file);
   return true;
 }
