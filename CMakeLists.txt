@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.4)
 project(main)
 
 set(CMAKE_CXX_FLAGS "-g -std=c++2a -Wall")
+set(CMAKE_CXX_FLAGS_DEBUG "-DDEBUG")
 
 
 set(LOX_SRC_DIR "${PROJECT_SOURCE_DIR}/src")

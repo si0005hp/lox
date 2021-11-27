@@ -6,6 +6,8 @@
 
 namespace lox {
 
+#define SRC Token* token
+
   enum FunctionType {
     TYPE_FUNCTION,
     TYPE_INITIALIZER,
@@ -46,11 +48,30 @@ namespace lox {
     virtual void visit(const Var* stmt);
     virtual void visit(const While* stmt);
 
+    Chunk& currentChunk() const {
+      return function_->chunk;
+    };
+
+    void endCompiler(SRC);
+
+    void emitByte(SRC, instruction inst);
+    void emitBytes(SRC, instruction inst1, instruction inst2);
+    void emitReturn(SRC);
+    void emitConstant(SRC, Value value);
+
+    int makeConstant(SRC, Value value);
+    int identifierConstant(SRC);
+    void error(SRC, const char* message);
+
+    void number(const Literal* literal);
+
    private:
     VM& vm_;
 
     ObjFunction* function_;
     FunctionType type_;
+
+    bool hadError_;
   };
 
 }; // namespace lox

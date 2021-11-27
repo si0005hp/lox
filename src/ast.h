@@ -4,22 +4,22 @@
 #include "memory.h"
 
 #define V_EXPR_ACCEPT_METHODS                                \
-  virtual Value* accept(Visitor<Value*>& visitor) const = 0; \
-  virtual void accept(Visitor<void>& visitor) const = 0;
+  virtual Value* accept(Visitor<Value*>* visitor) const = 0; \
+  virtual void accept(Visitor<void>* visitor) const = 0;
 
 #define EXPR_ACCEPT_METHODS                                \
-  Value* accept(Visitor<Value*>& visitor) const override { \
-    return visitor.visit(this);                            \
+  Value* accept(Visitor<Value*>* visitor) const override { \
+    return visitor->visit(this);                           \
   }                                                        \
-  void accept(Visitor<void>& visitor) const override {     \
-    return visitor.visit(this);                            \
+  void accept(Visitor<void>* visitor) const override {     \
+    return visitor->visit(this);                           \
   }
 
-#define V_STMT_ACCEPT_METHODS virtual void accept(Visitor<void>& visitor) const = 0;
+#define V_STMT_ACCEPT_METHODS virtual void accept(Visitor<void>* visitor) const = 0;
 
 #define STMT_ACCEPT_METHODS                            \
-  void accept(Visitor<void>& visitor) const override { \
-    return visitor.visit(this);                        \
+  void accept(Visitor<void>* visitor) const override { \
+    return visitor->visit(this);                       \
   }
 
 namespace lox {

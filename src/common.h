@@ -4,6 +4,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <iostream>
+
 #ifdef DEBUG
 
 #define ASSERT(condition, message)                                                      \
@@ -20,13 +22,20 @@
     abort();                                                                                   \
   }
 
+#define UNREACHABLE()                                                                     \
+  std::cerr << "[" __FILE__ << ":" << __LINE__ << "] This code should not be reached in " \
+            << __func__ << "()" << std::endl;                                             \
+  abort();
+
+//< Debug flags
+#define DEBUG_TRACE_EXECUTION
+#define DEBUG_PRINT_CODE
+//> Debug flags
+
 #else
 
 #define ASSERT(condition, message) ;
 #define ASSERT_INDEX(index, max) ;
-
-//< Debug flags
-#define DEBUG_TRACE_EXECUTION
-//> Debug flags
+#define UNREACHABLE() __builtin_unreachable()
 
 #endif
