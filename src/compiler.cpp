@@ -98,14 +98,18 @@ namespace lox {
   void Compiler::visit(const Grouping* expr) {}
 
   void Compiler::visit(const Literal* expr) {
-    if (expr->value->type == TOKEN_NUMBER) {
-      number(expr);
+    Token* value = expr->value;
+    switch (value->type) {
+      case TOKEN_NUMBER: {
+        double n = std::strtod(value->start, 0);
+        emitConstant(value, Number(n).asValue());
+        break;
+      }
+      case TOKEN_FALSE: emitByte(value, OP_FALSE); break;
+      case TOKEN_NIL: emitByte(value, OP_NIL); break;
+      case TOKEN_TRUE: emitByte(value, OP_TRUE); break;
+      default: UNREACHABLE();
     }
-  }
-
-  void Compiler::number(const Literal* literal) {
-    double value = std::strtod(literal->value->start, 0);
-    emitConstant(literal->value, Number(value).asValue());
   }
 
   void Compiler::visit(const Logical* expr) {}

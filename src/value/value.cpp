@@ -35,4 +35,8 @@ namespace lox {
     return "";
   }
 
+  bool Value::isFalsey() const {
+    return isNil() || (isBool() && !asBool().value());
+  }
+
 } // namespace lox

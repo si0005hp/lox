@@ -39,6 +39,7 @@ namespace lox {
     void freeObjects();
     InterpretResult run(ObjFunction* function);
     void traceStack();
+    void runtimeError(const char* format, ...) const;
 
     instruction readByte() {
       return currentChunk().getCode(currentFrame().ip++);
@@ -71,6 +72,10 @@ namespace lox {
     Value pop() {
       stackTop_--;
       return stack_[stackTop_];
+    }
+
+    Value peek(int offset) const {
+      return stack_[stackTop_ - offset];
     }
 
    private:

@@ -1,5 +1,7 @@
 #include "vm.h"
 
+#include <stdarg.h>
+
 #include "chunk.h"
 #include "compiler.h"
 #include "debug.h"
@@ -45,11 +47,15 @@ namespace lox {
       Disassembler::disassembleInstruction(currentChunk(), currentFrame().ip);
 #endif
 
-#define BINARY_OP(op)            \
-  do {                           \
-    Number b = pop().asNumber(); \
-    Number a = pop().asNumber(); \
-    push((a op b).asValue());    \
+#define BINARY_OP(op)                                 \
+  do {                                                \
+    if (!peek(0).isNumber() || !peek(1).isNumber()) { \
+      runtimeError("Operands must be numbers.");      \
+      return INTERPRET_RUNTIME_ERROR;                 \
+    }                                                 \
+    Number b = pop().asNumber();                      \
+    Number a = pop().asNumber();                      \
+    push((a op b).asValue());                         \
   } while (false)
 
       switch (inst = readByte()) {
@@ -59,7 +65,16 @@ namespace lox {
           break;
         }
 
+        case OP_NIL: push(Nil().asValue()); break;
+        case OP_TRUE: push(Bool(true).asValue()); break;
+        case OP_FALSE: push(Bool(false).asValue()); break;
+
+        case OP_NOT: push(Bool(pop().isFalsey()).asValue()); break;
         case OP_NEGATE: {
+          if (!peek(0).isNumber()) {
+            runtimeError("Operand must be a number.");
+            return INTERPRET_RUNTIME_ERROR;
+          }
           push((-pop().asNumber()).asValue());
           break;
         }
@@ -84,4 +99,9 @@ namespace lox {
     }
     printf("\n");
   }
+
+  void VM::runtimeError(const char* format, ...) const {
+    // TODO
+  }
+
 } // namespace lox

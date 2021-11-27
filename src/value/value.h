@@ -50,6 +50,8 @@ namespace lox {
 
     const char* toCString() const;
 
+    bool isFalsey() const;
+
    private:
     uint64_t ptr_;
   };
@@ -122,6 +124,7 @@ namespace lox {
 
   class Bool {
    public:
+    // TODO: Singleton base
     Bool(bool value)
       : value_(value) {}
 
@@ -146,6 +149,7 @@ namespace lox {
 
   class Nil {
    public:
+    // TODO: Singleton base
     Value asValue() const {
       return NIL_VAL;
     }

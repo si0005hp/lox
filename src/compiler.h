@@ -63,8 +63,6 @@ namespace lox {
     int identifierConstant(SRC);
     void error(SRC, const char* message);
 
-    void number(const Literal* literal);
-
    private:
     VM& vm_;
 
