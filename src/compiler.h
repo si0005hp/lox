@@ -22,6 +22,7 @@ namespace lox {
 
     ObjFunction* compile(const char* source);
 
+   private:
     virtual void visit(const Assign* expr);
     virtual void visit(const Binary* expr);
     virtual void visit(const Call* expr);
