@@ -5,6 +5,7 @@
 #include <new>
 #include <sstream>
 
+#include "common.h"
 #include "memory.h"
 
 namespace lox {
@@ -22,10 +23,11 @@ namespace lox {
     }
   }
 
-  Vector<Stmt*> Parser::parse() {
-    Vector<Stmt*> stmts;
-    while (!isDone()) stmts.push(declaration());
-    return stmts;
+  bool Parser::parse() {
+    while (!isDone()) result_.stmts.push(declaration());
+
+    result_.eof = consume(TOKEN_EOF, "Expect EOF at last.");
+    return !hadError_;
   }
 
   Expr* Parser::expression() {

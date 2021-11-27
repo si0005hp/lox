@@ -18,8 +18,7 @@ namespace lox {
     Lexer lexer(source);
     Parser parser(lexer);
 
-    Vector<Stmt*> stmts = parser.parse();
-    if (parser.hadError()) return nullptr;
+    if (!parser.parse()) return nullptr;
 
     int constant = function_->chunk.addConstant(Number(-2.3).asValue());
     function_->chunk.write(OP_CONSTANT, 123);

@@ -7,16 +7,22 @@
 
 namespace lox {
 
+  struct ParseResult {
+    Vector<Stmt*> stmts;
+    Token* eof;
+  };
+
   class Parser {
    public:
     Parser(Lexer& lexer);
     ~Parser();
 
-    Vector<Stmt*> parse();
-    Expr* expression();
+    bool parse();
 
-    bool hadError() const {
-      return hadError_;
+    Expr* expression(); // TODO: Exposed for tests only
+
+    const ParseResult& result() const {
+      return result_;
     }
 
    private:
@@ -75,6 +81,8 @@ namespace lox {
     }
 
    private:
+    ParseResult result_;
+
     Lexer& lexer_;
     Vector<Ast*> astNodes_;
     size_t astBytesAllocated_;

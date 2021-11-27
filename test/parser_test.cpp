@@ -19,6 +19,11 @@ class ParserTest : public TestBase {
     parser = new Parser(*lexer);
   }
 
+  void setupParserAndRun(const char* source, bool expectedParseResult = true) {
+    setupParser(source);
+    ASSERT_EQ(parser->parse(), expectedParseResult);
+  }
+
   void assertLiteral(const char* expectedValue, TokenType expectedType, Expr* expr) {
     Literal* lit = static_cast<Literal*>(expr);
     ASSERT_EQ(expectedType, lit->value->type);
@@ -198,37 +203,37 @@ TEST_F(ParserTest, expression_assignment_set) {
 }
 
 TEST_F(ParserTest, expressionStatement) {
-  setupParser("123;");
+  setupParserAndRun("123;");
 
-  Expression* stmt = static_cast<Expression*>(parser->parse()[0]);
+  Expression* stmt = static_cast<Expression*>(parser->result().stmts[0]);
   assertLiteral("123", TOKEN_NUMBER, stmt->expression);
 }
 
 TEST_F(ParserTest, returnStatement) {
-  setupParser("return 123;");
+  setupParserAndRun("return 123;");
 
-  Return* stmt = static_cast<Return*>(parser->parse()[0]);
+  Return* stmt = static_cast<Return*>(parser->result().stmts[0]);
   assertLiteral("123", TOKEN_NUMBER, stmt->value);
 }
 
 TEST_F(ParserTest, printStatement) {
-  setupParser("print 123;");
+  setupParserAndRun("print 123;");
 
-  Print* stmt = static_cast<Print*>(parser->parse()[0]);
+  Print* stmt = static_cast<Print*>(parser->result().stmts[0]);
   assertLiteral("123", TOKEN_NUMBER, stmt->expression);
 }
 
 TEST_F(ParserTest, block) {
-  setupParser("{ print 123; return; }");
+  setupParserAndRun("{ print 123; return; }");
 
-  Block* stmt = static_cast<Block*>(parser->parse()[0]);
+  Block* stmt = static_cast<Block*>(parser->result().stmts[0]);
   ASSERT_EQ(2, stmt->statements.size());
 }
 
 TEST_F(ParserTest, whileStatement) {
-  setupParser("while (true) { print 123; return; }");
+  setupParserAndRun("while (true) { print 123; return; }");
 
-  While* stmt = static_cast<While*>(parser->parse()[0]);
+  While* stmt = static_cast<While*>(parser->result().stmts[0]);
   assertLiteral("true", TOKEN_TRUE, stmt->condition);
 
   Block* body = static_cast<Block*>(stmt->body);
@@ -236,18 +241,18 @@ TEST_F(ParserTest, whileStatement) {
 }
 
 TEST_F(ParserTest, ifStatement) {
-  setupParser("if (999) { print 123; return; } else { print false; }");
+  setupParserAndRun("if (999) { print 123; return; } else { print false; }");
 
-  If* stmt = static_cast<If*>(parser->parse()[0]);
+  If* stmt = static_cast<If*>(parser->result().stmts[0]);
   assertLiteral("999", TOKEN_NUMBER, stmt->condition);
   ASSERT_EQ(2, static_cast<Block*>(stmt->thenBranch)->statements.size());
   ASSERT_EQ(1, static_cast<Block*>(stmt->elseBranch)->statements.size());
 }
 
 TEST_F(ParserTest, forStatement) {
-  setupParser("for (; false; 999) { print 123; }");
+  setupParserAndRun("for (; false; 999) { print 123; }");
 
-  While* stmt = static_cast<While*>(parser->parse()[0]);
+  While* stmt = static_cast<While*>(parser->result().stmts[0]);
   assertLiteral("false", TOKEN_FALSE, stmt->condition);
 
   Block* sugarBody = static_cast<Block*>(stmt->body);
@@ -261,17 +266,17 @@ TEST_F(ParserTest, forStatement) {
 }
 
 TEST_F(ParserTest, varDeclaration) {
-  setupParser("var myvar = 123;");
+  setupParserAndRun("var myvar = 123;");
 
-  Var* stmt = static_cast<Var*>(parser->parse()[0]);
+  Var* stmt = static_cast<Var*>(parser->result().stmts[0]);
   ASSERT_TRUE(stringEquals("myvar", stmt->name->start, stmt->name->length));
   assertLiteral("123", TOKEN_NUMBER, stmt->initializer);
 }
 
 TEST_F(ParserTest, funcDeclaration) {
-  setupParser("fun myFunc(p1, p2) { print p1; return p2; }");
+  setupParserAndRun("fun myFunc(p1, p2) { print p1; return p2; }");
 
-  Function* f = static_cast<Function*>(parser->parse()[0]);
+  Function* f = static_cast<Function*>(parser->result().stmts[0]);
   ASSERT_TRUE(stringEquals("myFunc", f->name->start, f->name->length));
 
   ASSERT_TRUE(stringEquals("p1", f->params[0]->start, f->params[0]->length));
@@ -281,13 +286,13 @@ TEST_F(ParserTest, funcDeclaration) {
 }
 
 TEST_F(ParserTest, classDeclaration) {
-  setupParser(
+  setupParserAndRun(
     "class Child < Parent { \
        m1() { print 123; } \
        m2() { print 999; } \
   }");
 
-  Class* c = static_cast<Class*>(parser->parse()[0]);
+  Class* c = static_cast<Class*>(parser->result().stmts[0]);
   ASSERT_TRUE(stringEquals("Child", c->name->start, c->name->length));
   ASSERT_TRUE(stringEquals("Parent", c->superclass->name->start, c->superclass->name->length));
   ASSERT_EQ(2, c->methods.size());
