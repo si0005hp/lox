@@ -89,11 +89,11 @@ namespace lox {
     }
 
     T& operator[](int index) {
-      return const_cast<T&>(get(index));
+      return const_cast<T&>(subscript(index));
     }
 
     const T& operator[](int index) const {
-      return get(index);
+      return subscript(index);
     }
 
     Vector& operator=(const Vector& other) {
@@ -106,7 +106,7 @@ namespace lox {
     }
 
    private:
-    const T& get(int index) const {
+    const T& subscript(int index) const {
       index = absIndex(index);
       ASSERT_INDEX(index, count_);
 
