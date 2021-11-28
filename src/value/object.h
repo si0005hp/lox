@@ -21,9 +21,31 @@ namespace lox {
   };
 
   struct ObjString : public Obj {
+    static ObjString* newFlex(const char* src, int length = -1) {
+      if (length == -1) length = static_cast<int>(std::strlen(src));
+
+      void* mem = Memory::allocate(sizeof(ObjString) + sizeof(char) * length);
+      return ::new (mem) ObjString(src, length);
+    }
+
+    ObjString(const char* src, int length)
+      : length(length) {
+      setValue(src);
+      setHash();
+    }
+
+    void setValue(const char* src) {
+      std::strncpy(value, src, length);
+      value[length] = '\0'; // Terminate string
+    }
+
+    void setHash() {
+      // TODO: implement
+    }
+
     int length;
-    char* chars;
     uint32_t hash;
+    char value[FLEXIBLE_ARRAY];
   };
 
   struct ObjFunction : public Obj {

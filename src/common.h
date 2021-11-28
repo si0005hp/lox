@@ -41,3 +41,5 @@
 #define UNREACHABLE() __builtin_unreachable()
 
 #endif
+
+#define FLEXIBLE_ARRAY (1)

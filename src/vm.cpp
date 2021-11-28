@@ -37,6 +37,11 @@ namespace lox {
     }
   }
 
+  void VM::appendObj(Obj* obj) {
+    obj->next = objects_;
+    objects_ = obj;
+  }
+
   InterpretResult VM::run(ObjFunction* function) {
     frame_.function = function;
 

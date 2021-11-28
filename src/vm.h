@@ -25,18 +25,24 @@ namespace lox {
 
     InterpretResult interpret(const char* source);
 
+    // TODO: Right place to manage heap allocation?
     template <typename T, typename... Args>
     T* allocateObj(Args&&... args) {
       T* obj = new T(std::forward<Args>(args)...);
+      appendObj(obj);
+      return obj;
+    }
 
-      // Append to objects list
-      obj->next = objects_;
-      objects_ = obj;
+    template <typename T, typename... Args>
+    T* allocateObjFlex(Args&&... args) {
+      T* obj = T::newFlex(std::forward<Args>(args)...);
+      appendObj(obj);
       return obj;
     }
 
    private:
     void freeObjects();
+    void appendObj(Obj* obj);
     InterpretResult run(ObjFunction* function);
     void traceStack();
     void runtimeError(const char* format, ...) const;
