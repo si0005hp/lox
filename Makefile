@@ -1,13 +1,12 @@
-BUILD_DIR=build
-# BUILD_TYPE?=Release
-BUILD_TYPE?=Debug # Temporary
+BUILD_TYPE?=Release
+BUILD_DIR=build/$(BUILD_TYPE)
  
 
 all: build
 
 build:
 	@mkdir -p $(BUILD_DIR)
-	cd $(BUILD_DIR) && cmake .. -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
+	cd $(BUILD_DIR) && cmake ../.. -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
 	$(MAKE) -C $(BUILD_DIR) -j
 
 clean:
@@ -15,7 +14,7 @@ clean:
 
 test: build
 	$(MAKE) -C $(BUILD_DIR) -j lox_test
-	./build/test/lox_test
+	$(BUILD_DIR)/test/lox_test
 
 format:
 	find src test -type f -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | xargs clang-format -i
