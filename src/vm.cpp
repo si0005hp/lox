@@ -55,7 +55,7 @@ namespace lox {
     }                                                 \
     Number b = pop().asNumber();                      \
     Number a = pop().asNumber();                      \
-    push((a op b).asValue());                         \
+    push((op).asValue());                             \
   } while (false)
 
       switch (inst = readByte()) {
@@ -69,6 +69,13 @@ namespace lox {
         case OP_TRUE: push(Bool(true).asValue()); break;
         case OP_FALSE: push(Bool(false).asValue()); break;
 
+        case OP_EQUAL: {
+          Value b = pop();
+          Value a = pop();
+          push(Bool(a == b).asValue());
+          break;
+        }
+
         case OP_NOT: push(Bool(pop().isFalsey()).asValue()); break;
         case OP_NEGATE: {
           if (!peek(0).isNumber()) {
@@ -79,10 +86,12 @@ namespace lox {
           break;
         }
 
-        case OP_ADD: BINARY_OP(+); break;
-        case OP_SUBTRACT: BINARY_OP(-); break;
-        case OP_MULTIPLY: BINARY_OP(*); break;
-        case OP_DIVIDE: BINARY_OP(/); break;
+        case OP_ADD: BINARY_OP(a + b); break;
+        case OP_SUBTRACT: BINARY_OP(a - b); break;
+        case OP_MULTIPLY: BINARY_OP(a * b); break;
+        case OP_DIVIDE: BINARY_OP(a / b); break;
+        case OP_GREATER: BINARY_OP(Bool(a > b)); break;
+        case OP_LESS: BINARY_OP(Bool(a < b)); break;
 
         case OP_RETURN: {
           printf("%s\n", pop().toCString());

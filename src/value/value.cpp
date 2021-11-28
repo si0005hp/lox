@@ -35,8 +35,17 @@ namespace lox {
     return "";
   }
 
+  // TODO: operator?
   bool Value::isFalsey() const {
     return isNil() || (isBool() && !asBool().value());
+  }
+
+  // TODO
+  bool Value::operator==(Value other) const {
+    if (isNumber() && other.isNumber()) return asNumber() == other.asNumber();
+    if (isBool() && other.isBool()) return asBool() == other.asBool();
+    if (isNil() && other.isNil()) return true;
+    return false;
   }
 
 } // namespace lox

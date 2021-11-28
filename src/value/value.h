@@ -52,6 +52,8 @@ namespace lox {
 
     bool isFalsey() const;
 
+    bool operator==(Value other) const;
+
    private:
     uint64_t ptr_;
   };
@@ -100,6 +102,18 @@ namespace lox {
       return Number(value_ / other.value_);
     }
 
+    bool operator==(Number other) const {
+      return value_ == other.value_;
+    }
+
+    bool operator>(Number other) const {
+      return value_ > other.value_;
+    }
+
+    bool operator<(Number other) const {
+      return value_ < other.value_;
+    }
+
    private:
     typedef union {
       uint64_t ptr;
@@ -141,6 +155,10 @@ namespace lox {
 
     const char* toCString() const {
       return value_ ? "true" : "false";
+    }
+
+    bool operator==(Bool other) const {
+      return value_ == other.value_;
     }
 
    private:

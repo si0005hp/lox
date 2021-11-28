@@ -83,6 +83,12 @@ namespace lox {
     expr->right->accept(this);
 
     switch (expr->op->type) {
+      case TOKEN_BANG_EQUAL: emitBytes(expr->op, OP_EQUAL, OP_NOT); break;
+      case TOKEN_EQUAL_EQUAL: emitByte(expr->op, OP_EQUAL); break;
+      case TOKEN_GREATER: emitByte(expr->op, OP_GREATER); break;
+      case TOKEN_GREATER_EQUAL: emitBytes(expr->op, OP_LESS, OP_NOT); break;
+      case TOKEN_LESS: emitByte(expr->op, OP_LESS); break;
+      case TOKEN_LESS_EQUAL: emitBytes(expr->op, OP_GREATER, OP_NOT); break;
       case TOKEN_PLUS: emitByte(expr->op, OP_ADD); break;
       case TOKEN_MINUS: emitByte(expr->op, OP_SUBTRACT); break;
       case TOKEN_STAR: emitByte(expr->op, OP_MULTIPLY); break;
