@@ -252,10 +252,12 @@ namespace lox {
   };
 
   struct Expression : public Stmt {
-    Expression(Expr* expression)
-      : expression(expression) {}
+    Expression(Expr* expression, Token* stop)
+      : expression(expression)
+      , stop(stop) {}
 
     Expr* expression;
+    Token* stop;
 
     STMT_ACCEPT_METHODS
   };

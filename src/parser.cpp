@@ -130,13 +130,13 @@ namespace lox {
     consume(TOKEN_SEMICOLON, "Expect ';' after loop condition.");
     /* for-increment */
     Expr* incr = lookAhead(TOKEN_RIGHT_PAREN) ? nullptr : expression();
-    consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
+    Token* stop = consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
 
     /* body */
     Stmt* body = statement();
 
     if (incr != nullptr) {
-      Vector<Stmt*> stmts{body, newAstNode<Expression>(incr)};
+      Vector<Stmt*> stmts{body, newAstNode<Expression>(incr, stop)};
       body = newAstNode<Block>(stmts);
     }
     if (cond == nullptr) cond = newAstNode<Literal>(lexer_.syntheticToken(TOKEN_TRUE, "true"));
@@ -173,8 +173,8 @@ namespace lox {
 
   Stmt* Parser::expressionStatement() {
     Expr* expr = expression();
-    consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
-    return newAstNode<Expression>(expr);
+    Token* stop = consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
+    return newAstNode<Expression>(expr, stop);
   }
 
   Stmt* Parser::whileStatement() {

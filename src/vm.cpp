@@ -59,6 +59,11 @@ namespace lox {
   } while (false)
 
       switch (inst = readByte()) {
+        case OP_POP: {
+          pop();
+          break;
+        }
+
         case OP_CONSTANT: {
           Value constant = readConstant();
           push(constant);

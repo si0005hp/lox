@@ -142,7 +142,10 @@ namespace lox {
 
   void Compiler::visit(const Class* stmt) {}
 
-  void Compiler::visit(const Expression* stmt) {}
+  void Compiler::visit(const Expression* stmt) {
+    stmt->expression->accept(this);
+    emitByte(stmt->stop, OP_POP);
+  }
 
   void Compiler::visit(const Function* stmt) {}
 
