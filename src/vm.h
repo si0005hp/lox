@@ -75,7 +75,7 @@ namespace lox {
     }
 
     Value peek(int offset) const {
-      return stack_[stackTop_ - offset];
+      return stack_[stackTop_ - 1 - offset];
     }
 
    private:

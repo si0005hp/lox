@@ -39,9 +39,11 @@ int main(int argc, char const* argv[]) {
   }
 
   VM vm;
-  vm.interpret(buf);
-
+  InterpretResult result = vm.interpret(buf);
   delete buf;
+
+  if (result == INTERPRET_COMPILE_ERROR) exit(65);
+  if (result == INTERPRET_RUNTIME_ERROR) exit(70);
 
   return 0;
 }

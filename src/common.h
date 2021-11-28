@@ -8,6 +8,8 @@
 
 #ifdef DEBUG
 
+#include "../tmp/dbg.h" // TODO: path
+
 #define ASSERT(condition, message)                                                      \
   if (!(condition)) {                                                                   \
     std::cerr << "ASSERTION FAILED " << __FILE__ << ":" << __LINE__ << " - " << message \

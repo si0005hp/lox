@@ -11,7 +11,8 @@ namespace lox {
 
   Compiler::Compiler(VM& vm, FunctionType type)
     : vm_(vm)
-    , type_(type) {
+    , type_(type)
+    , hadError_(false) {
     function_ = vm.allocateObj<ObjFunction>(0, nullptr);
   }
 
@@ -21,19 +22,13 @@ namespace lox {
 
     if (!parser.parse()) return nullptr;
 
-    int constant = function_->chunk.addConstant(Number(-2.3).asValue());
-    function_->chunk.write(OP_CONSTANT, 123);
-    function_->chunk.write(constant, 123);
+    Vector<Stmt*> stmts = parser.result().stmts;
+    for (int i = 0; i < stmts.size(); i++) {
+      stmts[i]->accept(this);
+    }
 
-    constant = function_->chunk.addConstant(Number(4.5).asValue());
-    function_->chunk.write(OP_CONSTANT, 123);
-    function_->chunk.write(constant, 123);
-
-    function_->chunk.write(OP_ADD, 123);
-
-    function_->chunk.write(OP_RETURN, 123);
-
-    return function_;
+    endCompiler(parser.result().eof);
+    return hadError_ ? nullptr : function_;
   }
 
   void Compiler::endCompiler(SRC) {
@@ -101,7 +96,9 @@ namespace lox {
 
   void Compiler::visit(const Get* expr) {}
 
-  void Compiler::visit(const Grouping* expr) {}
+  void Compiler::visit(const Grouping* expr) {
+    expr->expression->accept(this);
+  }
 
   void Compiler::visit(const Literal* expr) {
     Token* value = expr->value;
@@ -144,7 +141,7 @@ namespace lox {
 
   void Compiler::visit(const Expression* stmt) {
     stmt->expression->accept(this);
-    emitByte(stmt->stop, OP_POP);
+    // emitByte(stmt->stop, OP_POP); TODO: Temporarily omit
   }
 
   void Compiler::visit(const Function* stmt) {}
