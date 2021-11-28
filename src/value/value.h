@@ -25,7 +25,10 @@ namespace lox {
 
   class Number;
   class Bool;
+  class Obj;
+  class ObjString;
 
+  // TODO: The whole Value abstraction could be better desined.
   class Value {
    public:
     Value()
@@ -43,6 +46,10 @@ namespace lox {
     bool isNil() const;
 
     bool isObj() const;
+    Obj* asObj() const;
+
+    bool isObjString() const;
+    ObjString* asObjString() const;
 
     uint64_t ptr() const {
       return ptr_;

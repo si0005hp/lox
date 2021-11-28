@@ -1,6 +1,17 @@
 #include "value.h"
 
+#include "object.h"
+
 namespace lox {
+
+#define OBJ_SUBTYPE_APIS(subtype)                          \
+  bool Value::is##subtype() const {                        \
+    return isObj() && typeid(*asObj()) == typeid(subtype); \
+  }                                                        \
+                                                           \
+  subtype* Value::as##subtype() const {                    \
+    return static_cast<subtype*>(asObj());                 \
+  }
 
   /* Value */
   bool Value::isNumber() const {
@@ -26,6 +37,12 @@ namespace lox {
   bool Value::isObj() const {
     return (ptr_ & (QNAN | SIGN_BIT)) == (QNAN | SIGN_BIT);
   }
+
+  Obj* Value::asObj() const {
+    return ((Obj*)(uintptr_t)((ptr_) & ~(SIGN_BIT | QNAN)));
+  }
+
+  OBJ_SUBTYPE_APIS(ObjString)
 
   // TODO
   const char* Value::toCString() const {

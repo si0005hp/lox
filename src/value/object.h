@@ -3,6 +3,7 @@
 #include "../chunk.h"
 #include "../common.h"
 #include "../memory.h"
+#include "value.h"
 
 namespace lox {
   struct Obj {
@@ -10,6 +11,10 @@ namespace lox {
 
     void* operator new(size_t s) {
       return Memory::allocate(s);
+    }
+
+    Value asValue() const {
+      return (Value)(SIGN_BIT | QNAN | (uint64_t)(uintptr_t)(this));
     }
 
     Obj* next;
