@@ -48,8 +48,8 @@ namespace lox {
     bool isObj() const;
     Obj* asObj() const;
 
-    bool isObjString() const;
-    ObjString* asObjString() const;
+    bool isString() const;
+    ObjString* asString() const;
 
     uint64_t ptr() const {
       return ptr_;

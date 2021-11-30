@@ -4,15 +4,6 @@
 
 namespace lox {
 
-#define OBJ_SUBTYPE_APIS(subtype)                          \
-  bool Value::is##subtype() const {                        \
-    return isObj() && typeid(*asObj()) == typeid(subtype); \
-  }                                                        \
-                                                           \
-  subtype* Value::as##subtype() const {                    \
-    return static_cast<subtype*>(asObj());                 \
-  }
-
   /* Value */
   bool Value::isNumber() const {
     return (ptr_ & QNAN) != QNAN;
@@ -42,7 +33,18 @@ namespace lox {
     return ((Obj*)(uintptr_t)((ptr_) & ~(SIGN_BIT | QNAN)));
   }
 
-  OBJ_SUBTYPE_APIS(ObjString)
+#define OBJ_TYPE_APIS(subtype)                \
+  bool Value::is##subtype() const {           \
+    return isObj() && asObj()->is##subtype(); \
+  }                                           \
+                                              \
+  Obj##subtype* Value::as##subtype() const {  \
+    return asObj()->as##subtype();            \
+  }
+
+  OBJ_TYPE_APIS(String)
+
+#undef OBJ_TYPE_APIS
 
   void Value::trace(std::ostream& os) const {
     if (isNumber()) {

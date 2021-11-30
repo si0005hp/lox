@@ -6,6 +6,8 @@
 #include "value.h"
 
 namespace lox {
+  class ObjString;
+
   class Obj {
     friend class VM;
 
@@ -21,6 +23,9 @@ namespace lox {
     }
 
     virtual void trace(std::ostream& os) const = 0;
+
+    bool isString() const;
+    ObjString* asString();
 
    private:
     Obj* next_;
