@@ -2,6 +2,8 @@
 
 #include <stdarg.h>
 
+#include <iostream>
+
 #include "chunk.h"
 #include "compiler.h"
 #include "debug.h"
@@ -104,7 +106,7 @@ namespace lox {
         case OP_LESS: BINARY_OP(Bool(a < b)); break;
 
         case OP_RETURN: {
-          printf("%s\n", pop().toCString());
+          std::cout << pop() << std::endl;
           return INTERPRET_OK;
         }
       }
@@ -112,11 +114,9 @@ namespace lox {
   }
 
   void VM::traceStack() {
-    printf("          ");
-    for (int i = 0; i < stackTop_; i++) {
-      printf("[ %s ]", stack_[i].toCString());
-    }
-    printf("\n");
+    std::cout << "          ";
+    for (int i = 0; i < stackTop_; i++) std::cout << "[ " << stack_[i] << " ]";
+    std::cout << std::endl;
   }
 
   void VM::runtimeError(const char* format, ...) const {

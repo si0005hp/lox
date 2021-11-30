@@ -122,7 +122,7 @@ namespace lox {
     }
 
     static void printValue(Value value) {
-      printf("%s", value.toCString());
+      std::cout << value;
     }
   };
 

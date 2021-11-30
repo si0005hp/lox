@@ -20,12 +20,19 @@ namespace lox {
       return (Value)(SIGN_BIT | QNAN | (uint64_t)(uintptr_t)(this));
     }
 
+    virtual void trace(std::ostream& os) const = 0;
+
    private:
     Obj* next_;
   };
 
   class ObjString : public Obj {
     friend class VM;
+
+   public:
+    virtual void trace(std::ostream& os) const {
+      os << value_;
+    }
 
    private:
     static ObjString* newFlex(const char* src, int length = -1) {
@@ -60,6 +67,13 @@ namespace lox {
     friend class VM;
 
    public:
+    virtual void trace(std::ostream& os) const {
+      if (name_ == nullptr)
+        os << "<script>";
+      else
+        os << "<fn " << name_ << ">";
+    }
+
     Chunk& chunk() {
       return chunk_;
     }

@@ -44,12 +44,18 @@ namespace lox {
 
   OBJ_SUBTYPE_APIS(ObjString)
 
-  // TODO
-  const char* Value::toCString() const {
-    if (isNumber()) return asNumber().toCString();
-    if (isBool()) return asBool().toCString();
-    if (isNil()) return Nil().toCString();
-    return "";
+  void Value::trace(std::ostream& os) const {
+    if (isNumber()) {
+      asNumber().trace(os);
+    } else if (isBool()) {
+      asBool().trace(os);
+    } else if (isNil()) {
+      Nil().trace(os);
+    } else if (isObj()) {
+      asObj()->trace(os);
+    } else {
+      UNREACHABLE();
+    }
   }
 
   // TODO: operator?

@@ -55,7 +55,7 @@ namespace lox {
       return ptr_;
     }
 
-    const char* toCString() const;
+    void trace(std::ostream& os) const;
 
     bool isFalsey() const;
 
@@ -63,6 +63,11 @@ namespace lox {
 
    private:
     uint64_t ptr_;
+  };
+
+  inline std::ostream& operator<<(std::ostream& os, Value value) {
+    value.trace(os);
+    return os;
   };
 
   class Number {
@@ -81,11 +86,8 @@ namespace lox {
       return value_;
     }
 
-    const char* toCString() const {
-      // TODO: This causes "Uninitialised value was created by a stack allocation".
-      std::ostringstream oss;
-      oss << std::noshowpoint << value_;
-      return oss.str().c_str();
+    void trace(std::ostream& os) const {
+      os << std::noshowpoint << value_;
     }
 
    public:
@@ -160,8 +162,8 @@ namespace lox {
       return value_;
     }
 
-    const char* toCString() const {
-      return value_ ? "true" : "false";
+    void trace(std::ostream& os) const {
+      os << (value_ ? "true" : "false");
     }
 
     bool operator==(Bool other) const {
@@ -179,8 +181,8 @@ namespace lox {
       return NIL_VAL;
     }
 
-    const char* toCString() const {
-      return "nil";
+    void trace(std::ostream& os) const {
+      os << "nil";
     }
   };
 } // namespace lox
