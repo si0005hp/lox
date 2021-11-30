@@ -27,6 +27,11 @@ namespace lox {
     bool isString() const;
     ObjString* asString();
 
+    virtual bool eq(Obj* other) const {
+      // Default identity logic.
+      return this == other;
+    }
+
    private:
     Obj* next_;
   };
@@ -37,6 +42,13 @@ namespace lox {
    public:
     virtual void trace(std::ostream& os) const {
       os << value_;
+    }
+
+    virtual bool eq(Obj* other) const {
+      if (!other->isString()) return false;
+
+      // TODO: valid?
+      return hash_ == other->asString()->hash_;
     }
 
    private:
@@ -59,7 +71,13 @@ namespace lox {
     }
 
     void setHash() {
-      // TODO: implement
+      uint32_t hash = 2166136261u;
+
+      for (int i = 0; i < length_; i++) {
+        hash ^= value_[i];
+        hash *= 16777619;
+      }
+      hash_ = hash;
     }
 
    private:

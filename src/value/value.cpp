@@ -70,6 +70,7 @@ namespace lox {
     if (isNumber() && other.isNumber()) return asNumber() == other.asNumber();
     if (isBool() && other.isBool()) return asBool() == other.asBool();
     if (isNil() && other.isNil()) return true;
+    if (isObj() && other.isObj()) return asObj()->eq(other.asObj());
     return false;
   }
 

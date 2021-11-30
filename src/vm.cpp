@@ -98,7 +98,19 @@ namespace lox {
           break;
         }
 
-        case OP_ADD: BINARY_OP(a + b); break;
+        case OP_ADD: {
+          if (peek(0).isString() && peek(1).isString()) {
+            UNREACHABLE(/* Not implemented. */);
+          } else if (peek(0).isNumber() && peek(1).isNumber()) {
+            Number b = pop().asNumber();
+            Number a = pop().asNumber();
+            push((a + b).asValue());
+          } else {
+            runtimeError("Operands must be two numbers or two strings.");
+            return INTERPRET_RUNTIME_ERROR;
+          }
+          break;
+        }
         case OP_SUBTRACT: BINARY_OP(a - b); break;
         case OP_MULTIPLY: BINARY_OP(a * b); break;
         case OP_DIVIDE: BINARY_OP(a / b); break;
