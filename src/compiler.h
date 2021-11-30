@@ -49,7 +49,7 @@ namespace lox {
     virtual void visit(const While* stmt);
 
     Chunk& currentChunk() const {
-      return function_->chunk;
+      return function_->chunk();
     };
 
     void endCompiler(SRC);

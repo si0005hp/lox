@@ -68,7 +68,7 @@ namespace lox {
     };
 
     const Chunk& currentChunk() const {
-      return currentFn()->chunk;
+      return currentFn()->chunk();
     };
 
     void push(Value value) {

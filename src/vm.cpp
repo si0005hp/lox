@@ -31,14 +31,14 @@ namespace lox {
   void VM::freeObjects() {
     Obj* obj = objects_;
     while (obj != nullptr) {
-      Obj* next = obj->next;
+      Obj* next = obj->next_;
       Memory::deallocate<Obj>(obj);
       obj = next;
     }
   }
 
   void VM::appendObj(Obj* obj) {
-    obj->next = objects_;
+    obj->next_ = objects_;
     objects_ = obj;
   }
 
