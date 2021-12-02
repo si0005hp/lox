@@ -51,6 +51,10 @@ namespace lox {
       return hash_ == other->asString()->hash_;
     }
 
+    uint32_t hash() const {
+      return hash_;
+    };
+
    private:
     static ObjString* newFlex(const char* src, int length = -1) {
       if (length == -1) length = static_cast<int>(std::strlen(src));
@@ -66,7 +70,8 @@ namespace lox {
     }
 
     void setValue(const char* src) {
-      std::strncpy(value_, src, length_);
+      // TODO: Comparison with strncpy
+      std::memcpy(value_, src, length_);
       value_[length_] = '\0'; // Terminate string
     }
 
@@ -81,8 +86,8 @@ namespace lox {
     }
 
    private:
-    int length_;
     uint32_t hash_;
+    int length_;
     char value_[FLEXIBLE_ARRAY];
   };
 
