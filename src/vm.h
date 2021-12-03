@@ -2,6 +2,7 @@
 
 #include "common.h"
 #include "lib/vector.h"
+#include "string_table.h"
 #include "value/object.h"
 #include "value/value.h"
 
@@ -90,5 +91,7 @@ namespace lox {
 
     std::array<Value, 256> stack_;
     int stackTop_ = 0;
+
+    StringTable strings;
   };
 } // namespace lox

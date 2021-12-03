@@ -64,24 +64,42 @@ namespace lox {
       return length_;
     };
 
-    class MapKey {
+    // https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function#FNV_hash_parameters
+    static uint32_t calcHash(const char* chars, int length) {
+      uint32_t hash = 2166136261u;
+
+      for (int i = 0; i < length; i++) {
+        hash ^= chars[i];
+        hash *= 16777619;
+      }
+      return hash;
+    }
+
+    class HashMapKey {
      public:
-      MapKey()
-        : MapKey(nullptr) {}
+      HashMapKey()
+        : isNull_(true) {}
 
-      MapKey(ObjString* value)
-        : value_(value) {}
+      HashMapKey(ObjString* s)
+        : HashMapKey(s->hash()) {}
 
-      bool operator==(const MapKey& other) const {
-        return value_ == nullptr ? other.value_ == nullptr : value_->eq(other.value_);
+      HashMapKey(uint32_t hash)
+        : isNull_(false)
+        , hash_(hash) {}
+
+      bool operator==(const HashMapKey& other) const {
+        return isNull_ ? other.isNull_ : hash_ == other.hash_;
       };
 
       int hashCode() const {
-        return value_->hash();
+        ASSERT(!isNull_, "Hash must be non-null.");
+
+        return hash_;
       }
 
      private:
-      ObjString* value_;
+      bool isNull_;
+      uint32_t hash_;
     };
 
    private:
@@ -97,34 +115,20 @@ namespace lox {
     }
 
     ObjString(const char* src, int length)
-      : length_(length) {
-      setValue(src);
-      setHash();
-    }
-
-    void setValue(const char* src) {
-      // TODO: Comparison with strncpy
+      : hash_(calcHash(src, length))
+      , length_(length) {
+      // Set value (TODO: Comparison with strncpy)
       std::memcpy(value_, src, length_);
       value_[length_] = '\0'; // Terminate string
     }
 
-    void setHash() {
-      uint32_t hash = 2166136261u;
-
-      for (int i = 0; i < length_; i++) {
-        hash ^= value_[i];
-        hash *= 16777619;
-      }
-      hash_ = hash;
-    }
-
-   private:
+   public:
     uint32_t hash_;
     int length_;
     char value_[FLEXIBLE_ARRAY];
   };
 
-  typedef ObjString::MapKey StringKey;
+  typedef ObjString::HashMapKey StringKey;
 
   class ObjFunction : public Obj {
     friend class VM;
