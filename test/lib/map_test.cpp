@@ -11,26 +11,6 @@ using namespace lox;
 
 class MapTest : public TestBase {};
 
-class StrKey {
- public:
-  StrKey()
-    : StrKey(nullptr) {}
-
-  StrKey(ObjString* value) // Implicit constructor
-    : value_(value) {}
-
-  bool operator==(const StrKey& other) const {
-    return value_ == nullptr ? other.value_ == nullptr : value_->eq(other.value_);
-  };
-
-  int hashCode() const {
-    return value_->hash();
-  }
-
- private:
-  ObjString* value_;
-};
-
 class IntKey {
  public:
   IntKey()
@@ -83,7 +63,7 @@ TEST_F(MapTest, remove) {
 
 TEST_F(MapTest, str) {
   VM vm;
-  Map<StrKey, int> map;
+  Map<StringKey, int> map;
 
   ObjString* hoge = vm.allocateObjFlex<ObjString>("hoge", 4);
   map.put(hoge, 100);

@@ -6,6 +6,7 @@
 #include "value.h"
 
 namespace lox {
+
   class ObjString;
 
   class Obj {
@@ -55,6 +56,26 @@ namespace lox {
       return hash_;
     };
 
+    class MapKey {
+     public:
+      MapKey()
+        : MapKey(nullptr) {}
+
+      MapKey(ObjString* value)
+        : value_(value) {}
+
+      bool operator==(const MapKey& other) const {
+        return value_ == nullptr ? other.value_ == nullptr : value_->eq(other.value_);
+      };
+
+      int hashCode() const {
+        return value_->hash();
+      }
+
+     private:
+      ObjString* value_;
+    };
+
    private:
     static ObjString* newFlex(const char* src, int length = -1) {
       if (length == -1) length = static_cast<int>(std::strlen(src));
@@ -90,6 +111,8 @@ namespace lox {
     int length_;
     char value_[FLEXIBLE_ARRAY];
   };
+
+  typedef ObjString::MapKey StringKey;
 
   class ObjFunction : public Obj {
     friend class VM;
