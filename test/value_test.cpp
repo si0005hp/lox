@@ -39,7 +39,7 @@ TEST_F(ValueTest, Number_conv) {
   ASSERT_EQ(1, v.asNumber().value());
 }
 
-TEST_F(ValueTest, Number_operator_unary_minus) {
+TEST_F(ValueTest, Number_operator_unary_mianus) {
   Number n(2);
   ASSERT_EQ(-2, -n.value());
 }

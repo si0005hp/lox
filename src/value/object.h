@@ -52,8 +52,16 @@ namespace lox {
       return hash_ == other->asString()->hash_;
     }
 
+    bool eqCString(const char* cStr) const {
+      return length_ == strlen(cStr) && std::memcmp(value_, cStr, length_) == 0;
+    }
+
     uint32_t hash() const {
       return hash_;
+    };
+
+    int length() const {
+      return length_;
     };
 
     class MapKey {
@@ -78,10 +86,14 @@ namespace lox {
 
    private:
     static ObjString* newFlex(const char* src, int length = -1) {
-      if (length == -1) length = static_cast<int>(std::strlen(src));
+      if (length == -1) length = strlen(src);
 
       void* mem = Memory::allocate(sizeof(ObjString) + sizeof(char) * length);
       return ::new (mem) ObjString(src, length);
+    }
+
+    static int strlen(const char* chars) {
+      return static_cast<int>(std::strlen(chars));
     }
 
     ObjString(const char* src, int length)
