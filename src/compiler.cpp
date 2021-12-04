@@ -55,8 +55,8 @@ namespace lox {
     emitBytes(token, OP_CONSTANT, makeConstant(token, value));
   }
 
-  int Compiler::makeConstant(SRC, Value value) {
-    int constant = currentChunk().addConstant(value);
+  instruction Compiler::makeConstant(SRC, Value value) {
+    instruction constant = currentChunk().addConstant(value);
     if (constant > UINT8_MAX) {
       error(token, "Too many constants in one chunk.");
       return 0;
@@ -64,11 +64,36 @@ namespace lox {
     return constant;
   }
 
-  int Compiler::identifierConstant(SRC) {
-    return 0;
+  instruction Compiler::identifierConstant(Token* idt) {
+    return makeConstant(idt, vm_.allocateObj<ObjString>(idt->start, idt->length)->asValue());
   }
 
-  void Compiler::error(SRC, const char* message) {}
+  void Compiler::error(SRC, const char* message) {
+    // TODO: implement
+  }
+
+  instruction Compiler::parseVariable(Token* var) {
+    if (isLocalScope()) {
+      declareVariableLocal(var);
+      return -1; // dummy
+    }
+    return identifierConstant(var);
+  }
+
+  void Compiler::declareVariableLocal(Token* var) {}
+
+  void Compiler::defineVariable(Token* var, instruction global) {
+    if (isLocalScope()) {
+      // markInitialized();
+      return;
+    }
+    ASSERT(global != -1, "Global slot must be given.");
+    emitBytes(var, OP_DEFINE_GLOBAL, global);
+  }
+
+  bool Compiler::isLocalScope() const {
+    return scopeDepth_ > 0;
+  }
 
   void Compiler::visit(const Assign* expr) {}
 
@@ -160,7 +185,16 @@ namespace lox {
 
   void Compiler::visit(const Return* stmt) {}
 
-  void Compiler::visit(const Var* stmt) {}
+  void Compiler::visit(const Var* stmt) {
+    instruction slot = parseVariable(stmt->name);
+
+    if (stmt->initializer)
+      stmt->initializer->accept(this);
+    else
+      emitByte(stmt->name, OP_NIL);
+
+    defineVariable(stmt->name, slot);
+  }
 
   void Compiler::visit(const While* stmt) {}
 

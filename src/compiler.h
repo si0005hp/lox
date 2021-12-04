@@ -59,9 +59,15 @@ namespace lox {
     void emitReturn(SRC);
     void emitConstant(SRC, Value value);
 
-    int makeConstant(SRC, Value value);
-    int identifierConstant(SRC);
+    instruction makeConstant(SRC, Value value);
+    instruction identifierConstant(SRC);
     void error(SRC, const char* message);
+
+    instruction parseVariable(Token* var);
+    void declareVariableLocal(Token* var);
+    void defineVariable(Token* var, instruction global = -1);
+
+    bool isLocalScope() const;
 
    private:
     VM& vm_;
@@ -70,6 +76,8 @@ namespace lox {
     FunctionType type_;
 
     bool hadError_ = false;
+
+    int scopeDepth_ = 0;
   };
 
 }; // namespace lox

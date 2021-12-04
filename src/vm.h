@@ -60,6 +60,10 @@ namespace lox {
       return currentChunk().getConstant(readByte());
     }
 
+    ObjString* readString() {
+      return readConstant().asString();
+    }
+
     CallFrame& currentFrame() {
       return frame_;
     };
@@ -97,5 +101,6 @@ namespace lox {
     int stackTop_ = 0;
 
     StringTable strings;
+    Map<StringKey, Value> globals;
   };
 } // namespace lox
