@@ -65,13 +65,13 @@ TEST_F(MapTest, str) {
   VM vm;
   Map<StringKey, int> map;
 
-  ObjString* hoge = vm.allocateObjFlex<ObjString>("hoge", 4);
+  ObjString* hoge = vm.allocateObj<ObjString>("hoge", 4);
   map.put(hoge, 100);
 
-  ObjString* foo = vm.allocateObjFlex<ObjString>("foo", 3);
+  ObjString* foo = vm.allocateObj<ObjString>("foo", 3);
   map.put(foo, 200);
 
-  ObjString* key = vm.allocateObjFlex<ObjString>("hoge", 4);
+  ObjString* key = vm.allocateObj<ObjString>("hoge", 4);
   int value;
   ASSERT_TRUE(map.get(key, &value));
   ASSERT_EQ(value, 100);

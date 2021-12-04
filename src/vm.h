@@ -29,14 +29,7 @@ namespace lox {
     // TODO: Right place to manage heap allocation?
     template <typename T, typename... Args>
     T* allocateObj(Args&&... args) {
-      T* obj = new T(std::forward<Args>(args)...);
-      appendObj(obj);
-      return obj;
-    }
-
-    template <typename T, typename... Args>
-    T* allocateObjFlex(Args&&... args) {
-      T* obj = T::newFlex(std::forward<Args>(args)...);
+      T* obj = T::allocate(std::forward<Args>(args)...);
       appendObj(obj);
       return obj;
     }

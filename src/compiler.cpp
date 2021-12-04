@@ -113,7 +113,7 @@ namespace lox {
       case TOKEN_TRUE: emitByte(value, OP_TRUE); break;
       case TOKEN_STRING: {
         // Trim double quotes.
-        ObjString* s = vm_.allocateObjFlex<ObjString>(value->start + 1, value->length - 2);
+        ObjString* s = vm_.allocateObj<ObjString>(value->start + 1, value->length - 2);
         emitConstant(value, s->asValue());
         break;
       }

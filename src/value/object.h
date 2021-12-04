@@ -103,15 +103,11 @@ namespace lox {
     };
 
    private:
-    static ObjString* newFlex(const char* src, int length = -1) {
+    static ObjString* allocate(const char* src, int length = -1) {
       if (length == -1) length = strlen(src);
 
       void* mem = Memory::allocate(sizeof(ObjString) + sizeof(char) * length);
       return ::new (mem) ObjString(src, length);
-    }
-
-    static int strlen(const char* chars) {
-      return static_cast<int>(std::strlen(chars));
     }
 
     ObjString(const char* src, int length)
@@ -120,6 +116,10 @@ namespace lox {
       // Set value (TODO: Comparison with strncpy)
       std::memcpy(value_, src, length_);
       value_[length_] = '\0'; // Terminate string
+    }
+
+    static int strlen(const char* chars) {
+      return static_cast<int>(std::strlen(chars));
     }
 
    public:
@@ -146,6 +146,10 @@ namespace lox {
     }
 
    private:
+    static ObjFunction* allocate(int arity, ObjString* name) {
+      return new ObjFunction(arity, name);
+    }
+
     ObjFunction(int arity, ObjString* name)
       : arity_(arity)
       , name_(name) {}
