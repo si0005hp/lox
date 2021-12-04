@@ -147,14 +147,17 @@ namespace lox {
 
   void Compiler::visit(const Expression* stmt) {
     stmt->expression->accept(this);
-    // emitByte(stmt->stop, OP_POP); TODO: Temporarily omit
+    emitByte(stmt->stop, OP_POP);
   }
 
   void Compiler::visit(const Function* stmt) {}
 
   void Compiler::visit(const If* stmt) {}
 
-  void Compiler::visit(const Print* stmt) {}
+  void Compiler::visit(const Print* stmt) {
+    stmt->expression->accept(this);
+    emitByte(stmt->print, OP_PRINT);
+  }
 
   void Compiler::visit(const Return* stmt) {}
 

@@ -160,9 +160,10 @@ namespace lox {
   }
 
   Stmt* Parser::printStatement() {
+    Token* print = last_;
     Expr* value = expression();
     consume(TOKEN_SEMICOLON, "Expect ';' after value.");
-    return newAstNode<Print>(value);
+    return newAstNode<Print>(print, value);
   }
 
   Stmt* Parser::returnStatement() {

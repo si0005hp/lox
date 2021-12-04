@@ -76,10 +76,7 @@ namespace lox {
   } while (false)
 
       switch (inst = readByte()) {
-        case OP_POP: {
-          pop();
-          break;
-        }
+        case OP_POP: pop(); break;
 
         case OP_CONSTANT: {
           Value constant = readConstant();
@@ -127,8 +124,11 @@ namespace lox {
         case OP_GREATER: BINARY_OP(Bool(a > b)); break;
         case OP_LESS: BINARY_OP(Bool(a < b)); break;
 
-        case OP_RETURN: {
+        case OP_PRINT: {
           std::cout << pop() << std::endl;
+          break;
+        }
+        case OP_RETURN: {
           return INTERPRET_OK;
         }
       }

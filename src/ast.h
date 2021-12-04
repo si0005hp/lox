@@ -257,7 +257,7 @@ namespace lox {
       , stop(stop) {}
 
     Expr* expression;
-    Token* stop;
+    Token* stop; // TODO
 
     STMT_ACCEPT_METHODS
   };
@@ -289,9 +289,11 @@ namespace lox {
   };
 
   struct Print : public Stmt {
-    Print(Expr* expression)
-      : expression(expression) {}
+    Print(Token* print, Expr* expression)
+      : print(print)
+      , expression(expression) {}
 
+    Token* print; // TODO
     Expr* expression;
 
     STMT_ACCEPT_METHODS
