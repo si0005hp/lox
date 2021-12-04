@@ -11,8 +11,7 @@ namespace lox {
 
   Compiler::Compiler(VM& vm, FunctionType type)
     : vm_(vm)
-    , type_(type)
-    , hadError_(false) {
+    , type_(type) {
     function_ = vm.allocateObj<ObjFunction>(0, nullptr);
   }
 

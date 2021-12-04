@@ -77,12 +77,7 @@ namespace lox {
 
       switch (inst = readByte()) {
         case OP_POP: pop(); break;
-
-        case OP_CONSTANT: {
-          Value constant = readConstant();
-          push(constant);
-          break;
-        }
+        case OP_CONSTANT: push(readConstant()); break;
 
         case OP_NIL: push(Nil().asValue()); break;
         case OP_TRUE: push(Bool(true).asValue()); break;

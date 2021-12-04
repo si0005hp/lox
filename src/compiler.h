@@ -69,7 +69,7 @@ namespace lox {
     ObjFunction* function_;
     FunctionType type_;
 
-    bool hadError_;
+    bool hadError_ = false;
   };
 
 }; // namespace lox
