@@ -41,10 +41,15 @@ namespace lox {
 
    private:
     void freeObjects();
+
     void appendObj(Obj* obj);
+
     ObjString* findOrAllocateString(const char* src, int length);
+
     InterpretResult run(ObjFunction* function);
+
     void traceStack();
+
     void runtimeError(const char* format, ...) const;
 
     instruction readByte() {
