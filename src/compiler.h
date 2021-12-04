@@ -66,6 +66,7 @@ namespace lox {
     instruction parseVariable(Token* var);
     void declareVariableLocal(Token* var);
     void defineVariable(Token* var, instruction global = -1);
+    void namedVariable(Token* var, bool isSetOp = false);
 
     bool isLocalScope() const;
 

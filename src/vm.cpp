@@ -78,6 +78,16 @@ namespace lox {
       switch (inst = readByte()) {
         case OP_POP: pop(); break;
 
+        case OP_GET_GLOBAL: {
+          ObjString* name = readString();
+          Value value;
+          if (!globals.get(name, &value)) {
+            runtimeError("Undefined variable '%s'.", name->value());
+            return INTERPRET_RUNTIME_ERROR;
+          }
+          push(value);
+          break;
+        }
         case OP_DEFINE_GLOBAL: {
           ObjString* name = readString();
           globals.put(name, peek(0));
@@ -109,7 +119,7 @@ namespace lox {
 
         case OP_ADD: {
           if (peek(0).isString() && peek(1).isString()) {
-            UNREACHABLE(/* Not implemented. */);
+            UNREACHABLE(/* Not implemented. */); // TODO: implement
           } else if (peek(0).isNumber() && peek(1).isNumber()) {
             Number b = pop().asNumber();
             Number a = pop().asNumber();
@@ -144,7 +154,7 @@ namespace lox {
   }
 
   void VM::runtimeError(const char* format, ...) const {
-    // TODO
+    // TODO: implement
   }
 
 } // namespace lox

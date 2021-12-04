@@ -12,7 +12,7 @@ class ObjectTest : public TestBase {
   void assertString(ObjString* actual, const char* expectedValue, int expectedLength,
                     uint32_t expectedHash) {
     ASSERT_TRUE(actual->eqCString(expectedValue));
-    ASSERT_TRUE(stringEquals(actual->cString(), expectedValue)); // TODO: Can be skipped
+    ASSERT_TRUE(stringEquals(actual->value(), expectedValue)); // TODO: Can be skipped
     ASSERT_EQ(actual->length(), expectedLength);
     ASSERT_EQ(actual->hash(), expectedHash);
   }

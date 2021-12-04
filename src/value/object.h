@@ -64,7 +64,7 @@ namespace lox {
       return length_;
     };
 
-    const char* cString() const {
+    const char* value() const {
       return value_;
     }
 
