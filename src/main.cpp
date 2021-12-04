@@ -8,23 +8,24 @@
 
 using namespace lox;
 
-static bool readFile(const char* path, char** bufp) {
+static char* readFile(const char* path) {
   FILE* file = fopen(path, "rb");
-  if (file == nullptr) return false;
+  if (!file) return nullptr;
 
   fseek(file, 0L, SEEK_END);
   size_t fileSize = ftell(file);
   rewind(file);
 
-  *bufp = static_cast<char*>(::operator new(fileSize + 1));
-  if (*bufp == nullptr) return false;
+  char* buf = static_cast<char*>(::operator new(fileSize + 1));
+  if (!buf) return nullptr;
 
-  size_t bytesRead = fread(*bufp, sizeof(char), fileSize, file);
-  if (bytesRead < fileSize) return false;
+  size_t bytesRead = fread(buf, sizeof(char), fileSize, file);
+  if (bytesRead < fileSize) return nullptr;
 
-  (*bufp)[bytesRead] = '\0';
+  buf[bytesRead] = '\0';
+
   fclose(file);
-  return true;
+  return buf;
 }
 
 int main(int argc, char const* argv[]) {
@@ -33,8 +34,8 @@ int main(int argc, char const* argv[]) {
     exit(-1);
   }
 
-  char* buf = nullptr;
-  if (!readFile(argv[1], &buf)) {
+  char* buf = readFile(argv[1]);
+  if (!buf) {
     exit(-1);
   }
 

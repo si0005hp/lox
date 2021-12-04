@@ -13,8 +13,7 @@
 
 namespace lox {
 
-  VM::VM()
-    : objects_(nullptr) {
+  VM::VM() {
     Memory::initialize(this);
   }
 
@@ -25,14 +24,14 @@ namespace lox {
   InterpretResult VM::interpret(const char* source) {
     Compiler compiler(*this, TYPE_SCRIPT);
     ObjFunction* function = compiler.compile(source);
-    if (function == nullptr) return INTERPRET_COMPILE_ERROR;
+    if (!function) return INTERPRET_COMPILE_ERROR;
 
     return run(function);
   }
 
   void VM::freeObjects() {
     Obj* obj = objects_;
-    while (obj != nullptr) {
+    while (obj) {
       Obj* next = obj->next_;
       Memory::deallocate<Obj>(obj);
       obj = next;
@@ -46,7 +45,7 @@ namespace lox {
 
   ObjString* VM::findOrAllocateString(const char* src, int length) {
     ObjString* obj = strings.find(src, length);
-    if (obj != nullptr) return obj;
+    if (obj) return obj;
 
     obj = ObjString::allocate(src, length);
     appendObj(obj);

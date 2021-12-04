@@ -137,10 +137,10 @@ namespace lox {
 
    public:
     virtual void trace(std::ostream& os) const {
-      if (name_ == nullptr)
-        os << "<script>";
-      else
+      if (name_)
         os << "<fn " << name_ << ">";
+      else
+        os << "<script>";
     }
 
     Chunk& chunk() {

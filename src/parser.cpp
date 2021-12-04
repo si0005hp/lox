@@ -135,14 +135,14 @@ namespace lox {
     /* body */
     Stmt* body = statement();
 
-    if (incr != nullptr) {
+    if (incr) {
       Vector<Stmt*> stmts{body, newAstNode<Expression>(incr, stop)};
       body = newAstNode<Block>(stmts);
     }
-    if (cond == nullptr) cond = newAstNode<Literal>(lexer_.syntheticToken(TOKEN_TRUE, "true"));
+    if (!cond) cond = newAstNode<Literal>(lexer_.syntheticToken(TOKEN_TRUE, "true"));
     body = newAstNode<While>(cond, body);
 
-    if (initializer != nullptr) {
+    if (initializer) {
       Vector<Stmt*> stmts{initializer, body};
       body = newAstNode<Block>(stmts);
     }

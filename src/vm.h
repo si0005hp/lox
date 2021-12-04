@@ -94,7 +94,7 @@ namespace lox {
     }
 
    private:
-    Obj* objects_;
+    Obj* objects_ = nullptr;
     CallFrame frame_; // TODO: tmp
 
     std::array<Value, 256> stack_;
