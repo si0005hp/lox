@@ -1,5 +1,7 @@
 #pragma once
 
+#include <type_traits>
+
 #include "common.h"
 #include "lib/vector.h"
 #include "string_table.h"
@@ -29,6 +31,9 @@ namespace lox {
     // TODO: Right place to manage heap allocation?
     template <typename T, typename... Args>
     T* allocateObj(Args&&... args) {
+      if constexpr (std::is_same_v<T, ObjString>) {
+        return findOrAllocateString(std::forward<Args>(args)...);
+      }
       T* obj = T::allocate(std::forward<Args>(args)...);
       appendObj(obj);
       return obj;
@@ -37,6 +42,7 @@ namespace lox {
    private:
     void freeObjects();
     void appendObj(Obj* obj);
+    ObjString* findOrAllocateString(const char* src, int length);
     InterpretResult run(ObjFunction* function);
     void traceStack();
     void runtimeError(const char* format, ...) const;

@@ -44,6 +44,16 @@ namespace lox {
     objects_ = obj;
   }
 
+  ObjString* VM::findOrAllocateString(const char* src, int length) {
+    ObjString* obj = strings.find(src, length);
+    if (obj != nullptr) return obj;
+
+    obj = ObjString::allocate(src, length);
+    appendObj(obj);
+    strings.add(obj);
+    return obj;
+  }
+
   InterpretResult VM::run(ObjFunction* function) {
     frame_.function = function;
 

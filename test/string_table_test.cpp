@@ -21,8 +21,8 @@ class StringTableTest : public TestBase {
 
 TEST_F(StringTableTest, String_) {
   StringTable table;
-  ObjString* emptyString = vm_.allocateObj<ObjString>("");
-  ObjString* foo = vm_.allocateObj<ObjString>("foo");
+  ObjString* emptyString = vm_.allocateObj<ObjString>("", 0);
+  ObjString* foo = vm_.allocateObj<ObjString>("foo", 3);
 
   table.add(emptyString);
   table.add(foo);

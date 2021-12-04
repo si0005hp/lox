@@ -103,9 +103,7 @@ namespace lox {
     };
 
    private:
-    static ObjString* allocate(const char* src, int length = -1) {
-      if (length == -1) length = strlen(src);
-
+    static ObjString* allocate(const char* src, int length) {
       void* mem = Memory::allocate(sizeof(ObjString) + sizeof(char) * length);
       return ::new (mem) ObjString(src, length);
     }

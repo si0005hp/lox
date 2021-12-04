@@ -21,7 +21,7 @@ class ObjectTest : public TestBase {
 };
 
 TEST_F(ObjectTest, String_) {
-  ObjString* s = vm_.allocateObj<ObjString>("");
+  ObjString* s = vm_.allocateObj<ObjString>("", 0);
   assertString(s, "", 0, 2166136261);
 
   s = vm_.allocateObj<ObjString>("foo", 3);
