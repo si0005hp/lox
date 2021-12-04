@@ -59,6 +59,10 @@ namespace lox {
       capacity_ = 0;
     }
 
+    bool containsKey(const K& key) {
+      return findIndex(key) != -1;
+    }
+
    private:
     struct Entry {
       K key;

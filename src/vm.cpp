@@ -87,6 +87,15 @@ namespace lox {
           push(value);
           break;
         }
+        case OP_SET_GLOBAL: {
+          ObjString* name = readString();
+          if (!globals.containsKey(name)) {
+            runtimeError("Undefined variable '%s'.", name->value());
+            return INTERPRET_RUNTIME_ERROR;
+          }
+          globals.put(name, peek(0));
+        }
+
         case OP_DEFINE_GLOBAL: {
           ObjString* name = readString();
           globals.put(name, peek(0));

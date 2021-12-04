@@ -82,7 +82,8 @@ namespace lox {
     class HashMapKey {
      public:
       HashMapKey()
-        : isNull_(true) {}
+        : isNull_(true)
+        , hash_(0) {}
 
       HashMapKey(ObjString* s)
         : HashMapKey(s->hash()) {}
@@ -92,7 +93,10 @@ namespace lox {
         , hash_(hash) {}
 
       bool operator==(const HashMapKey& other) const {
-        return isNull_ ? other.isNull_ : hash_ == other.hash_;
+        if (isNull_) return other.isNull_;
+
+        ASSERT(hash_ != 0, "Hash must be non-null.");
+        return hash_ == other.hash_;
       };
 
       int hashCode() const {

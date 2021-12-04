@@ -93,14 +93,17 @@ namespace lox {
 
   void Compiler::namedVariable(Token* var, bool isSetOp) {
     instruction slot = identifierConstant(var);
-    emitBytes(var, OP_GET_GLOBAL, slot);
+    emitBytes(var, isSetOp ? OP_SET_GLOBAL : OP_GET_GLOBAL, slot);
   }
 
   bool Compiler::isLocalScope() const {
     return scopeDepth_ > 0;
   }
 
-  void Compiler::visit(const Assign* expr) {}
+  void Compiler::visit(const Assign* expr) {
+    expr->value->accept(this);
+    namedVariable(expr->name, true);
+  }
 
   void Compiler::visit(const Binary* expr) {
     expr->left->accept(this);

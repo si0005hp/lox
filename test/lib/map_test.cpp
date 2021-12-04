@@ -61,6 +61,14 @@ TEST_F(MapTest, remove) {
   ASSERT_FALSE(map.get(1, &value));
 }
 
+TEST_F(MapTest, containsKey) {
+  Map<IntKey, int> map;
+  map.put(1, 100);
+
+  ASSERT_TRUE(map.containsKey(1));
+  ASSERT_FALSE(map.containsKey(2));
+}
+
 TEST_F(MapTest, str) {
   VM vm;
   Map<StringKey, int> map;
