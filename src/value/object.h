@@ -64,6 +64,10 @@ namespace lox {
       return length_;
     };
 
+    const char* cString() const {
+      return value_;
+    }
+
     // https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function#FNV_hash_parameters
     static uint32_t calcHash(const char* chars, int length) {
       uint32_t hash = 2166136261u;

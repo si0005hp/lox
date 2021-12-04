@@ -8,14 +8,6 @@ using namespace lox;
 
 class StringTableTest : public TestBase {
  public:
-  void assertString(ObjString* actual, const char* expectedValue, int expectedLength,
-                    uint32_t expectedHash) {
-    ASSERT_TRUE(actual->eqCString(expectedValue));
-    ASSERT_EQ(actual->length(), expectedLength);
-    ASSERT_EQ(actual->hash(), expectedHash);
-  }
-
- public:
   VM vm_;
 };
 
