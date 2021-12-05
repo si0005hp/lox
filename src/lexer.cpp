@@ -4,6 +4,7 @@
 #include <new>
 
 #include "memory.h"
+#include "utils.h"
 
 namespace lox {
 
@@ -13,10 +14,6 @@ namespace lox {
 
   static inline bool isDigit(char c) {
     return c >= '0' && c <= '9';
-  }
-
-  static inline bool strEq(const char* a, const char* b, int len) {
-    return std::memcmp(a, b, len) == 0;
   }
 
   Lexer::Lexer(const char* source)
@@ -111,7 +108,7 @@ namespace lox {
   }
 
   TokenType Lexer::checkKeyword(int start, int length, const char* rest, TokenType type) const {
-    if (currentLength() == start + length && strEq(start_ + start, rest, length)) {
+    if (currentLength() == start + length && stringEquals(start_ + start, rest, length)) {
       return type;
     }
     return TOKEN_IDENTIFIER;

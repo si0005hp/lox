@@ -223,7 +223,7 @@ namespace lox {
 
   void Compiler::visit(const Print* stmt) {
     stmt->expression->accept(this);
-    emitByte(stmt->print, OP_PRINT);
+    emitByte(stmt->start, OP_PRINT);
   }
 
   void Compiler::visit(const Return* stmt) {}

@@ -7,6 +7,7 @@
 
 #include "common.h"
 #include "memory.h"
+#include "utils.h"
 
 namespace lox {
 
@@ -54,6 +55,7 @@ namespace lox {
   }
 
   Stmt* Parser::classDeclaration() {
+    Token* keyword = last_;
     Token* name = consume(TOKEN_IDENTIFIER, "Expect class name.");
 
     Variable* superclass = nullptr;
@@ -68,8 +70,7 @@ namespace lox {
       methods.push(function("method"));
     }
     consume(TOKEN_RIGHT_BRACE, "Expect '}' after class body.");
-
-    return newAstNode<Class>(name, superclass, methods);
+    return newAstNode<Class>(keyword, name, superclass, methods, last_);
   }
 
   Stmt* Parser::funcDeclaration() {
@@ -77,6 +78,7 @@ namespace lox {
   }
 
   Function* Parser::function(const char* kind) {
+    Token* keyword = last_; // Only for function case
     Token* name = consume(TOKEN_IDENTIFIER, "Expect %s name.", kind);
 
     consume(TOKEN_LEFT_PAREN, "Expect '(' after %s name.", kind);
@@ -93,14 +95,17 @@ namespace lox {
 
     consume(TOKEN_LEFT_BRACE, "Expect '{' before %s body.", kind);
     Vector<Stmt*> body = blockBody();
-    return newAstNode<Function>(name, params, body);
+
+    return newAstNode<Function>(stringEquals("function", kind, 8) ? keyword : name, name, params,
+                                body, last_);
   }
 
   Stmt* Parser::varDeclaration() {
+    Token* keyword = last_;
     Token* name = consume(TOKEN_IDENTIFIER, "Expect variable name.");
     Expr* initializer = match(TOKEN_EQUAL) ? expression() : nullptr;
     consume(TOKEN_SEMICOLON, "Expect ';' after variable declaration.");
-    return newAstNode<Var>(name, initializer);
+    return newAstNode<Var>(keyword, name, initializer, last_);
   }
 
   Stmt* Parser::statement() {
@@ -114,6 +119,7 @@ namespace lox {
   }
 
   Stmt* Parser::forStatement() {
+    Token* keyword = last_;
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'for'.");
 
     /* for-initializer */
@@ -130,64 +136,69 @@ namespace lox {
     consume(TOKEN_SEMICOLON, "Expect ';' after loop condition.");
     /* for-increment */
     Expr* incr = lookAhead(TOKEN_RIGHT_PAREN) ? nullptr : expression();
-    Token* stop = consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
+    Token* rParen = consume(TOKEN_RIGHT_PAREN, "Expect ')' after for clauses.");
 
     /* body */
     Stmt* body = statement();
 
     if (incr) {
-      Vector<Stmt*> stmts{body, newAstNode<Expression>(incr, stop)};
-      body = newAstNode<Block>(stmts);
+      Vector<Stmt*> stmts{body, newAstNode<Expression>(incr, rParen)};
+      body = newAstNode<Block>(body->getStart(), stmts, last_); // TODO: Fix soon
     }
     if (!cond) cond = newAstNode<Literal>(lexer_.syntheticToken(TOKEN_TRUE, "true"));
-    body = newAstNode<While>(cond, body);
+    body = newAstNode<While>(keyword, cond, body, last_);
 
     if (initializer) {
       Vector<Stmt*> stmts{initializer, body};
-      body = newAstNode<Block>(stmts);
+      body = newAstNode<Block>(keyword, stmts, last_); // TODO: Fix soon
     }
     return body;
   }
 
   Stmt* Parser::ifStatement() {
+    Token* keyword = last_;
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'if'.");
     Expr* cond = expression();
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
 
     Stmt* thenBody = statement();
     Stmt* elseBody = match(TOKEN_ELSE) ? statement() : nullptr;
-    return newAstNode<If>(cond, thenBody, elseBody);
+    return newAstNode<If>(keyword, cond, thenBody, elseBody);
   }
 
   Stmt* Parser::printStatement() {
-    Token* print = last_;
+    Token* keyword = last_;
     Expr* value = expression();
     consume(TOKEN_SEMICOLON, "Expect ';' after value.");
-    return newAstNode<Print>(print, value);
+    return newAstNode<Print>(keyword, value, last_);
   }
 
   Stmt* Parser::returnStatement() {
+    Token* keyword = last_;
     Expr* value = lookAhead(TOKEN_SEMICOLON) ? nullptr : expression();
     consume(TOKEN_SEMICOLON, "Expect ';' after return value.");
-    return newAstNode<Return>(value);
+    return newAstNode<Return>(keyword, value, last_);
   }
 
   Stmt* Parser::expressionStatement() {
     Expr* expr = expression();
-    Token* stop = consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
-    return newAstNode<Expression>(expr, stop);
+    consume(TOKEN_SEMICOLON, "Expect ';' after expression.");
+    return newAstNode<Expression>(expr, last_);
   }
 
   Stmt* Parser::whileStatement() {
+    Token* keyword = last_;
     consume(TOKEN_LEFT_PAREN, "Expect '(' after 'while'.");
     Expr* cond = expression();
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after condition.");
     Stmt* body = statement();
-    return newAstNode<While>(cond, body);
+    return newAstNode<While>(keyword, cond, body, last_);
   }
 
   Stmt* Parser::block() {
-    return newAstNode<Block>(blockBody());
+    Token* lBrace = last_;
+    Vector<Stmt*> stmts = blockBody();
+    return newAstNode<Block>(lBrace, stmts, last_);
   }
 
   Vector<Stmt*> Parser::blockBody() {
@@ -310,8 +321,8 @@ namespace lox {
       } while (match(TOKEN_COMMA));
     }
 
-    consume(TOKEN_RIGHT_PAREN, "Expect ')' after arguments.");
-    return newAstNode<Call>(callee, args);
+    Token* stop = consume(TOKEN_RIGHT_PAREN, "Expect ')' after arguments.");
+    return newAstNode<Call>(callee, args, stop);
   }
 
   Expr* Parser::primary() {
@@ -325,16 +336,17 @@ namespace lox {
     }
     /* expression */
     if (match(TOKEN_LEFT_PAREN)) {
+      Token* lParen = last_;
       Expr* expr = expression();
-      consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
-      return newAstNode<Grouping>(expr);
+      Token* rParen = consume(TOKEN_RIGHT_PAREN, "Expect ')' after expression.");
+      return newAstNode<Grouping>(lParen, expr, rParen);
     }
     /* super attr */
     if (match(TOKEN_SUPER)) {
-      Token* super = last_;
+      Token* keyword = last_;
       consume(TOKEN_DOT, "Expect '.' after 'super'.");
       Token* property = consume(TOKEN_IDENTIFIER, "Expect superclass method name.");
-      return newAstNode<Super>(super, property);
+      return newAstNode<Super>(keyword, property);
     }
 
     error("Expect expression.");

@@ -5,6 +5,7 @@
 #include "../chunk.h"
 #include "../common.h"
 #include "../memory.h"
+#include "../utils.h"
 #include "value.h"
 
 namespace lox {
@@ -55,7 +56,7 @@ namespace lox {
     }
 
     bool eqCString(const char* cStr) const {
-      return length_ == strlen(cStr) && std::memcmp(value_, cStr, length_) == 0;
+      return length_ == strlen(cStr) && stringEquals(value_, cStr, length_);
     }
 
     uint32_t hash() const {

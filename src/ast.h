@@ -22,15 +22,25 @@
     return visitor->visit(this);                       \
   }
 
+#define GET_TOKENS_METHODS(start, stop) \
+  virtual Token* getStart() const {     \
+    return start;                       \
+  }                                     \
+  virtual Token* getStop() const {      \
+    return stop;                        \
+  }
+
 namespace lox {
+
+  class Token;
+  class Value;
 
   struct Ast {
     virtual ~Ast() {}
-  };
 
-  /* Expr */
-  class Token;
-  class Value;
+    virtual Token* getStart() const = 0;
+    virtual Token* getStop() const = 0;
+  };
 
   class Assign;
   class Binary;
@@ -77,6 +87,7 @@ namespace lox {
     Expr* value;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(name, value->getStop())
   };
 
   struct Binary : public Expr {
@@ -90,17 +101,21 @@ namespace lox {
     Expr* right;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(left->getStart(), right->getStop())
   };
 
   struct Call : public Expr {
-    Call(Expr* callee, Vector<Expr*> arguments)
+    Call(Expr* callee, Vector<Expr*> arguments, Token* stop)
       : callee(callee)
-      , arguments(arguments) {}
+      , arguments(arguments)
+      , stop(stop) {}
 
     Expr* callee;
     Vector<Expr*> arguments;
+    Token* stop;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(callee->getStart(), stop)
   };
 
   struct Get : public Expr {
@@ -112,15 +127,21 @@ namespace lox {
     Token* name;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(object->getStart(), name)
   };
 
   struct Grouping : public Expr {
-    Grouping(Expr* expression)
-      : expression(expression) {}
+    Grouping(Token* lParen, Expr* expression, Token* rParen)
+      : start(lParen)
+      , expression(expression)
+      , stop(rParen) {}
 
+    Token* start;
     Expr* expression;
+    Token* stop;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(start, stop)
   };
 
   struct Literal : public Expr {
@@ -130,6 +151,7 @@ namespace lox {
     Token* value;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(value, value)
   };
 
   struct Logical : public Expr {
@@ -143,6 +165,7 @@ namespace lox {
     Expr* right;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(left->getStart(), right->getStop())
   };
 
   struct Set : public Expr {
@@ -156,17 +179,19 @@ namespace lox {
     Expr* value;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(object->getStart(), value->getStop())
   };
 
   struct Super : public Expr {
     Super(Token* keyword, Token* method)
-      : keyword(keyword)
+      : start(keyword)
       , method(method) {}
 
-    Token* keyword;
+    Token* start;
     Token* method;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(start, method)
   };
 
   struct This : public Expr {
@@ -176,6 +201,7 @@ namespace lox {
     Token* keyword;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(keyword, keyword)
   };
 
   struct Unary : public Expr {
@@ -187,6 +213,7 @@ namespace lox {
     Expr* right;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(op, right->getStop())
   };
 
   struct Variable : public Expr {
@@ -196,6 +223,7 @@ namespace lox {
     Token* name;
 
     EXPR_ACCEPT_METHODS
+    GET_TOKENS_METHODS(name, name)
   };
 
   /* Stmt */
@@ -224,14 +252,23 @@ namespace lox {
       virtual R visit(const While* stmt) = 0;
     };
 
+    Stmt(Token* start, Token* stop)
+      : start(start)
+      , stop(stop) {}
+
     virtual ~Stmt() {}
 
     V_STMT_ACCEPT_METHODS
+    GET_TOKENS_METHODS(start, stop)
+
+    Token* start;
+    Token* stop;
   };
 
   struct Block : public Stmt {
-    Block(Vector<Stmt*> statements)
-      : statements(statements) {}
+    Block(Token* lBrace, Vector<Stmt*> statements, Token* rBrace)
+      : Stmt(lBrace, rBrace)
+      , statements(statements) {}
 
     Vector<Stmt*> statements;
 
@@ -239,8 +276,10 @@ namespace lox {
   };
 
   struct Class : public Stmt {
-    Class(Token* name, Variable* superclass, Vector<Function*> methods)
-      : name(name)
+    Class(Token* keyword, Token* name, Variable* superclass, Vector<Function*> methods,
+          Token* rBrace)
+      : Stmt(keyword, rBrace)
+      , name(name)
       , superclass(superclass)
       , methods(methods) {}
 
@@ -252,19 +291,19 @@ namespace lox {
   };
 
   struct Expression : public Stmt {
-    Expression(Expr* expression, Token* stop)
-      : expression(expression)
-      , stop(stop) {}
+    Expression(Expr* expression, Token* semicolon)
+      : Stmt(expression->getStart(), semicolon)
+      , expression(expression) {}
 
     Expr* expression;
-    Token* stop; // TODO
 
     STMT_ACCEPT_METHODS
   };
 
   struct Function : public Stmt {
-    Function(Token* name, Vector<Token*> params, Vector<Stmt*> body)
-      : name(name)
+    Function(Token* start, Token* name, Vector<Token*> params, Vector<Stmt*> body, Token* stop)
+      : Stmt(start, stop)
+      , name(name)
       , params(params)
       , body(body) {}
 
@@ -276,8 +315,9 @@ namespace lox {
   };
 
   struct If : public Stmt {
-    If(Expr* condition, Stmt* thenBranch, Stmt* elseBranch)
-      : condition(condition)
+    If(Token* start, Expr* condition, Stmt* thenBranch, Stmt* elseBranch)
+      : Stmt(start, (elseBranch ? elseBranch : thenBranch)->getStop())
+      , condition(condition)
       , thenBranch(thenBranch)
       , elseBranch(elseBranch) {}
 
@@ -289,19 +329,19 @@ namespace lox {
   };
 
   struct Print : public Stmt {
-    Print(Token* print, Expr* expression)
-      : print(print)
+    Print(Token* keyword, Expr* expression, Token* stop)
+      : Stmt(keyword, stop)
       , expression(expression) {}
 
-    Token* print; // TODO
     Expr* expression;
 
     STMT_ACCEPT_METHODS
   };
 
   struct Return : public Stmt {
-    Return(Expr* value)
-      : value(value) {}
+    Return(Token* keyword, Expr* value, Token* stop)
+      : Stmt(keyword, stop)
+      , value(value) {}
 
     Expr* value;
 
@@ -309,8 +349,9 @@ namespace lox {
   };
 
   struct Var : public Stmt {
-    Var(Token* name, Expr* initializer)
-      : name(name)
+    Var(Token* keyword, Token* name, Expr* initializer, Token* stop)
+      : Stmt(keyword, stop)
+      , name(name)
       , initializer(initializer) {}
 
     Token* name;
@@ -320,8 +361,9 @@ namespace lox {
   };
 
   struct While : public Stmt {
-    While(Expr* condition, Stmt* body)
-      : condition(condition)
+    While(Token* keyword, Expr* condition, Stmt* body, Token* stop)
+      : Stmt(keyword, stop)
+      , condition(condition)
       , body(body) {}
 
     Expr* condition;
