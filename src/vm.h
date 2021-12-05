@@ -97,7 +97,8 @@ namespace lox {
     Obj* objects_ = nullptr;
     CallFrame frame_; // TODO: tmp
 
-    std::array<Value, 256> stack_;
+    static constexpr int STACK_MAX = 256;
+    std::array<Value, STACK_MAX> stack_;
     int stackTop_ = 0;
 
     StringTable strings;

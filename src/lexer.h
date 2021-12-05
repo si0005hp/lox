@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstring>
 #include <functional>
 
 #include "./lib/vector.h"
@@ -60,6 +61,10 @@ namespace lox {
       , start(start)
       , length(length)
       , line(line) {}
+
+    bool operator==(const Token& other) {
+      return length == other.length && std::memcmp(start, other.start, length) == 0;
+    }
 
     TokenType type;
     const char* start;

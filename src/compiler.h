@@ -15,6 +15,20 @@ namespace lox {
     TYPE_SCRIPT
   };
 
+  struct Local {
+    Local() {}
+    Local(Token* name)
+      : name(name) {}
+
+    bool isInitialized() const {
+      return depth != -1;
+    }
+
+    Token* name = nullptr;
+    int depth = -1;
+    bool isCaptured = false;
+  };
+
   class Compiler
     : public Expr::Visitor<void>
     , public Stmt::Visitor<void> {
@@ -65,10 +79,21 @@ namespace lox {
 
     instruction parseVariable(Token* var);
     void declareVariableLocal(Token* var);
+    void addLocal(Token* var);
     void defineVariable(Token* var, instruction global = -1);
     void namedVariable(Token* var, bool isSetOp = false);
 
-    bool isLocalScope() const;
+    bool isLocalScope() const {
+      return scopeDepth_ > 0;
+    }
+
+    void beginScope() {
+      scopeDepth_++;
+    }
+
+    void endScope();
+
+    void compileBlock(Vector<Stmt*> stmts);
 
    private:
     VM& vm_;
@@ -78,6 +103,8 @@ namespace lox {
 
     bool hadError_ = false;
 
+    static constexpr int LOCALS_MAX = 256;
+    Vector<Local> locals_; // TODO: Fixed size container
     int scopeDepth_ = 0;
   };
 

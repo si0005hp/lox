@@ -11,7 +11,8 @@ namespace lox {
 
   Compiler::Compiler(VM& vm, FunctionType type)
     : vm_(vm)
-    , type_(type) {
+    , type_(type)
+    , locals_(Vector<Local>(LOCALS_MAX)) {
     function_ = vm.allocateObj<ObjFunction>(0, nullptr);
   }
 
@@ -80,7 +81,25 @@ namespace lox {
     return identifierConstant(var);
   }
 
-  void Compiler::declareVariableLocal(Token* var) {}
+  void Compiler::declareVariableLocal(Token* var) {
+    if (!isLocalScope()) return;
+
+    // Check duplication
+    for (int i = locals_.size() - 1; i >= 0; i--) {
+      if (locals_[i].isInitialized() && locals_[i].depth < scopeDepth_) break;
+
+      if (*locals_[i].name == *var) error(var, "Already variable with this name in this scope.");
+    }
+    addLocal(var);
+  }
+
+  void Compiler::addLocal(Token* var) {
+    if (locals_.size() > LOCALS_MAX) {
+      error(var, "Too many local variables.");
+      return;
+    }
+    locals_.emplace(var);
+  }
 
   void Compiler::defineVariable(Token* var, instruction global) {
     if (isLocalScope()) {
@@ -94,10 +113,6 @@ namespace lox {
   void Compiler::namedVariable(Token* var, bool isSetOp) {
     instruction slot = identifierConstant(var);
     emitBytes(var, isSetOp ? OP_SET_GLOBAL : OP_GET_GLOBAL, slot);
-  }
-
-  bool Compiler::isLocalScope() const {
-    return scopeDepth_ > 0;
   }
 
   void Compiler::visit(const Assign* expr) {
@@ -175,7 +190,25 @@ namespace lox {
     namedVariable(expr->name);
   }
 
-  void Compiler::visit(const Block* stmt) {}
+  void Compiler::visit(const Block* stmt) {
+    beginScope();
+    compileBlock(stmt->statements);
+    endScope();
+  }
+
+  void Compiler::endScope() {
+    scopeDepth_--;
+    while (!locals_.isEmpty() && locals_[-1].depth > scopeDepth_) {
+      Local local = locals_.removeAt(-1);
+      if (local.isCaptured) {
+        // TODO: Need token here
+      }
+    }
+  }
+
+  void Compiler::compileBlock(Vector<Stmt*> stmts) {
+    for (int i = 0; i < stmts.size(); i++) stmts[i]->accept(this);
+  }
 
   void Compiler::visit(const Class* stmt) {}
 
