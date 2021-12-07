@@ -56,6 +56,12 @@ namespace lox {
       return currentChunk().getCode(currentFrame().ip++);
     }
 
+    uint16_t readShort() {
+      instruction firstByte = currentChunk().getCode(currentFrame().ip++);
+      instruction secondByte = currentChunk().getCode(currentFrame().ip++);
+      return (uint16_t)(firstByte << 8 | secondByte);
+    }
+
     Value readConstant() {
       return currentChunk().getConstant(readByte());
     }

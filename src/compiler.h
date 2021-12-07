@@ -97,6 +97,9 @@ namespace lox {
 
     void compileBlock(Vector<Stmt*> stmts);
 
+    int emitJump(SRC, instruction opCode);
+    void patchJump(SRC, int offset);
+
    private:
     VM& vm_;
 

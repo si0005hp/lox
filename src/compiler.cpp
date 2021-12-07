@@ -233,7 +233,40 @@ namespace lox {
 
   void Compiler::visit(const Function* stmt) {}
 
-  void Compiler::visit(const If* stmt) {}
+  void Compiler::visit(const If* stmt) {
+    stmt->condition->accept(this);
+
+    int thenJumpOffset = emitJump(stmt->getStart(), OP_JUMP_IF_FALSE);
+    emitByte(stmt->getStart(), OP_POP);
+
+    stmt->thenBranch->accept(this);
+    int elseJumpOffset = emitJump(stmt->getStart(), OP_JUMP);
+
+    patchJump(stmt->getStart(), thenJumpOffset);
+    emitByte(stmt->getStart(), OP_POP);
+
+    if (stmt->elseBranch) stmt->elseBranch->accept(this);
+
+    patchJump(stmt->getStart(), elseJumpOffset);
+  }
+
+  int Compiler::emitJump(SRC, instruction opCode) {
+    emitByte(token, opCode);
+    emitByte(token, 0xff);
+    emitByte(token, 0xff);
+    return currentChunk().count() - 2;
+  }
+
+  void Compiler::patchJump(SRC, int offset) {
+    int jump = currentChunk().count() - offset - 2;
+
+    if (jump > UINT16_MAX) {
+      error(token, "Too much code to jump over.");
+    }
+
+    currentChunk().rewrite(offset, (jump >> 8) & 0xff);
+    currentChunk().rewrite(offset + 1, jump & 0xff);
+  }
 
   void Compiler::visit(const Print* stmt) {
     stmt->expression->accept(this);

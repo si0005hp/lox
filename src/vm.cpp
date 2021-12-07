@@ -159,6 +159,18 @@ namespace lox {
           std::cout << pop() << std::endl;
           break;
         }
+
+        case OP_JUMP: {
+          uint16_t offset = readShort();
+          currentFrame().ip += offset;
+          break;
+        }
+        case OP_JUMP_IF_FALSE: {
+          uint16_t offset = readShort();
+          if (peek(0).isFalsey()) currentFrame().ip += offset;
+          break;
+        }
+
         case OP_RETURN: {
           return INTERPRET_OK;
         }
