@@ -110,9 +110,25 @@ namespace lox {
     emitBytes(var, OP_DEFINE_GLOBAL, global);
   }
 
-  void Compiler::namedVariable(Token* var, bool isSetOp) {
-    instruction slot = identifierConstant(var);
-    emitBytes(var, isSetOp ? OP_SET_GLOBAL : OP_GET_GLOBAL, slot);
+  void Compiler::namedVariable(Token* name, bool isSetOp) {
+    int index = resolveLocal(name);
+    if (index != -1) {
+      emitBytes(name, isSetOp ? OP_SET_LOCAL : OP_GET_LOCAL, index);
+    } else {
+      instruction slot = identifierConstant(name);
+      emitBytes(name, isSetOp ? OP_SET_GLOBAL : OP_GET_GLOBAL, slot);
+    }
+  }
+
+  int Compiler::resolveLocal(Token* name) {
+    for (int i = locals_.size() - 1; i >= 0; i--) {
+      if (*locals_[i].name == *name) {
+        if (!locals_[i].isInitialized())
+          error(name, "Can't read local variable in its own initializer.");
+        return i;
+      }
+    }
+    return -1; // Not found
   }
 
   void Compiler::visit(const Assign* expr) {
@@ -193,16 +209,14 @@ namespace lox {
   void Compiler::visit(const Block* stmt) {
     beginScope();
     compileBlock(stmt->statements);
-    endScope();
+    endScope(stmt->getStop());
   }
 
-  void Compiler::endScope() {
+  void Compiler::endScope(SRC) {
     scopeDepth_--;
     while (!locals_.isEmpty() && locals_[-1].depth > scopeDepth_) {
       Local local = locals_.removeAt(-1);
-      if (local.isCaptured) {
-        // TODO: Need token here
-      }
+      emitByte(token, local.isCaptured ? OP_CLOSE_UPVALUE : OP_POP);
     }
   }
 

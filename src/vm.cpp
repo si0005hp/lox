@@ -77,6 +77,17 @@ namespace lox {
       switch (inst = readByte()) {
         case OP_POP: pop(); break;
 
+        case OP_GET_LOCAL: {
+          instruction slot = readByte();
+          push(stack_[slot]);
+          break;
+        }
+        case OP_SET_LOCAL: {
+          instruction slot = readByte();
+          stack_[slot] = peek(0);
+          break;
+        }
+
         case OP_GET_GLOBAL: {
           ObjString* name = readString();
           Value value;

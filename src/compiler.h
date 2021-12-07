@@ -81,7 +81,9 @@ namespace lox {
     void declareVariableLocal(Token* var);
     void addLocal(Token* var);
     void defineVariable(Token* var, instruction global = -1);
-    void namedVariable(Token* var, bool isSetOp = false);
+    void namedVariable(Token* name, bool isSetOp = false);
+
+    int resolveLocal(Token* name);
 
     bool isLocalScope() const {
       return scopeDepth_ > 0;
@@ -91,7 +93,7 @@ namespace lox {
       scopeDepth_++;
     }
 
-    void endScope();
+    void endScope(SRC);
 
     void compileBlock(Vector<Stmt*> stmts);
 
