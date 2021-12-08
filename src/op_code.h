@@ -39,7 +39,10 @@ namespace lox {
     OP_RETURN,
     OP_CLASS,
     OP_INHERIT,
-    OP_METHOD
+    OP_METHOD,
+
+    OP_OR,
+    OP_AND,
   };
 
 }; // namespace lox

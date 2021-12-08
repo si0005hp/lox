@@ -55,6 +55,8 @@ namespace lox {
         case OP_PRINT: return simpleInstruction("OP_PRINT", offset);
         case OP_JUMP: return jumpInstruction("OP_JUMP", 1, chunk, offset);
         case OP_JUMP_IF_FALSE: return jumpInstruction("OP_JUMP_IF_FALSE", 1, chunk, offset);
+        case OP_AND: return jumpInstruction("OP_AND", 1, chunk, offset);
+        case OP_OR: return jumpInstruction("OP_OR", 1, chunk, offset);
         case OP_LOOP: return jumpInstruction("OP_LOOP", -1, chunk, offset);
         case OP_CALL: return byteInstruction("OP_CALL", chunk, offset);
         case OP_INVOKE: return invokeInstruction("OP_INVOKE", chunk, offset);

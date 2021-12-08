@@ -184,7 +184,13 @@ namespace lox {
     }
   }
 
-  void Compiler::visit(const Logical* expr) {}
+  void Compiler::visit(const Logical* expr) {
+    expr->left->accept(this);
+
+    int jumpOffset = emitJump(expr->op, expr->op->type == TOKEN_AND ? OP_AND : OP_OR);
+    expr->right->accept(this);
+    patchJump(expr->op, jumpOffset);
+  }
 
   void Compiler::visit(const Set* expr) {}
 
