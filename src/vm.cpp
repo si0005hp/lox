@@ -170,6 +170,11 @@ namespace lox {
           if (peek(0).isFalsey()) currentFrame().ip += offset;
           break;
         }
+        case OP_LOOP: {
+          uint16_t offset = readShort();
+          currentFrame().ip -= offset;
+          break;
+        }
         case OP_AND: {
           uint16_t offset = readShort();
           if (peek(0).isFalsey()) {

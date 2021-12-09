@@ -99,6 +99,7 @@ namespace lox {
 
     int emitJump(SRC, instruction opCode);
     void patchJump(SRC, int offset);
+    void emitLoop(SRC, int loopStart);
 
    private:
     VM& vm_;

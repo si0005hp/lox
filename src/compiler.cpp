@@ -292,6 +292,27 @@ namespace lox {
     defineVariable(stmt->name, slot);
   }
 
-  void Compiler::visit(const While* stmt) {}
+  void Compiler::visit(const While* stmt) {
+    int loopStart = currentChunk().count();
+
+    stmt->condition->accept(this);
+    int exitJumpOffset = emitJump(stmt->getStart(), OP_JUMP_IF_FALSE);
+    emitByte(stmt->getStart(), OP_POP);
+
+    stmt->body->accept(this);
+    emitLoop(stmt->getStart(), loopStart);
+
+    patchJump(stmt->getStart(), exitJumpOffset);
+    emitByte(stmt->getStart(), OP_POP);
+  }
+
+  void Compiler::emitLoop(SRC, int loopStart) {
+    int backJumpDistance = currentChunk().count() - loopStart + 3;
+    if (backJumpDistance > UINT16_MAX) error(token, "Loop body too large.");
+
+    emitByte(token, OP_LOOP);
+    emitByte(token, (backJumpDistance >> 8) & 0xff);
+    emitByte(token, backJumpDistance & 0xff);
+  }
 
 }; // namespace lox
