@@ -13,7 +13,8 @@
 
 namespace lox {
 
-  VM::VM() {
+  VM::VM(std::ostream& out)
+    : out_(out) {
     Memory::initialize(this);
   }
 
@@ -105,6 +106,7 @@ namespace lox {
             return INTERPRET_RUNTIME_ERROR;
           }
           globals.put(name, peek(0));
+          break;
         }
 
         case OP_DEFINE_GLOBAL: {
@@ -156,7 +158,7 @@ namespace lox {
         case OP_LESS: BINARY_OP(Bool(a < b)); break;
 
         case OP_PRINT: {
-          std::cout << pop() << std::endl;
+          out_ << pop() << std::endl;
           break;
         }
 

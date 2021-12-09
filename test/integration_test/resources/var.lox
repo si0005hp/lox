@@ -1,0 +1,6 @@
+var a;
+a = 123;
+print a;
+
+var b = a + 564;
+print b;

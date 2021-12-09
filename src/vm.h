@@ -23,7 +23,8 @@ namespace lox {
 
   class VM {
    public:
-    VM();
+    VM(std::ostream& out = std::cout);
+
     ~VM();
 
     InterpretResult interpret(const char* source);
@@ -109,5 +110,7 @@ namespace lox {
 
     StringTable strings;
     Map<StringKey, Value> globals;
+
+    std::ostream& out_;
   };
 } // namespace lox

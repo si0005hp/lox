@@ -1,0 +1,10 @@
+var x = 1;
+var y;
+{
+  y = 9;
+
+  var n = 123;
+  var m = 68;
+
+  print x + y + n + m;
+}
