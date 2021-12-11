@@ -28,7 +28,8 @@ namespace lox {
     ObjFunction* function = compiler.compile();
     if (!function) return INTERPRET_COMPILE_ERROR;
 
-    return run(function);
+    appendCallFrame(function, 0);
+    return run();
   }
 
   void VM::freeObjects() {
@@ -55,9 +56,11 @@ namespace lox {
     return obj;
   }
 
-  InterpretResult VM::run(ObjFunction* function) {
-    frame_.function = function;
+  void VM::appendCallFrame(ObjFunction* function, int stackStart) {
+    frames_[frameCount_++] = CallFrame(function, stackStart);
+  }
 
+  InterpretResult VM::run() {
     instruction inst;
     while (true) {
 #ifdef DEBUG_TRACE_EXECUTION
@@ -81,12 +84,12 @@ namespace lox {
 
         case OP_GET_LOCAL: {
           instruction slot = readByte();
-          push(stack_[slot]);
+          push(load(currentStackStart() + slot));
           break;
         }
         case OP_SET_LOCAL: {
           instruction slot = readByte();
-          stack_[slot] = peek(0);
+          store(currentStackStart() + slot, peek(0));
           break;
         }
 

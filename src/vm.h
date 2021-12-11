@@ -17,8 +17,15 @@ namespace lox {
   };
 
   struct CallFrame {
+    CallFrame() {}
+
+    CallFrame(ObjFunction* function, int stackStart)
+      : function(function)
+      , stackStart(stackStart) {}
+
     int ip = 0;
     ObjFunction* function = nullptr;
+    int stackStart = 0;
   };
 
   class VM {
@@ -47,11 +54,13 @@ namespace lox {
 
     ObjString* findOrAllocateString(const char* src, int length);
 
-    InterpretResult run(ObjFunction* function);
+    InterpretResult run();
 
     void traceStack();
 
     void runtimeError(const char* format, ...) const;
+
+    void appendCallFrame(ObjFunction* function, int stackStart);
 
     instruction readByte() {
       return currentChunk().getCode(currentFrame().ip++);
@@ -72,11 +81,11 @@ namespace lox {
     }
 
     CallFrame& currentFrame() {
-      return frame_;
+      return frames_[frameCount_ - 1];
     };
 
     const CallFrame& currentFrame() const {
-      return frame_;
+      return frames_[frameCount_ - 1];
     };
 
     ObjFunction* currentFn() const {
@@ -86,6 +95,10 @@ namespace lox {
     const Chunk& currentChunk() const {
       return currentFn()->chunk();
     };
+
+    int currentStackStart() const {
+      return currentFrame().stackStart;
+    }
 
     void push(Value value) {
       stack_[stackTop_++] = value;
@@ -100,11 +113,24 @@ namespace lox {
       return stack_[stackTop_ - 1 - offset];
     }
 
+    Value load(int index) const {
+      return stack_[index];
+    }
+
+    void store(int index, Value value) {
+      // Access from the tail if the index is negative
+      if (index < 0) index += stackTop_;
+      stack_[index] = value;
+    }
+
     ObjString* concatString(ObjString* left, ObjString* right); // TODO: Change place
 
    private:
     Obj* objects_ = nullptr;
-    CallFrame frame_; // TODO: tmp
+
+    static constexpr int FRAME_MAX = 64;
+    std::array<CallFrame, FRAME_MAX> frames_;
+    int frameCount_ = 0;
 
     static constexpr int STACK_MAX = 256;
     std::array<Value, STACK_MAX> stack_;
