@@ -9,16 +9,23 @@
 
 namespace lox {
 
-  Compiler::Compiler(VM& vm, FunctionType type)
-    : vm_(vm)
-    , type_(type)
+  Compiler::Compiler(const char* source, VM& vm, FunctionType type)
+    : lexer_(source)
+    , vm_(vm)
     , locals_(Vector<Local>(LOCALS_MAX)) {
-    function_ = vm.allocateObj<ObjFunction>(0, nullptr);
+    function_ = vm.allocateObj<ObjFunction>(type, 0, nullptr);
+    setFirstLocal();
   }
 
-  ObjFunction* Compiler::compile(const char* source) {
-    Lexer lexer(source);
-    Parser parser(lexer);
+  void Compiler::setFirstLocal() {
+    Local local(
+      lexer_.syntheticToken(TOKEN_IDENTIFIER, function_->type() == TYPE_FUNCTION ? "" : "this"));
+    local.depth = 0;
+    locals_.push(local);
+  }
+
+  ObjFunction* Compiler::compile() {
+    Parser parser(lexer_);
 
     if (!parser.parse()) return nullptr;
 
@@ -35,7 +42,9 @@ namespace lox {
     emitReturn(token);
 
 #ifdef DEBUG_PRINT_CODE
-    if (!hadError_) Disassembler::disassembleChunk(currentChunk(), "code");
+    if (!hadError_)
+      Disassembler::disassembleChunk(currentChunk(),
+                                     function_->name() ? function_->name()->value() : "<script>");
 #endif
   }
 

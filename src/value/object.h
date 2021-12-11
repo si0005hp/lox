@@ -139,6 +139,13 @@ namespace lox {
 
   typedef ObjString::HashMapKey StringKey;
 
+  enum FunctionType {
+    TYPE_FUNCTION,
+    TYPE_INITIALIZER,
+    TYPE_METHOD,
+    TYPE_SCRIPT
+  };
+
   class ObjFunction : public Obj {
     friend class VM;
 
@@ -150,20 +157,38 @@ namespace lox {
         os << "<script>";
     }
 
+    FunctionType type() const {
+      return type_;
+    }
+
+    int arity() const {
+      return arity_;
+    }
+
+    int upvalueCount() const {
+      return upvalueCount_;
+    }
+
     Chunk& chunk() {
       return chunk_;
     }
 
-   private:
-    static ObjFunction* allocate(int arity, ObjString* name) {
-      return new ObjFunction(arity, name);
+    ObjString* name() const {
+      return name_;
     }
 
-    ObjFunction(int arity, ObjString* name)
-      : arity_(arity)
+   private:
+    static ObjFunction* allocate(FunctionType type, int arity, ObjString* name) {
+      return new ObjFunction(type, arity, name);
+    }
+
+    ObjFunction(FunctionType type, int arity, ObjString* name)
+      : type_(type)
+      , arity_(arity)
       , name_(name) {}
 
    private:
+    FunctionType type_;
     int arity_;
     int upvalueCount_ = 0;
     Chunk chunk_;

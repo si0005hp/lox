@@ -1,19 +1,13 @@
 #pragma once
 
 #include "ast.h"
+#include "lexer.h"
 #include "value/object.h"
 #include "vm.h"
 
 namespace lox {
 
 #define SRC Token* token
-
-  enum FunctionType {
-    TYPE_FUNCTION,
-    TYPE_INITIALIZER,
-    TYPE_METHOD,
-    TYPE_SCRIPT
-  };
 
   struct Local {
     Local() {}
@@ -34,11 +28,13 @@ namespace lox {
     , public Stmt::Visitor<void> {
 
    public:
-    Compiler(VM& vm, FunctionType type);
+    Compiler(const char* source, VM& vm, FunctionType type);
 
-    ObjFunction* compile(const char* source);
+    ObjFunction* compile();
 
    private:
+    void setFirstLocal();
+
     virtual void visit(const Assign* expr);
     virtual void visit(const Binary* expr);
     virtual void visit(const Call* expr);
@@ -102,10 +98,11 @@ namespace lox {
     void emitLoop(SRC, int loopStart);
 
    private:
+    Lexer lexer_;
+
     VM& vm_;
 
     ObjFunction* function_;
-    FunctionType type_;
 
     bool hadError_ = false;
 
