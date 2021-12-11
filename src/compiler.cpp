@@ -9,11 +9,24 @@
 
 namespace lox {
 
-  Compiler::Compiler(const char* source, VM& vm, FunctionType type)
+  Compiler::Compiler(VM& vm, Compiler* parent, const char* source)
     : lexer_(source)
     , vm_(vm)
-    , locals_(Vector<Local>(LOCALS_MAX)) {
-    function_ = vm.allocateObj<ObjFunction>(type, 0, nullptr);
+    , locals_(Vector<Local>(LOCALS_MAX))
+    , enclosing_(parent) {
+    function_ = vm.allocateObj<ObjFunction>(TYPE_SCRIPT, 0, nullptr);
+    setFirstLocal();
+  }
+
+  // TODO: refactor constructors
+  Compiler::Compiler(VM& vm, Compiler* parent, const Function* fn)
+    : lexer_(nullptr)
+    , vm_(vm)
+    , locals_(Vector<Local>(LOCALS_MAX))
+    , enclosing_(parent) {
+    function_ =
+      vm.allocateObj<ObjFunction>(TYPE_FUNCTION, fn->params.size(),
+                                  vm_.allocateObj<ObjString>(fn->name->start, fn->name->length));
     setFirstLocal();
   }
 
@@ -112,7 +125,7 @@ namespace lox {
 
   void Compiler::defineVariable(Token* var, instruction global) {
     if (isLocalScope()) {
-      // markInitialized();
+      markInitialized();
       return;
     }
     ASSERT(global != -1, "Global slot must be given.");
@@ -127,6 +140,12 @@ namespace lox {
       instruction slot = identifierConstant(name);
       emitBytes(name, isSetOp ? OP_SET_GLOBAL : OP_GET_GLOBAL, slot);
     }
+  }
+
+  void Compiler::markInitialized() {
+    ASSERT(isLocalScope(), "Must be in global scope.");
+
+    locals_[-1].depth = scopeDepth_;
   }
 
   int Compiler::resolveLocal(Token* name) {
@@ -246,7 +265,37 @@ namespace lox {
     emitByte(stmt->stop, OP_POP);
   }
 
-  void Compiler::visit(const Function* stmt) {}
+  void Compiler::visit(const Function* stmt) {
+    instruction slot = parseVariable(stmt->name);
+    if (isLocalScope()) markInitialized();
+
+    compileFunction(stmt);
+    defineVariable(stmt->name, slot);
+  }
+
+  void Compiler::compileFunction(const Function* fn) {
+    Compiler compiler(vm_, this, fn);
+    compiler.doCompileFunction(fn);
+  }
+
+  void Compiler::doCompileFunction(const Function* fn) {
+    beginScope();
+
+    if (fn->params.size() > MAX_FUNC_PARAMS) {
+      error(fn->params[-1], "Number of function params can't be more than 255.");
+    } else {
+      for (int i = 0; i < fn->params.size(); i++) {
+        // Function params are local variables.
+        parseVariable(fn->params[i]);
+        defineVariable(fn->params[i]);
+      }
+    }
+
+    for (int i = 0; i < fn->body.size(); i++) fn->body[i]->accept(this);
+    endCompiler(fn->getStop());
+
+    emitBytes(fn->getStart(), OP_CONSTANT, makeConstant(fn->getStart(), function_->asValue()));
+  }
 
   void Compiler::visit(const If* stmt) {
     stmt->condition->accept(this);
@@ -323,5 +372,4 @@ namespace lox {
     emitByte(token, (backJumpDistance >> 8) & 0xff);
     emitByte(token, backJumpDistance & 0xff);
   }
-
 }; // namespace lox

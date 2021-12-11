@@ -28,7 +28,8 @@ namespace lox {
     , public Stmt::Visitor<void> {
 
    public:
-    Compiler(const char* source, VM& vm, FunctionType type);
+    Compiler(VM& vm, Compiler* parent, const char* source);
+    Compiler(VM& vm, Compiler* parent, const Function* fn);
 
     ObjFunction* compile();
 
@@ -78,6 +79,7 @@ namespace lox {
     void addLocal(Token* var);
     void defineVariable(Token* var, instruction global = -1);
     void namedVariable(Token* name, bool isSetOp = false);
+    void markInitialized();
 
     int resolveLocal(Token* name);
 
@@ -97,6 +99,10 @@ namespace lox {
     void patchJump(SRC, int offset);
     void emitLoop(SRC, int loopStart);
 
+    void compileFunction(const Function* fn);
+    void doCompileFunction(const Function* fn);
+    static constexpr int MAX_FUNC_PARAMS = 255;
+
    private:
     Lexer lexer_;
 
@@ -109,6 +115,8 @@ namespace lox {
     static constexpr int LOCALS_MAX = 256;
     Vector<Local> locals_; // TODO: Fixed size container
     int scopeDepth_ = 0;
+
+    Compiler* enclosing_;
   };
 
 }; // namespace lox

@@ -24,7 +24,7 @@ namespace lox {
   }
 
   InterpretResult VM::interpret(const char* source) {
-    Compiler compiler(source, *this, TYPE_SCRIPT);
+    Compiler compiler(*this, nullptr, source);
     ObjFunction* function = compiler.compile();
     if (!function) return INTERPRET_COMPILE_ERROR;
 
