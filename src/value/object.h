@@ -167,7 +167,7 @@ namespace lox {
     int arity_;
     int upvalueCount_ = 0;
     Chunk chunk_;
-    ObjString* name_;
+    ObjString* name_; // Name can be null for script instance, otherwise it is function's name;
   };
 
 } // namespace lox

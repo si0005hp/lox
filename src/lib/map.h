@@ -106,7 +106,7 @@ namespace lox {
     }
 
     void free(Entry* pointer, int count) {
-      Memory::reallocate(pointer, sizeof(Entry) * count, 0);
+      Memory::reallocate(pointer, sizeof(Entry) * count, 0); // TODO: Fix oldSize spec
     }
 
     static constexpr int MAX_LOAD_PERCENT = 75;
