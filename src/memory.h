@@ -19,7 +19,11 @@ namespace lox {
     // https://github.com/v8/v8/blob/9.7.37/src/zone/zone.h#L107
     template <typename T>
     static T* allocate() {
-      return static_cast<T*>(allocate(sizeof(T)));
+      return allocate<T>(1);
+    }
+    template <typename T>
+    static T* allocate(int count) {
+      return static_cast<T*>(allocate(sizeof(T) * count));
     }
 
     template <typename T>

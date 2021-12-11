@@ -43,3 +43,7 @@ TEST_F(IntegrationTest, while2) {
 TEST_F(IntegrationTest, if_) {
   runTest("negative\n", "if");
 }
+
+TEST_F(IntegrationTest, concat) {
+  runTest("hogefuga\n", "concat");
+}

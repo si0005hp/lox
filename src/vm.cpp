@@ -9,6 +9,7 @@
 #include "debug.h"
 #include "memory.h"
 #include "op_code.h"
+#include "value/object.h"
 #include "value/value.h"
 
 namespace lox {
@@ -140,7 +141,9 @@ namespace lox {
 
         case OP_ADD: {
           if (peek(0).isString() && peek(1).isString()) {
-            UNREACHABLE(/* Not implemented. */); // TODO: implement
+            ObjString* b = pop().asString();
+            ObjString* a = pop().asString();
+            push(concatString(a, b)->asValue());
           } else if (peek(0).isNumber() && peek(1).isNumber()) {
             Number b = pop().asNumber();
             Number a = pop().asNumber();
@@ -211,6 +214,24 @@ namespace lox {
 
   void VM::runtimeError(const char* format, ...) const {
     // TODO: implement
+  }
+
+  ObjString* VM::concatString(ObjString* left, ObjString* right) {
+    // Avoid GC
+    push(left->asValue());
+    push(right->asValue());
+
+    int length = left->length() + right->length();
+    char* chars = Memory::allocate<char>(length + 1);
+    memcpy(chars, left->value(), left->length());
+    memcpy(chars + right->length(), right->value(), right->length());
+    chars[length] = '\0';
+
+    ObjString* result = allocateObj<ObjString>(chars, length);
+    Memory::reallocate(chars, sizeof(char) * length, 0);
+    pop();
+    pop();
+    return result;
   }
 
 } // namespace lox

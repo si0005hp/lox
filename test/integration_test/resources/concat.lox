@@ -1,0 +1,4 @@
+var a = "hoge";
+var b = "fuga";
+var c = a + b;
+print c;

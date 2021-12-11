@@ -100,6 +100,8 @@ namespace lox {
       return stack_[stackTop_ - 1 - offset];
     }
 
+    ObjString* concatString(ObjString* left, ObjString* right); // TODO: Change place
+
    private:
     Obj* objects_ = nullptr;
     CallFrame frame_; // TODO: tmp
