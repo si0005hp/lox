@@ -65,6 +65,8 @@ namespace lox {
     bool callValue(Value callee, int argCount);
     bool call(ObjClosure* closure, int argCount);
 
+    ObjUpvalue* captureUpvalue(Value* location);
+
     instruction readByte() {
       return currentChunk().getCode(currentFrame().ip++);
     }

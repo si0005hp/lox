@@ -118,6 +118,17 @@ namespace lox {
           break;
         }
 
+        case OP_GET_UPVALUE: {
+          instruction slot = readByte();
+          push(*currentFrame().closure->upvalues()[slot]->location());
+          break;
+        }
+        case OP_SET_UPVALUE: {
+          instruction slot = readByte();
+          *currentFrame().closure->upvalues()[slot]->location() = peek(0);
+          break;
+        }
+
         case OP_DEFINE_GLOBAL: {
           ObjString* name = readString();
           globals.put(name, peek(0));
@@ -216,8 +227,21 @@ namespace lox {
           break;
         }
         case OP_CLOSURE: {
-          ObjFunction* function = readConstant().asFunction();
-          push(allocateObj<ObjClosure>(function)->asValue());
+          ObjClosure* closure = allocateObj<ObjClosure>(readConstant().asFunction());
+          push(closure->asValue());
+
+          for (int i = 0; i < closure->fn()->upvalueCount(); i++) {
+            instruction isLocal = readByte();
+            instruction index = readByte();
+            if (isLocal == 1) {
+              // Make an new upvalue to close over the parent's local variable.
+              // TODO: Directly accesing stack here
+              closure->upvalues()[i] = captureUpvalue(&stack_[currentStackStart() + index]);
+            } else {
+              // Grab an upvalue from the enclosing function, which we are executing at the moment.
+              closure->upvalues()[i] = currentFrame().closure->upvalues()[index];
+            }
+          }
           break;
         }
 
@@ -240,6 +264,11 @@ namespace lox {
         }
       }
     }
+  }
+
+  ObjUpvalue* VM::captureUpvalue(Value* location) {
+    ObjUpvalue* createdUpvalue = allocateObj<ObjUpvalue>(location);
+    return createdUpvalue;
   }
 
   bool VM::callValue(Value callee, int argCount) {

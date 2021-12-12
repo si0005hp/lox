@@ -208,6 +208,40 @@ namespace lox {
     ObjString* name_; // Name can be null for script instance, otherwise it is function's name;
   };
 
+  class ObjUpvalue : public Obj {
+    friend class VM;
+
+   public:
+    virtual void trace(std::ostream& os) const {
+      UNREACHABLE();
+    }
+
+   private:
+    static ObjUpvalue* allocate(Value* location) {
+      return new ObjUpvalue(location);
+    }
+
+    ObjUpvalue(Value* location)
+      : location_(location) {}
+
+    Value* location() const {
+      return location_;
+    }
+
+    Value closed() const {
+      return closed_;
+    }
+
+    ObjUpvalue* next() const {
+      return next_;
+    }
+
+   private:
+    Value* location_;
+    Value closed_ = NIL_VAL;
+    ObjUpvalue* next_ = nullptr;
+  };
+
   class ObjClosure : public Obj {
     friend class VM;
 
@@ -220,16 +254,24 @@ namespace lox {
       return fn_;
     }
 
+    ObjUpvalue** upvalues() {
+      return upvalues_;
+    }
+
    private:
     static ObjClosure* allocate(ObjFunction* fn) {
-      return new ObjClosure(fn);
+      void* mem = Memory::allocate(sizeof(ObjClosure) + sizeof(ObjUpvalue) * fn->upvalueCount());
+      return ::new (mem) ObjClosure(fn);
     }
 
     ObjClosure(ObjFunction* fn)
-      : fn_(fn) {}
+      : fn_(fn) {
+      for (int i = 0; i < fn->upvalueCount(); i++) upvalues_[i] = nullptr;
+    }
 
    private:
     ObjFunction* fn_;
+    ObjUpvalue* upvalues_[FLEXIBLE_ARRAY];
   };
 
 } // namespace lox
