@@ -325,8 +325,7 @@ namespace lox {
     Compiler fnCompiler(vm_, this, fn);
     fnCompiler.doCompileFunction(fn);
 
-    emitBytes(fn->getStart(), OP_CLOSURE,
-              makeConstant(fn->getStart(), fnCompiler.function_->asValue()));
+    emitClosure(fn->getStart(), fnCompiler.function_, fnCompiler.upvalues_);
   }
 
   void Compiler::doCompileFunction(const Function* fn) {
@@ -342,6 +341,16 @@ namespace lox {
 
     for (int i = 0; i < fn->body.size(); i++) fn->body[i]->accept(this);
     endCompiler(fn->getStop());
+  }
+
+  void Compiler::emitClosure(SRC, ObjFunction* fn, const Vector<CompilerUpvalue>& upvalues) {
+    emitBytes(token, OP_CLOSURE, makeConstant(token, fn->asValue()));
+
+    for (int i = 0; i < upvalues.size(); i++) {
+      // TODO: Token line is not consistent here.
+      emitByte(token, upvalues[i].isLocal ? 1 : 0);
+      emitByte(token, upvalues[i].index);
+    }
   }
 
   void Compiler::visit(const If* stmt) {

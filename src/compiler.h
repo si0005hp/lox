@@ -111,9 +111,10 @@ namespace lox {
     void patchJump(SRC, int offset);
     void emitLoop(SRC, int loopStart);
 
+    static constexpr int MAX_FUNC_PARAMS = 255;
     void compileFunction(const Function* fn);
     void doCompileFunction(const Function* fn);
-    static constexpr int MAX_FUNC_PARAMS = 255;
+    void emitClosure(SRC, ObjFunction* fn, const Vector<CompilerUpvalue>& upvalues);
     void compileArguments(Vector<Expr*> arguments);
 
    private:

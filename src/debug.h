@@ -67,6 +67,14 @@ namespace lox {
           printf("%-16s %4d ", "OP_CLOSURE", constant);
           printValue(chunk.getConstant(constant));
           printf("\n");
+
+          ObjFunction* fn = chunk.getConstant(constant).asFunction();
+          for (int i = 0; i < fn->upvalueCount(); i++) {
+            int isLocal = chunk.getCode(offset++);
+            int index = chunk.getCode(offset++);
+            printf("%04d      |                     %s %d\n", offset - 2,
+                   isLocal ? "local" : "upvalue", index);
+          }
           return offset;
         }
         case OP_CLOSE_UPVALUE: return simpleInstruction("OP_CLOSE_UPVALUE", offset);
