@@ -347,7 +347,20 @@ namespace lox {
     emitByte(stmt->start, OP_PRINT);
   }
 
-  void Compiler::visit(const Return* stmt) {}
+  void Compiler::visit(const Return* stmt) {
+    if (function_->type() == TYPE_SCRIPT)
+      error(stmt->getStart(), "Can't return from top-level code.");
+
+    if (stmt->value) {
+      if (function_->type() == TYPE_INITIALIZER) {
+        error(stmt->getStart(), "Can't return a value from an initializer.");
+      }
+      stmt->value->accept(this);
+      emitByte(stmt->value->getStart(), OP_RETURN);
+    } else {
+      emitReturn(stmt->getStart());
+    }
+  }
 
   void Compiler::visit(const Var* stmt) {
     instruction slot = parseVariable(stmt->name);

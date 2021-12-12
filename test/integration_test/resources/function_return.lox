@@ -1,0 +1,14 @@
+fun noReturn() {
+}
+
+fun emptyReturn() {
+  return;
+}
+
+fun returnValue(a, b) {
+  return a + b;
+}
+
+print noReturn();
+print emptyReturn();
+print returnValue(3, 5);

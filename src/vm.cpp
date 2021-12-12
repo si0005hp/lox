@@ -227,7 +227,7 @@ namespace lox {
           // Truncate stack of the frame.
           stackTop_ = frameStackStart;
           push(result);
-          return INTERPRET_OK;
+          break;
         }
       }
     }
