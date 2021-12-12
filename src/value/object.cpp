@@ -12,6 +12,7 @@ namespace lox {
   }
 
   OBJ_TYPE_APIS(String)
+  OBJ_TYPE_APIS(Function)
 
 #undef OBJ_TYPE_APIS
 

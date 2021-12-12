@@ -27,6 +27,7 @@ namespace lox {
   class Bool;
   class Obj;
   class ObjString;
+  class ObjFunction;
 
   // TODO: The whole Value abstraction could be better desined.
   class Value {
@@ -50,6 +51,9 @@ namespace lox {
 
     bool isString() const;
     ObjString* asString() const;
+
+    bool isFunction() const;
+    ObjFunction* asFunction() const;
 
     uint64_t ptr() const {
       return ptr_;

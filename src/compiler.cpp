@@ -71,6 +71,7 @@ namespace lox {
   }
 
   void Compiler::emitReturn(SRC) {
+    emitByte(token, OP_NIL);
     emitByte(token, OP_RETURN);
   }
 
@@ -183,7 +184,17 @@ namespace lox {
     }
   }
 
-  void Compiler::visit(const Call* expr) {}
+  // TODO: Invoke case
+  void Compiler::visit(const Call* expr) {
+    expr->callee->accept(this);
+    compileArguments(expr->arguments);
+    emitBytes(expr->callee->getStart(), OP_CALL, expr->arguments.size());
+  }
+
+  void Compiler::compileArguments(Vector<Expr*> arguments) {
+    ASSERT(arguments.size() <= MAX_FUNC_PARAMS, "Number of function args must be less than 255.");
+    for (int i = 0; i < arguments.size(); i++) arguments[i]->accept(this);
+  }
 
   void Compiler::visit(const Get* expr) {}
 

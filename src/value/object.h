@@ -11,6 +11,7 @@
 namespace lox {
 
   class ObjString;
+  class ObjFunction;
 
   class Obj {
     friend class VM;
@@ -28,8 +29,12 @@ namespace lox {
 
     virtual void trace(std::ostream& os) const = 0;
 
+    // TODO: lame
     bool isString() const;
     ObjString* asString();
+
+    bool isFunction() const;
+    ObjFunction* asFunction();
 
     virtual bool eq(Obj* other) const {
       // Default identity logic.

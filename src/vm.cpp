@@ -28,7 +28,8 @@ namespace lox {
     ObjFunction* function = compiler.compile();
     if (!function) return INTERPRET_COMPILE_ERROR;
 
-    appendCallFrame(function, 0);
+    push(function->asValue());
+    callValue(function->asValue(), 0);
     return run();
   }
 
@@ -202,11 +203,56 @@ namespace lox {
           break;
         }
 
+        case OP_CALL: {
+          int argCount = readByte();
+          Value callee = peek(argCount);
+          if (!callValue(callee, argCount)) {
+            return INTERPRET_RUNTIME_ERROR;
+          }
+          break;
+        }
+
         case OP_RETURN: {
+          // Save data for subsequent processes.
+          Value result = pop();
+          int frameStackStart = currentStackStart();
+
+          frameCount_--;
+          if (frameCount_ == 0) {
+            // Top-level done. Pop global script out and finish.
+            pop();
+            return INTERPRET_OK;
+          }
+
+          // Truncate stack of the frame.
+          stackTop_ = frameStackStart;
+          push(result);
           return INTERPRET_OK;
         }
       }
     }
+  }
+
+  bool VM::callValue(Value callee, int argCount) {
+    if (callee.isFunction()) {
+      return call(callee.asFunction(), argCount);
+    }
+    runtimeError("Can only call functions and classes.");
+    return false;
+  }
+
+  bool VM::call(ObjFunction* function, int argCount) {
+    if (argCount != function->arity()) {
+      runtimeError("Expected %d arguments but got %d.", function->arity(), argCount);
+      return false;
+    }
+    if (frameCount_ == FRAMES_MAX) {
+      runtimeError("Stack overflow.");
+      return false;
+    }
+
+    appendCallFrame(function, stackTop_ - argCount - 1);
+    return true;
   }
 
   void VM::traceStack() {

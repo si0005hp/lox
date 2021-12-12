@@ -102,6 +102,7 @@ namespace lox {
     void compileFunction(const Function* fn);
     void doCompileFunction(const Function* fn);
     static constexpr int MAX_FUNC_PARAMS = 255;
+    void compileArguments(Vector<Expr*> arguments);
 
    private:
     Lexer lexer_;

@@ -62,6 +62,9 @@ namespace lox {
 
     void appendCallFrame(ObjFunction* function, int stackStart);
 
+    bool callValue(Value callee, int argCount);
+    bool call(ObjFunction* function, int argCount);
+
     instruction readByte() {
       return currentChunk().getCode(currentFrame().ip++);
     }
@@ -128,8 +131,8 @@ namespace lox {
    private:
     Obj* objects_ = nullptr;
 
-    static constexpr int FRAME_MAX = 64;
-    std::array<CallFrame, FRAME_MAX> frames_;
+    static constexpr int FRAMES_MAX = 64;
+    std::array<CallFrame, FRAMES_MAX> frames_;
     int frameCount_ = 0;
 
     static constexpr int STACK_MAX = 256;
