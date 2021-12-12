@@ -10,7 +10,7 @@ namespace lox {
 #define SRC Token* token
 
   struct Local {
-    Local() {}
+    Local() {} // TODO: Essentially not necessary
     Local(Token* name)
       : name(name) {}
 
@@ -20,7 +20,17 @@ namespace lox {
 
     Token* name = nullptr;
     int depth = -1;
-    bool isCaptured = false;
+    bool isCapturedAsUpvalue = false;
+  };
+
+  struct CompilerUpvalue {
+    CompilerUpvalue() {} // TODO: Essentially not necessary
+    CompilerUpvalue(int index, bool isLocal)
+      : index(index)
+      , isLocal(isLocal) {}
+
+    int index = -1;
+    bool isLocal = false;
   };
 
   class Compiler
@@ -82,6 +92,8 @@ namespace lox {
     void markInitialized();
 
     int resolveLocal(Token* name);
+    int resolveUpvalue(Token* name);
+    int addUpvalue(SRC, int index, bool isLocal);
 
     bool isLocalScope() const {
       return scopeDepth_ > 0;
@@ -118,6 +130,9 @@ namespace lox {
     int scopeDepth_ = 0;
 
     Compiler* enclosing_;
+
+    static constexpr int UPVALUES_MAX = 256;
+    Vector<CompilerUpvalue> upvalues_; // TODO: Fixed size container
   };
 
 }; // namespace lox

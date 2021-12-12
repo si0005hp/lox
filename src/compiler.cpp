@@ -13,7 +13,8 @@ namespace lox {
     : lexer_(source)
     , vm_(vm)
     , locals_(Vector<Local>(LOCALS_MAX))
-    , enclosing_(parent) {
+    , enclosing_(parent)
+    , upvalues_(Vector<CompilerUpvalue>(UPVALUES_MAX)) {
     function_ = vm.allocateObj<ObjFunction>(TYPE_SCRIPT, 0, nullptr);
     setFirstLocal();
   }
@@ -23,7 +24,8 @@ namespace lox {
     : lexer_(nullptr)
     , vm_(vm)
     , locals_(Vector<Local>(LOCALS_MAX))
-    , enclosing_(parent) {
+    , enclosing_(parent)
+    , upvalues_(Vector<CompilerUpvalue>(UPVALUES_MAX)) {
     function_ =
       vm.allocateObj<ObjFunction>(TYPE_FUNCTION, fn->params.size(),
                                   vm_.allocateObj<ObjString>(fn->name->start, fn->name->length));
@@ -137,6 +139,8 @@ namespace lox {
     int index = resolveLocal(name);
     if (index != -1) {
       emitBytes(name, isSetOp ? OP_SET_LOCAL : OP_GET_LOCAL, index);
+    } else if ((index = resolveUpvalue(name)) != -1) {
+      emitBytes(name, isSetOp ? OP_SET_UPVALUE : OP_GET_UPVALUE, index);
     } else {
       instruction slot = identifierConstant(name);
       emitBytes(name, isSetOp ? OP_SET_GLOBAL : OP_GET_GLOBAL, slot);
@@ -158,6 +162,39 @@ namespace lox {
       }
     }
     return -1; // Not found
+  }
+
+  int Compiler::resolveUpvalue(Token* name) {
+    if (!enclosing_) return -1;
+
+    int local = enclosing_->resolveLocal(name);
+    if (local != -1) {
+      enclosing_->locals_[local].isCapturedAsUpvalue = true;
+      return addUpvalue(name, local, true);
+    }
+
+    int upvalue = enclosing_->resolveUpvalue(name);
+    if (upvalue != -1) {
+      return addUpvalue(name, upvalue, false);
+    }
+
+    return -1;
+  }
+
+  int Compiler::addUpvalue(SRC, int index, bool isLocal) {
+    // Look for an existing one.
+    for (int i = 0; i < function_->upvalueCount(); i++) {
+      CompilerUpvalue& upvalue = upvalues_[i];
+      if (upvalue.index == index && upvalue.isLocal == isLocal) return i;
+    }
+
+    if (function_->upvalueCount() == UPVALUES_MAX) {
+      error(token, "Too many closure variables in function.");
+      return 0;
+    }
+    // Add new upvalue.
+    upvalues_.emplace(index, isLocal);
+    return function_->getAndIncrementUpvalue();
   }
 
   void Compiler::visit(const Assign* expr) {
@@ -261,7 +298,7 @@ namespace lox {
     scopeDepth_--;
     while (!locals_.isEmpty() && locals_[-1].depth > scopeDepth_) {
       Local local = locals_.removeAt(-1);
-      emitByte(token, local.isCaptured ? OP_CLOSE_UPVALUE : OP_POP);
+      emitByte(token, local.isCapturedAsUpvalue ? OP_CLOSE_UPVALUE : OP_POP);
     }
   }
 

@@ -166,6 +166,10 @@ namespace lox {
         os << "<script>";
     }
 
+    int getAndIncrementUpvalue() {
+      return upvalueCount_++;
+    }
+
     FunctionType type() const {
       return type_;
     }
