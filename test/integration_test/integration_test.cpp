@@ -5,6 +5,12 @@
 
 using namespace lox;
 
+#define TO_STR(x) #x
+#define INTEGRATION_TEST(expected, testName)     \
+  TEST_F(IntegrationTest, testName) {            \
+    runTest(TO_STR(expected), TO_STR(testName)); \
+  }
+
 class IntegrationTest : public TestBase {
  public:
   std::string testPath(const std::string &fileName) {
@@ -20,30 +26,10 @@ class IntegrationTest : public TestBase {
   }
 };
 
-TEST_F(IntegrationTest, expression) {
-  runTest("true\n", "expression");
-}
-
-TEST_F(IntegrationTest, var) {
-  runTest("123\n687\n", "var");
-}
-
-TEST_F(IntegrationTest, local_scope) {
-  runTest("201\n", "local_scope");
-}
-
-TEST_F(IntegrationTest, while_) {
-  runTest("0\n1\n2\n3\n4\n", "while");
-}
-
-TEST_F(IntegrationTest, while2) {
-  runTest("20\n", "while2");
-}
-
-TEST_F(IntegrationTest, if_) {
-  runTest("negative\n", "if");
-}
-
-TEST_F(IntegrationTest, concat) {
-  runTest("hogefuga\n", "concat");
-}
+INTEGRATION_TEST(true\n, expression)
+INTEGRATION_TEST(123\n687\n, var)
+INTEGRATION_TEST(201\n, local_scope)
+INTEGRATION_TEST(0\n1\n2\n3\n4\n, while)
+INTEGRATION_TEST(20\n, while2)
+INTEGRATION_TEST(negative\n, if)
+INTEGRATION_TEST(hogefuga\n, concat)
