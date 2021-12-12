@@ -288,7 +288,7 @@ namespace lox {
     Compiler fnCompiler(vm_, this, fn);
     fnCompiler.doCompileFunction(fn);
 
-    emitBytes(fn->getStart(), OP_CONSTANT,
+    emitBytes(fn->getStart(), OP_CLOSURE,
               makeConstant(fn->getStart(), fnCompiler.function_->asValue()));
   }
 

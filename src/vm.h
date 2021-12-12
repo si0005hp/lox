@@ -19,12 +19,12 @@ namespace lox {
   struct CallFrame {
     CallFrame() {}
 
-    CallFrame(ObjFunction* function, int stackStart)
-      : function(function)
+    CallFrame(ObjClosure* closure, int stackStart)
+      : closure(closure)
       , stackStart(stackStart) {}
 
     int ip = 0;
-    ObjFunction* function = nullptr;
+    ObjClosure* closure = nullptr;
     int stackStart = 0;
   };
 
@@ -60,10 +60,10 @@ namespace lox {
 
     void runtimeError(const char* format, ...) const;
 
-    void appendCallFrame(ObjFunction* function, int stackStart);
+    void appendCallFrame(ObjClosure* closure, int stackStart);
 
     bool callValue(Value callee, int argCount);
-    bool call(ObjFunction* function, int argCount);
+    bool call(ObjClosure* closure, int argCount);
 
     instruction readByte() {
       return currentChunk().getCode(currentFrame().ip++);
@@ -92,7 +92,7 @@ namespace lox {
     };
 
     ObjFunction* currentFn() const {
-      return currentFrame().function;
+      return currentFrame().closure->fn();
     };
 
     const Chunk& currentChunk() const {

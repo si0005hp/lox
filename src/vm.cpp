@@ -29,7 +29,11 @@ namespace lox {
     if (!function) return INTERPRET_COMPILE_ERROR;
 
     push(function->asValue());
-    callValue(function->asValue(), 0);
+    ObjClosure* closure = allocateObj<ObjClosure>(function);
+    pop();
+
+    push(closure->asValue());
+    callValue(closure->asValue(), 0);
     return run();
   }
 
@@ -57,8 +61,8 @@ namespace lox {
     return obj;
   }
 
-  void VM::appendCallFrame(ObjFunction* function, int stackStart) {
-    frames_[frameCount_++] = CallFrame(function, stackStart);
+  void VM::appendCallFrame(ObjClosure* closure, int stackStart) {
+    frames_[frameCount_++] = CallFrame(closure, stackStart);
   }
 
   InterpretResult VM::run() {
@@ -211,6 +215,11 @@ namespace lox {
           }
           break;
         }
+        case OP_CLOSURE: {
+          ObjFunction* function = readConstant().asFunction();
+          push(allocateObj<ObjClosure>(function)->asValue());
+          break;
+        }
 
         case OP_RETURN: {
           // Save data for subsequent processes.
@@ -234,16 +243,16 @@ namespace lox {
   }
 
   bool VM::callValue(Value callee, int argCount) {
-    if (callee.isFunction()) {
-      return call(callee.asFunction(), argCount);
+    if (callee.isClosure()) {
+      return call(callee.asClosure(), argCount);
     }
     runtimeError("Can only call functions and classes.");
     return false;
   }
 
-  bool VM::call(ObjFunction* function, int argCount) {
-    if (argCount != function->arity()) {
-      runtimeError("Expected %d arguments but got %d.", function->arity(), argCount);
+  bool VM::call(ObjClosure* closure, int argCount) {
+    if (argCount != closure->fn()->arity()) {
+      runtimeError("Expected %d arguments but got %d.", closure->fn()->arity(), argCount);
       return false;
     }
     if (frameCount_ == FRAMES_MAX) {
@@ -251,7 +260,7 @@ namespace lox {
       return false;
     }
 
-    appendCallFrame(function, stackTop_ - argCount - 1);
+    appendCallFrame(closure, stackTop_ - argCount - 1);
     return true;
   }
 

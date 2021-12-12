@@ -61,23 +61,14 @@ namespace lox {
         case OP_CALL: return byteInstruction("OP_CALL", chunk, offset);
         case OP_INVOKE: return invokeInstruction("OP_INVOKE", chunk, offset);
         case OP_SUPER_INVOKE: return invokeInstruction("OP_SUPER_INVOKE", chunk, offset);
-        // case OP_CLOSURE: {
-        //   offset++;
-        //   uint8_t constant = chunk.getCode(offset++);
-        //   printf("%-16s %4d ", "OP_CLOSURE", constant);
-        //   // printValue(chunk->constants.values[constant));
-        //   printf("\n");
-
-        //     ObjFunction* function = AS_FUNCTION(chunk->constants.values[constant));
-        //     for (int j = 0; j < function->upvalueCount; j++) {
-        //       int isLocal = chunk.getCode(offset++);
-        //       int index = chunk.getCode(offset++);
-        //       printf("%04d      |                     %s %d\n", offset - 2,
-        //              isLocal ? "local" : "upvalue", index);
-        //     }
-
-        //     return offset;
-        // }
+        case OP_CLOSURE: {
+          offset++;
+          uint8_t constant = chunk.getCode(offset++);
+          printf("%-16s %4d ", "OP_CLOSURE", constant);
+          printValue(chunk.getConstant(constant));
+          printf("\n");
+          return offset;
+        }
         case OP_CLOSE_UPVALUE: return simpleInstruction("OP_CLOSE_UPVALUE", offset);
         case OP_RETURN: return simpleInstruction("OP_RETURN", offset);
         case OP_CLASS: return constantInstruction("OP_CLASS", chunk, offset);

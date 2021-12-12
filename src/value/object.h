@@ -12,6 +12,7 @@ namespace lox {
 
   class ObjString;
   class ObjFunction;
+  class ObjClosure;
 
   class Obj {
     friend class VM;
@@ -35,6 +36,9 @@ namespace lox {
 
     bool isFunction() const;
     ObjFunction* asFunction();
+
+    bool isClosure() const;
+    ObjClosure* asClosure();
 
     virtual bool eq(Obj* other) const {
       // Default identity logic.
@@ -198,6 +202,30 @@ namespace lox {
     int upvalueCount_ = 0;
     Chunk chunk_;
     ObjString* name_; // Name can be null for script instance, otherwise it is function's name;
+  };
+
+  class ObjClosure : public Obj {
+    friend class VM;
+
+   public:
+    virtual void trace(std::ostream& os) const {
+      fn_->trace(os);
+    }
+
+    ObjFunction* fn() const {
+      return fn_;
+    }
+
+   private:
+    static ObjClosure* allocate(ObjFunction* fn) {
+      return new ObjClosure(fn);
+    }
+
+    ObjClosure(ObjFunction* fn)
+      : fn_(fn) {}
+
+   private:
+    ObjFunction* fn_;
   };
 
 } // namespace lox
