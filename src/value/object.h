@@ -152,7 +152,7 @@ namespace lox {
    public:
     virtual void trace(std::ostream& os) const {
       if (name_)
-        os << "<fn " << name_ << ">";
+        os << "<fn " << name_->value() << ">";
       else
         os << "<script>";
     }

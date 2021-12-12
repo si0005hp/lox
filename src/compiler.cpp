@@ -274,27 +274,26 @@ namespace lox {
   }
 
   void Compiler::compileFunction(const Function* fn) {
-    Compiler compiler(vm_, this, fn);
-    compiler.doCompileFunction(fn);
+    Compiler fnCompiler(vm_, this, fn);
+    fnCompiler.doCompileFunction(fn);
+
+    emitBytes(fn->getStart(), OP_CONSTANT,
+              makeConstant(fn->getStart(), fnCompiler.function_->asValue()));
   }
 
   void Compiler::doCompileFunction(const Function* fn) {
     beginScope();
 
-    if (fn->params.size() > MAX_FUNC_PARAMS) {
-      error(fn->params[-1], "Number of function params can't be more than 255.");
-    } else {
-      for (int i = 0; i < fn->params.size(); i++) {
-        // Function params are local variables.
-        parseVariable(fn->params[i]);
-        defineVariable(fn->params[i]);
-      }
+    ASSERT(fn->params.size() <= MAX_FUNC_PARAMS,
+           "Number of function params must be less than 255.");
+    for (int i = 0; i < fn->params.size(); i++) {
+      // Function params are local variables.
+      parseVariable(fn->params[i]);
+      defineVariable(fn->params[i]);
     }
 
     for (int i = 0; i < fn->body.size(); i++) fn->body[i]->accept(this);
     endCompiler(fn->getStop());
-
-    emitBytes(fn->getStart(), OP_CONSTANT, makeConstant(fn->getStart(), function_->asValue()));
   }
 
   void Compiler::visit(const If* stmt) {
