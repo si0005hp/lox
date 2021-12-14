@@ -52,12 +52,12 @@ namespace lox {
   }
 
   ObjString* VM::findOrAllocateString(const char* src, int length) {
-    ObjString* obj = strings.find(src, length);
+    ObjString* obj = strings_.find(src, length);
     if (obj) return obj;
 
     obj = ObjString::allocate(src, length);
     appendObj(obj);
-    strings.add(obj);
+    strings_.add(obj);
     return obj;
   }
 
@@ -101,7 +101,7 @@ namespace lox {
         case OP_GET_GLOBAL: {
           ObjString* name = readString();
           Value value;
-          if (!globals.get(name, &value)) {
+          if (!globals_.get(name, &value)) {
             runtimeError("Undefined variable '%s'.", name->value());
             return INTERPRET_RUNTIME_ERROR;
           }
@@ -110,11 +110,11 @@ namespace lox {
         }
         case OP_SET_GLOBAL: {
           ObjString* name = readString();
-          if (!globals.containsKey(name)) {
+          if (!globals_.containsKey(name)) {
             runtimeError("Undefined variable '%s'.", name->value());
             return INTERPRET_RUNTIME_ERROR;
           }
-          globals.put(name, peek(0));
+          globals_.put(name, peek(0));
           break;
         }
 
@@ -131,7 +131,7 @@ namespace lox {
 
         case OP_DEFINE_GLOBAL: {
           ObjString* name = readString();
-          globals.put(name, peek(0));
+          globals_.put(name, peek(0));
           pop();
           break;
         }

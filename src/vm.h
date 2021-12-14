@@ -141,8 +141,8 @@ namespace lox {
     std::array<Value, STACK_MAX> stack_;
     int stackTop_ = 0;
 
-    StringTable strings;
-    Map<StringKey, Value> globals;
+    StringTable strings_;
+    Map<StringKey, Value> globals_;
 
     std::ostream& out_;
   };
