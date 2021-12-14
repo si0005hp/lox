@@ -1,0 +1,11 @@
+fun makeClosure(value) {
+  fun closure() {
+    print value;
+  }
+  return closure;
+}
+
+var a = makeClosure("foo");
+var b = makeClosure("bar");
+a();
+b();

@@ -1,0 +1,17 @@
+fun outer() {
+  var x = 4;
+
+  fun middle() {
+    var y = 2;
+
+    fun inner() {
+      print x + y;
+    }
+    return inner;
+  }
+
+  return middle;
+}
+
+var inner = outer()();
+inner();
