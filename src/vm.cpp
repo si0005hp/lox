@@ -244,11 +244,18 @@ namespace lox {
           }
           break;
         }
+        case OP_CLOSE_UPVALUE: {
+          closeUpvalues(&stack_[stackTop_ - 1]);
+          pop();
+          break;
+        }
 
         case OP_RETURN: {
           // Save data for subsequent processes.
           Value result = pop();
           int frameStackStart = currentStackStart();
+
+          closeUpvalues(&stack_[frameStackStart]);
 
           frameCount_--;
           if (frameCount_ == 0) {
@@ -266,9 +273,36 @@ namespace lox {
     }
   }
 
-  ObjUpvalue* VM::captureUpvalue(Value* location) {
-    ObjUpvalue* createdUpvalue = allocateObj<ObjUpvalue>(location);
+  ObjUpvalue* VM::captureUpvalue(Value* local) {
+    ObjUpvalue* prevUpvalue = nullptr;
+    ObjUpvalue* upvalue = openUpvalues_;
+
+    // Walk towards the bottom of the stack until we find a previously existing
+    // upvalue or pass where it should be.
+    while (upvalue != nullptr && upvalue->location() > local) {
+      prevUpvalue = upvalue;
+      upvalue = upvalue->next();
+    }
+
+    // Found an existing upvalue for this local.
+    if (upvalue != nullptr && upvalue->location() == local) return upvalue;
+
+    // Make a new one, link it.
+    ObjUpvalue* createdUpvalue = allocateObj<ObjUpvalue>(local);
+    if (prevUpvalue == nullptr) {
+      openUpvalues_ = createdUpvalue;
+    } else {
+      prevUpvalue->next_ = createdUpvalue;
+    }
     return createdUpvalue;
+  }
+
+  void VM::closeUpvalues(Value* last) {
+    while (openUpvalues_ != nullptr && openUpvalues_->location() > last) {
+      ObjUpvalue* upvalue = openUpvalues_;
+      upvalue->doClose();
+      openUpvalues_ = upvalue->next();
+    }
   }
 
   bool VM::callValue(Value callee, int argCount) {

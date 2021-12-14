@@ -216,13 +216,10 @@ namespace lox {
       UNREACHABLE();
     }
 
-   private:
-    static ObjUpvalue* allocate(Value* location) {
-      return new ObjUpvalue(location);
+    void doClose() {
+      closed_ = *location_;
+      location_ = &closed_;
     }
-
-    ObjUpvalue(Value* location)
-      : location_(location) {}
 
     Value* location() const {
       return location_;
@@ -237,8 +234,16 @@ namespace lox {
     }
 
    private:
+    static ObjUpvalue* allocate(Value* location) {
+      return new ObjUpvalue(location);
+    }
+
+    ObjUpvalue(Value* location)
+      : location_(location) {}
+
+   private:
     Value* location_;
-    Value closed_ = NIL_VAL;
+    Value closed_ = Nil().asValue();
     ObjUpvalue* next_ = nullptr;
   };
 

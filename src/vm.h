@@ -66,6 +66,7 @@ namespace lox {
     bool call(ObjClosure* closure, int argCount);
 
     ObjUpvalue* captureUpvalue(Value* location);
+    void closeUpvalues(Value* last);
 
     instruction readByte() {
       return currentChunk().getCode(currentFrame().ip++);
@@ -143,6 +144,8 @@ namespace lox {
 
     StringTable strings_;
     Map<StringKey, Value> globals_;
+
+    ObjUpvalue* openUpvalues_;
 
     std::ostream& out_;
   };
