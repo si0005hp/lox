@@ -54,7 +54,7 @@ namespace lox {
     }
 
     void clear() {
-      free(entries_, count_);
+      Memory::deallocate(entries_);
       count_ = 0;
       capacity_ = 0;
     }
@@ -101,12 +101,8 @@ namespace lox {
         for (int i = 0; i < oldSize; i++) {
           if (!(oldEntries[i].key == K())) put(oldEntries[i].key, oldEntries[i].value);
         }
-        free(oldEntries, oldSize);
+        Memory::deallocate(oldEntries);
       }
-    }
-
-    void free(Entry* pointer, int count) {
-      Memory::reallocate(pointer, sizeof(Entry) * count, 0); // TODO: Fix oldSize spec
     }
 
     static constexpr int MAX_LOAD_PERCENT = 75;

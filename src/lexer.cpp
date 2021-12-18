@@ -201,7 +201,7 @@ namespace lox {
   }
 
   void Lexer::freeToken(Token* token) {
-    Memory::reallocate(token, sizeof(Token), 0);
+    Memory::deallocate(token);
   }
 
   Token* Lexer::syntheticToken(TokenType type, const char* text) {

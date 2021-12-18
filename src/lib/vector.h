@@ -53,7 +53,7 @@ namespace lox {
     }
 
     void clear() {
-      Memory::reallocate(items_, sizeof(T) * count_, 0); // TODO: Fix oldSize spec
+      Memory::deallocate(items_);
       count_ = 0;
       capacity_ = 0;
     }
