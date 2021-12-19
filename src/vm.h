@@ -145,7 +145,7 @@ namespace lox {
     StringTable strings_;
     Map<StringKey, Value> globals_;
 
-    ObjUpvalue* openUpvalues_;
+    ObjUpvalue* openUpvalues_ = nullptr;
 
     std::ostream& out_;
   };
