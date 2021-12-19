@@ -6,6 +6,7 @@
 #include "op_code.h"
 #include "parser.h"
 #include "value/value.h"
+#include "vm.h"
 
 namespace lox {
 

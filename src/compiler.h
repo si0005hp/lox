@@ -3,7 +3,6 @@
 #include "ast.h"
 #include "lexer.h"
 #include "value/object.h"
-#include "vm.h"
 
 namespace lox {
 

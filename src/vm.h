@@ -3,6 +3,7 @@
 #include <type_traits>
 
 #include "common.h"
+#include "compiler.h"
 #include "lib/vector.h"
 #include "string_table.h"
 #include "value/object.h"
@@ -48,6 +49,8 @@ namespace lox {
     }
 
    private:
+    ObjFunction* compileSource(const char* source);
+
     void freeObjects();
 
     void appendObj(Obj* obj);
@@ -148,5 +151,8 @@ namespace lox {
     ObjUpvalue* openUpvalues_ = nullptr;
 
     std::ostream& out_;
+
+    // Pointer to the Compiler that is currently compiling.
+    Compiler* compiler_ = nullptr;
   };
 } // namespace lox

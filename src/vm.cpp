@@ -23,9 +23,18 @@ namespace lox {
     freeObjects();
   }
 
-  InterpretResult VM::interpret(const char* source) {
+  ObjFunction* VM::compileSource(const char* source) {
     Compiler compiler(*this, nullptr, source);
-    ObjFunction* function = compiler.compile();
+    compiler_ = &compiler;
+
+    ObjFunction* result = compiler.compile();
+
+    compiler_ = nullptr;
+    return result;
+  }
+
+  InterpretResult VM::interpret(const char* source) {
+    ObjFunction* function = compileSource(source);
     if (!function) return INTERPRET_COMPILE_ERROR;
 
     push(function->asValue());
