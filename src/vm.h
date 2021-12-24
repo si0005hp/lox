@@ -52,6 +52,7 @@ namespace lox {
     ObjFunction* compileSource(const char* source);
 
     void freeObjects();
+    void freeObject(Obj* obj);
 
     void appendObj(Obj* obj);
 

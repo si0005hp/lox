@@ -48,7 +48,16 @@ namespace lox {
 
     // TODO: Should we use operator new/delete instead of realloc/free?
     static void* reallocate(void* p, size_t oldSize, size_t newSize) {
+#ifdef DEBUG_LOG_GC
+      printf("reallocate %p %lu -> %lu\n", p, (unsigned long)oldSize, (unsigned long)newSize);
+#endif
       totalBytesAllocated_ += newSize - oldSize;
+
+      if (newSize > oldSize) {
+#ifdef DEBUG_STRESS_GC
+        collectGarbage();
+#endif
+      }
 
       if (newSize == 0) {
         std::free(p);
@@ -59,6 +68,17 @@ namespace lox {
 
     static size_t totalBytesAllocated() {
       return totalBytesAllocated_;
+    }
+
+   private:
+    static void collectGarbage() {
+#ifdef DEBUG_LOG_GC
+      printf("-- gc begin\n");
+#endif
+
+#ifdef DEBUG_LOG_GC
+      printf("-- gc end\n");
+#endif
     }
 
    private:

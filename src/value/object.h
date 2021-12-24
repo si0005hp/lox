@@ -49,6 +49,11 @@ namespace lox {
     Obj* next_;
   };
 
+  inline std::ostream& operator<<(std::ostream& os, const Obj& obj) {
+    obj.trace(os);
+    return os;
+  };
+
   class ObjString : public Obj {
     friend class VM;
 
@@ -213,7 +218,7 @@ namespace lox {
 
    public:
     virtual void trace(std::ostream& os) const {
-      UNREACHABLE();
+      os << "upvalue"; // TODO
     }
 
     void doClose() {

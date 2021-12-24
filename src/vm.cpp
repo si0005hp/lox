@@ -5,6 +5,7 @@
 #include <iostream>
 
 #include "chunk.h"
+#include "common.h"
 #include "compiler.h"
 #include "debug.h"
 #include "memory.h"
@@ -50,9 +51,16 @@ namespace lox {
     Obj* obj = objects_;
     while (obj) {
       Obj* next = obj->next_;
-      Memory::deallocate<Obj>(obj);
+      freeObject(obj);
       obj = next;
     }
+  }
+
+  void VM::freeObject(Obj* obj) {
+#ifdef DEBUG_LOG_GC
+    std::cout << "free " << *obj << " @ " << obj << std::endl;
+#endif
+    Memory::deallocate<Obj>(obj);
   }
 
   void VM::appendObj(Obj* obj) {
