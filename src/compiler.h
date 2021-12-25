@@ -35,12 +35,15 @@ namespace lox {
   class Compiler
     : public Expr::Visitor<void>
     , public Stmt::Visitor<void> {
+    friend class VM;
 
    public:
     Compiler(VM& vm, Compiler* parent, const char* source);
     Compiler(VM& vm, Compiler* parent, const Function* fn);
 
     ObjFunction* compile();
+
+    void gcBlacken(VM& vm) const;
 
    private:
     void setFirstLocal();

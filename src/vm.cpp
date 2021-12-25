@@ -391,6 +391,13 @@ namespace lox {
       gcMarkObject(e->key.value());
       gcMarkValue(e->value);
     }
+
+    // Compiler
+    Compiler* compiler = compiler_;
+    while (compiler != nullptr) {
+      compiler = compiler_->enclosing_;
+      compiler->gcBlacken(*this);
+    }
   }
 
   void VM::gcBlackenObjects() {
@@ -399,7 +406,6 @@ namespace lox {
 #ifdef DEBUG_LOG_GC
       std::cout << "blacken " << *obj << " @ " << obj << std::endl;
 #endif
-
       obj->gcBlacken(*this);
     }
   }
@@ -417,7 +423,7 @@ namespace lox {
 #ifdef DEBUG_LOG_GC
     std::cout << "mark " << *obj << " @ " << obj << std::endl;
 #endif
-
+    obj->isGCMarked_ = true;
     gcGrayStack_.push(obj);
   }
 

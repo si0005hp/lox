@@ -42,6 +42,11 @@ namespace lox {
     locals_.push(local);
   }
 
+  void Compiler::gcBlacken(VM& vm) const {
+    vm.gcMarkObject(function_);
+    // TODO: ast size
+  }
+
   ObjFunction* Compiler::compile() {
     Parser parser(lexer_);
 
