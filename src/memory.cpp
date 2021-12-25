@@ -9,7 +9,7 @@ namespace lox {
     printf("-- gc begin\n");
 #endif
 
-    vm_->gcMarkRoots();
+    // vm_->gcMarkRoots();
 
 #ifdef DEBUG_LOG_GC
     printf("-- gc end\n");

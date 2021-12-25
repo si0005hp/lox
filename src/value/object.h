@@ -109,7 +109,7 @@ namespace lox {
       HashMapKey(ObjString* s)
         : isNull_(false)
         , hash_(s->hash_)
-        , s_(s) {}
+        , value_(s) {}
 
       // TODO
       HashMapKey(uint32_t hash)
@@ -129,10 +129,14 @@ namespace lox {
         return hash_;
       }
 
+      ObjString* value() const {
+        return value_;
+      }
+
      private:
       bool isNull_ = true;
       uint32_t hash_ = 0;
-      ObjString* s_ = nullptr;
+      ObjString* value_ = nullptr;
     };
 
    private:

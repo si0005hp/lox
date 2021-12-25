@@ -372,7 +372,31 @@ namespace lox {
     return result;
   }
 
-  void VM::gcMarkRoots() {}
+  void VM::gcMarkRoots() {
+    // VM stack
+    for (int i = 0; i < stackTop_; i++) {
+      gcMarkValue(stack_[i]);
+    }
+
+    // Functions in callframes
+    for (int i = 0; i < frameCount_; i++) {
+      gcMarkObject(frames_[i].closure);
+    }
+
+    // Open upvalues.
+    for (ObjUpvalue* upvalue = openUpvalues_; upvalue != nullptr; upvalue = upvalue->next()) {
+      gcMarkObject(upvalue);
+    }
+
+    // Global variables
+    for (int i = 0; i < globals_.capacity(); ++i) {
+      Map<StringKey, Value>::Entry* e = globals_.getEntry(i);
+      if (e->isEmpty()) continue;
+
+      gcMarkObject(e->key.value());
+      gcMarkValue(e->value);
+    }
+  }
 
   void VM::gcBlackenObjects() {
     while (gcGrayStack_.size() > 0) {
