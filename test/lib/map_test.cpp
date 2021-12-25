@@ -84,3 +84,25 @@ TEST_F(MapTest, str) {
   ASSERT_TRUE(map.get(key, &value));
   ASSERT_EQ(value, 100);
 }
+
+TEST_F(MapTest, entries) {
+  Map<IntKey, int> map;
+  map.put(1, 100);
+  map.put(2, 200);
+
+  int entriesCount = 0;
+  for (int i = 0; i < map.capacity(); ++i) {
+    Map<IntKey, int>::Entry* e = map.getEntry(i);
+    if (e->isEmpty()) continue;
+
+    entriesCount++;
+    if (e->key == 1) {
+      ASSERT_EQ(100, e->value);
+    } else if (e->key == 2) {
+      ASSERT_EQ(200, e->value);
+    } else {
+      FAIL();
+    }
+  }
+  ASSERT_EQ(2, entriesCount);
+}

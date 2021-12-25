@@ -9,6 +9,15 @@ namespace lox {
   template <class K, class V>
   class Map {
    public:
+    struct Entry {
+      K key;
+      V value;
+
+      bool isEmpty() const {
+        return key == K();
+      }
+    };
+
     Map()
       : count_(0)
       , capacity_(0)
@@ -33,7 +42,7 @@ namespace lox {
 
       int index = static_cast<int>(key.hashCode() & 0x7fffffff) % capacity_;
 
-      while (!(entries_[index].key == K()) && !(entries_[index].key == key)) {
+      while (!entries_[index].isEmpty() && !(entries_[index].key == key)) {
         index = (index + 1) % capacity_;
       }
 
@@ -63,12 +72,23 @@ namespace lox {
       return findIndex(key) != -1;
     }
 
-   private:
-    struct Entry {
-      K key;
-      V value;
-    };
+    int size() const {
+      return count_;
+    }
 
+    int capacity() const {
+      return capacity_;
+    }
+
+    Entry* entries() const {
+      return entries_;
+    }
+
+    Entry* getEntry(int index) const {
+      return &entries_[index];
+    }
+
+   private:
     int findIndex(const K& key) const {
       if (capacity_ == 0) return -1;
 
@@ -77,7 +97,7 @@ namespace lox {
       while (true) {
         if (entries_[index].key == key) return index;
 
-        if (entries_[index].key == K()) return -1;
+        if (entries_[index].isEmpty()) return -1;
 
         index = (index + 1) % capacity_;
       }
@@ -99,7 +119,7 @@ namespace lox {
 
       if (oldEntries != nullptr) {
         for (int i = 0; i < oldSize; i++) {
-          if (!(oldEntries[i].key == K())) put(oldEntries[i].key, oldEntries[i].value);
+          if (!oldEntries[i].isEmpty()) put(oldEntries[i].key, oldEntries[i].value);
         }
         Memory::deallocate(oldEntries);
       }
