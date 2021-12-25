@@ -50,8 +50,8 @@ namespace lox {
 
     // GC procedures
     void gcMarkRoots();
-    void markValue(Value value);
-    void markObject(Obj* obj);
+    void gcMarkValue(Value value);
+    void gcMarkObject(Obj* obj);
 
    private:
     ObjFunction* compileSource(const char* source);
@@ -160,5 +160,7 @@ namespace lox {
 
     // Pointer to the Compiler that is currently compiling.
     Compiler* compiler_ = nullptr;
+
+    Vector<Obj*> gcGrayStack_;
   };
 } // namespace lox

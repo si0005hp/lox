@@ -374,19 +374,21 @@ namespace lox {
 
   void VM::gcMarkRoots() {}
 
-  void VM::markValue(Value value) {
+  void VM::gcMarkValue(Value value) {
     if (!value.isObj()) return;
 
-    markObject(value.asObj());
+    gcMarkObject(value.asObj());
   }
 
-  void VM::markObject(Obj* obj) {
+  void VM::gcMarkObject(Obj* obj) {
     if (obj == nullptr) return;
     if (obj->isMarked_) return;
 
 #ifdef DEBUG_LOG_GC
     std::cout << "mark " << *obj << " @ " << obj << std::endl;
 #endif
+
+    gcGrayStack_.push(obj);
   }
 
 } // namespace lox
