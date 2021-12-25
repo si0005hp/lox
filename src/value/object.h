@@ -46,7 +46,12 @@ namespace lox {
     }
 
    private:
-    bool isMarked_ = false;
+    virtual void gcBlacken(VM& vm) const {
+      // TODO: Fix leave this as default behavior, or change to pure virtual function?
+    }
+
+   private:
+    bool isGCMarked_ = false;
     Obj* next_ = nullptr;
   };
 
@@ -206,6 +211,8 @@ namespace lox {
       , arity_(arity)
       , name_(name) {}
 
+    void gcBlacken(VM& vm) const;
+
    private:
     FunctionType type_;
     int arity_;
@@ -247,6 +254,8 @@ namespace lox {
     ObjUpvalue(Value* location)
       : location_(location) {}
 
+    void gcBlacken(VM& vm) const;
+
    private:
     Value* location_;
     Value closed_ = Nil().asValue();
@@ -279,6 +288,8 @@ namespace lox {
       : fn_(fn) {
       for (int i = 0; i < fn->upvalueCount(); i++) upvalues_[i] = nullptr;
     }
+
+    void gcBlacken(VM& vm) const;
 
    private:
     ObjFunction* fn_;

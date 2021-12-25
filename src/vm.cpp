@@ -374,6 +374,17 @@ namespace lox {
 
   void VM::gcMarkRoots() {}
 
+  void VM::gcBlackenObjects() {
+    while (gcGrayStack_.size() > 0) {
+      Obj* obj = gcGrayStack_.removeAt(gcGrayStack_.size() - 1);
+#ifdef DEBUG_LOG_GC
+      std::cout << "blacken " << *obj << " @ " << obj << std::endl;
+#endif
+
+      obj->gcBlacken(*this);
+    }
+  }
+
   void VM::gcMarkValue(Value value) {
     if (!value.isObj()) return;
 
@@ -382,7 +393,7 @@ namespace lox {
 
   void VM::gcMarkObject(Obj* obj) {
     if (obj == nullptr) return;
-    if (obj->isMarked_) return;
+    if (obj->isGCMarked_) return;
 
 #ifdef DEBUG_LOG_GC
     std::cout << "mark " << *obj << " @ " << obj << std::endl;

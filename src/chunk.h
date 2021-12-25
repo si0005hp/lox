@@ -40,6 +40,10 @@ namespace lox {
       return constants_[index];
     }
 
+    const Vector<Value>& constants() const {
+      return constants_;
+    }
+
    private:
     Vector<instruction> code_;
     Vector<int> lines_;

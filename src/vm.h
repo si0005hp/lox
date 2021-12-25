@@ -50,6 +50,7 @@ namespace lox {
 
     // GC procedures
     void gcMarkRoots();
+    void gcBlackenObjects();
     void gcMarkValue(Value value);
     void gcMarkObject(Obj* obj);
 
