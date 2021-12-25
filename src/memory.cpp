@@ -13,6 +13,8 @@ namespace lox {
 
     vm_->gcBlackenObjects();
 
+    vm_->gcSweep();
+
 #ifdef DEBUG_LOG_GC
     printf("-- gc end\n");
 #endif

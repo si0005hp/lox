@@ -394,9 +394,9 @@ namespace lox {
 
     // Compiler
     Compiler* compiler = compiler_;
-    while (compiler != nullptr) {
-      compiler = compiler_->enclosing_;
+    while (compiler) {
       compiler->gcBlacken(*this);
+      compiler = compiler->enclosing_;
     }
   }
 
@@ -417,7 +417,7 @@ namespace lox {
   }
 
   void VM::gcMarkObject(Obj* obj) {
-    if (obj == nullptr) return;
+    if (!obj) return;
     if (obj->isGCMarked_) return;
 
 #ifdef DEBUG_LOG_GC
@@ -425,6 +425,27 @@ namespace lox {
 #endif
     obj->isGCMarked_ = true;
     gcGrayStack_.push(obj);
+  }
+
+  void VM::gcSweep() {
+    Obj* previous = nullptr;
+    Obj* obj = objects_;
+    while (obj) {
+      if (obj->isGCMarked_) {
+        previous = obj;
+        obj = obj->next_;
+      } else {
+        Obj* unreached = obj;
+        obj = obj->next_;
+        if (previous) {
+          previous->next_ = obj;
+        } else {
+          objects_ = obj;
+        }
+
+        freeObject(unreached);
+      }
+    }
   }
 
 } // namespace lox

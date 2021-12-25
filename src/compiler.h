@@ -124,7 +124,7 @@ namespace lox {
 
     VM& vm_;
 
-    ObjFunction* function_;
+    ObjFunction* function_ = nullptr;
 
     bool hadError_ = false;
 
