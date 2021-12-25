@@ -48,6 +48,10 @@ namespace lox {
       return obj;
     }
 
+    void setCompiler(Compiler* compiler) {
+      compiler_ = compiler;
+    }
+
     // GC procedures
     void gcMarkRoots();
     void gcBlackenObjects();

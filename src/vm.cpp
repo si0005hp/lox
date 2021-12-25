@@ -26,12 +26,7 @@ namespace lox {
 
   ObjFunction* VM::compileSource(const char* source) {
     Compiler compiler(*this, nullptr, source);
-    compiler_ = &compiler;
-
-    ObjFunction* result = compiler.compile();
-
-    compiler_ = nullptr;
-    return result;
+    return compiler.compile();
   }
 
   InterpretResult VM::interpret(const char* source) {

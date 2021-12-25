@@ -18,6 +18,7 @@ namespace lox {
     , upvalues_(Vector<CompilerUpvalue>(UPVALUES_MAX)) {
     function_ = vm.allocateObj<ObjFunction>(TYPE_SCRIPT, 0, nullptr);
     setFirstLocal();
+    vm.setCompiler(this);
   }
 
   // TODO: refactor constructors
@@ -31,6 +32,7 @@ namespace lox {
       vm.allocateObj<ObjFunction>(TYPE_FUNCTION, fn->params.size(),
                                   vm_.allocateObj<ObjString>(fn->name->start, fn->name->length));
     setFirstLocal();
+    vm.setCompiler(this);
   }
 
   void Compiler::setFirstLocal() {
