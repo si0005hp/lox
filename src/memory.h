@@ -1,13 +1,9 @@
 #pragma once
 
-// #include <stdlib.h>
 #include <cstdlib>
-
-// #include "vm.h"
 
 namespace lox {
 
-  // TODO
   class VM;
 
   class Memory {
@@ -71,15 +67,7 @@ namespace lox {
     }
 
    private:
-    static void collectGarbage() {
-#ifdef DEBUG_LOG_GC
-      printf("-- gc begin\n");
-#endif
-
-#ifdef DEBUG_LOG_GC
-      printf("-- gc end\n");
-#endif
-    }
+    static void collectGarbage();
 
    private:
     inline static size_t totalBytesAllocated_ = 0;

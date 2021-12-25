@@ -48,6 +48,11 @@ namespace lox {
       return obj;
     }
 
+    // GC procedures
+    void gcMarkRoots();
+    void markValue(Value value);
+    void markObject(Obj* obj);
+
    private:
     ObjFunction* compileSource(const char* source);
 

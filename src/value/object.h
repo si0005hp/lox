@@ -46,7 +46,8 @@ namespace lox {
     }
 
    private:
-    Obj* next_;
+    bool isMarked_ = false;
+    Obj* next_ = nullptr;
   };
 
   inline std::ostream& operator<<(std::ostream& os, const Obj& obj) {
