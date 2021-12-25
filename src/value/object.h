@@ -104,13 +104,14 @@ namespace lox {
 
     class HashMapKey {
      public:
-      HashMapKey()
-        : isNull_(true)
-        , hash_(0) {}
+      HashMapKey() {}
 
       HashMapKey(ObjString* s)
-        : HashMapKey(s->hash()) {}
+        : isNull_(false)
+        , hash_(s->hash_)
+        , s_(s) {}
 
+      // TODO
       HashMapKey(uint32_t hash)
         : isNull_(false)
         , hash_(hash) {}
@@ -129,8 +130,9 @@ namespace lox {
       }
 
      private:
-      bool isNull_;
-      uint32_t hash_;
+      bool isNull_ = true;
+      uint32_t hash_ = 0;
+      ObjString* s_ = nullptr;
     };
 
    private:
