@@ -106,19 +106,22 @@ namespace lox {
     void ensureCapacity() {
       if (count_ <= capacity_ * MAX_LOAD_PERCENT / 100) return;
 
-      int oldSize = capacity_;
-      capacity_ = MIN_CAPACITY;
-      if (oldSize >= MIN_CAPACITY) {
-        capacity_ = oldSize * GROW_FACTOR;
+      int oldCapacity = capacity_;
+      int newCapacity = MIN_CAPACITY;
+      if (oldCapacity >= MIN_CAPACITY) {
+        newCapacity = oldCapacity * GROW_FACTOR;
       }
 
       Entry* oldEntries = entries_;
 
-      void* mem = Memory::reallocate(nullptr, 0, sizeof(Entry) * capacity_);
-      entries_ = ::new (mem) Entry[capacity_];
+      void* mem = Memory::reallocate(nullptr, 0, sizeof(Entry) * newCapacity);
+      entries_ = ::new (mem) Entry[newCapacity];
+      // New capacity must be set 'after' new entries are allocated, otherwise null entries are
+      // returned during the GC.
+      capacity_ = newCapacity;
 
       if (oldEntries != nullptr) {
-        for (int i = 0; i < oldSize; i++) {
+        for (int i = 0; i < oldCapacity; i++) {
           if (!oldEntries[i].isEmpty()) put(oldEntries[i].key, oldEntries[i].value);
         }
         Memory::deallocate(oldEntries);
