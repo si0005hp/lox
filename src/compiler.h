@@ -84,6 +84,7 @@ namespace lox {
 
     instruction makeConstant(SRC, Value value);
     instruction identifierConstant(SRC);
+    instruction addConstant(Value value);
     void error(SRC, const char* message);
 
     instruction parseVariable(Token* var);

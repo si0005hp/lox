@@ -60,6 +60,18 @@ namespace lox {
     void gcMarkValue(Value value);
     void gcMarkObject(Obj* obj);
 
+    void pushRoot(Value value) {
+      push(value);
+    }
+
+    void pushRoot(Obj* obj) {
+      pushRoot(obj->asValue());
+    }
+
+    void popRoot() {
+      pop();
+    }
+
    private:
     ObjFunction* compileSource(const char* source);
 
@@ -129,14 +141,6 @@ namespace lox {
     Value pop() {
       stackTop_--;
       return stack_[stackTop_];
-    }
-
-    void pushRoot(Obj* obj) {
-      push(obj->asValue());
-    }
-
-    void popRoot() {
-      pop();
     }
 
     Value peek(int offset) const {

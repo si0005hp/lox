@@ -92,7 +92,7 @@ namespace lox {
   }
 
   instruction Compiler::makeConstant(SRC, Value value) {
-    instruction constant = currentChunk().addConstant(value);
+    instruction constant = addConstant(value);
     if (constant > UINT8_MAX) {
       error(token, "Too many constants in one chunk.");
       return 0;
@@ -102,6 +102,14 @@ namespace lox {
 
   instruction Compiler::identifierConstant(Token* idt) {
     return makeConstant(idt, vm_.allocateObj<ObjString>(idt->start, idt->length)->asValue());
+  }
+
+  instruction Compiler::addConstant(Value value) {
+    vm_.pushRoot(value);
+    instruction constant = currentChunk().addConstant(value);
+    vm_.popRoot();
+
+    return constant;
   }
 
   void Compiler::error(SRC, const char* message) {
