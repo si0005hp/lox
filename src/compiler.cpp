@@ -11,29 +11,27 @@
 namespace lox {
 
   Compiler::Compiler(VM& vm, Compiler* parent, const char* source)
+    : Compiler(vm, parent, source, nullptr) {}
+
+  Compiler::Compiler(VM& vm, Compiler* parent, const Function* fn)
+    : Compiler(vm, parent, nullptr, fn) {}
+
+  Compiler::Compiler(VM& vm, Compiler* parent, const char* source, const Function* fn)
     : lexer_(source)
     , vm_(vm)
-    , locals_(Vector<Local>(LOCALS_MAX))
     , enclosing_(parent)
-    , upvalues_(Vector<CompilerUpvalue>(UPVALUES_MAX)) {
-    vm.setCompiler(this);
-    function_ = vm.allocateObj<ObjFunction>(TYPE_SCRIPT, 0, nullptr);
-    setFirstLocal();
-  }
-
-  // TODO: refactor constructors
-  Compiler::Compiler(VM& vm, Compiler* parent, const Function* fn)
-    : lexer_(nullptr)
-    , vm_(vm)
     , locals_(Vector<Local>(LOCALS_MAX))
-    , enclosing_(parent)
     , upvalues_(Vector<CompilerUpvalue>(UPVALUES_MAX)) {
-    vm.setCompiler(this);
+    vm_.setCompiler(this);
 
-    ObjString* name = vm_.allocateObj<ObjString>(fn->name->start, fn->name->length);
-    vm.pushRoot(name);
-    function_ = vm.allocateObj<ObjFunction>(TYPE_FUNCTION, fn->params.size(), name);
-    vm.popRoot();
+    if (!fn) {
+      function_ = vm_.allocateObj<ObjFunction>(TYPE_SCRIPT, 0, nullptr);
+    } else {
+      ObjString* name = vm_.allocateObj<ObjString>(fn->name->start, fn->name->length);
+      vm_.pushRoot(name);
+      function_ = vm_.allocateObj<ObjFunction>(TYPE_FUNCTION, fn->params.size(), name);
+      vm_.popRoot();
+    }
 
     setFirstLocal();
   }

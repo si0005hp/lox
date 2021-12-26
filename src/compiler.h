@@ -46,6 +46,8 @@ namespace lox {
     void gcBlacken(VM& vm) const;
 
    private:
+    Compiler(VM& vm, Compiler* parent, const char* source, const Function* fn);
+
     void setFirstLocal();
 
     virtual void visit(const Assign* expr);
@@ -122,8 +124,8 @@ namespace lox {
 
    private:
     Lexer lexer_;
-
     VM& vm_;
+    Compiler* enclosing_ = nullptr;
 
     ObjFunction* function_ = nullptr;
 
@@ -132,8 +134,6 @@ namespace lox {
     static constexpr int LOCALS_MAX = 256;
     Vector<Local> locals_; // TODO: Fixed size container
     int scopeDepth_ = 0;
-
-    Compiler* enclosing_;
 
     static constexpr int UPVALUES_MAX = 256;
     Vector<CompilerUpvalue> upvalues_; // TODO: Fixed size container
