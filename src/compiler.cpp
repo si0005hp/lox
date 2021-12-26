@@ -29,9 +29,12 @@ namespace lox {
     , enclosing_(parent)
     , upvalues_(Vector<CompilerUpvalue>(UPVALUES_MAX)) {
     vm.setCompiler(this);
-    function_ =
-      vm.allocateObj<ObjFunction>(TYPE_FUNCTION, fn->params.size(),
-                                  vm_.allocateObj<ObjString>(fn->name->start, fn->name->length));
+
+    ObjString* name = vm_.allocateObj<ObjString>(fn->name->start, fn->name->length);
+    vm.pushRoot(name);
+    function_ = vm.allocateObj<ObjFunction>(TYPE_FUNCTION, fn->params.size(), name);
+    vm.popRoot();
+
     setFirstLocal();
   }
 
