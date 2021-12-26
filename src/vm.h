@@ -130,6 +130,14 @@ namespace lox {
       return stack_[stackTop_];
     }
 
+    void pushRoot(Obj* obj) {
+      push(obj->asValue());
+    }
+
+    void popRoot() {
+      pop();
+    }
+
     Value peek(int offset) const {
       return stack_[stackTop_ - 1 - offset];
     }

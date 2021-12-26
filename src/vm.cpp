@@ -33,9 +33,9 @@ namespace lox {
     ObjFunction* function = compileSource(source);
     if (!function) return INTERPRET_COMPILE_ERROR;
 
-    push(function->asValue());
+    pushRoot(function);
     ObjClosure* closure = allocateObj<ObjClosure>(function);
-    pop();
+    popRoot();
 
     push(closure->asValue());
     callValue(closure->asValue(), 0);
@@ -350,9 +350,8 @@ namespace lox {
   }
 
   ObjString* VM::concatString(ObjString* left, ObjString* right) {
-    // Avoid GC
-    push(left->asValue());
-    push(right->asValue());
+    pushRoot(left);
+    pushRoot(right);
 
     int length = left->length() + right->length();
     char* chars = Memory::allocate<char>(length + 1);
@@ -362,8 +361,8 @@ namespace lox {
 
     ObjString* result = allocateObj<ObjString>(chars, length);
     Memory::reallocate(chars, sizeof(char) * length, 0);
-    pop();
-    pop();
+    popRoot();
+    popRoot();
     return result;
   }
 
