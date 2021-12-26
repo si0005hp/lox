@@ -49,6 +49,7 @@ namespace lox {
 #endif
       totalBytesAllocated_ += newSize - oldSize;
 
+      // TODO: GC cycle.
       if (newSize > oldSize) {
 #ifdef DEBUG_STRESS_GC
         collectGarbage();
