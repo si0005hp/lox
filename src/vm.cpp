@@ -413,6 +413,10 @@ namespace lox {
     }
   }
 
+  void VM::gcRemoveWeakReferences() {
+    strings_.removeUnmarkedStrings();
+  }
+
   void VM::gcSweep() {
     Obj* previous = nullptr;
     Obj* obj = objects_;

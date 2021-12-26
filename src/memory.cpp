@@ -13,6 +13,8 @@ namespace lox {
 
     vm_->gcBlackenObjects();
 
+    vm_->gcRemoveWeakReferences();
+
     vm_->gcSweep();
 
 #ifdef DEBUG_LOG_GC

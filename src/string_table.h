@@ -21,6 +21,16 @@ namespace lox {
       return nullptr;
     }
 
+    void removeUnmarkedStrings() {
+      // Interned strings
+      for (int i = 0; i < map_.capacity(); ++i) {
+        Map<StringKey, ObjString*>::Entry* e = map_.getEntry(i);
+        if (e->isEmpty()) continue;
+
+        if (!e->value->isGCMarked()) map_.remove(e->key);
+      }
+    }
+
    private:
     Map<StringKey, ObjString*> map_;
   };

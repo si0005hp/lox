@@ -45,6 +45,10 @@ namespace lox {
       return this == other;
     }
 
+    bool isGCMarked() const {
+      return isGCMarked_;
+    }
+
    private:
     virtual void gcBlacken(VM& vm) const {
       // TODO: Fix leave this as default behavior, or change to pure virtual function?
