@@ -413,23 +413,6 @@ namespace lox {
     }
   }
 
-  void VM::gcMarkValue(Value value) {
-    if (!value.isObj()) return;
-
-    gcMarkObject(value.asObj());
-  }
-
-  void VM::gcMarkObject(Obj* obj) {
-    if (!obj) return;
-    if (obj->isGCMarked_) return;
-
-#ifdef DEBUG_LOG_GC
-    std::cout << "mark " << *obj << " @ " << obj << std::endl;
-#endif
-    obj->isGCMarked_ = true;
-    gcGrayStack_.push(obj);
-  }
-
   void VM::gcSweep() {
     Obj* previous = nullptr;
     Obj* obj = objects_;
@@ -449,6 +432,23 @@ namespace lox {
         freeObject(unreached);
       }
     }
+  }
+
+  void VM::gcMarkValue(Value value) {
+    if (!value.isObj()) return;
+
+    gcMarkObject(value.asObj());
+  }
+
+  void VM::gcMarkObject(Obj* obj) {
+    if (!obj) return;
+    if (obj->isGCMarked_) return;
+
+#ifdef DEBUG_LOG_GC
+    std::cout << "mark " << *obj << " @ " << obj << std::endl;
+#endif
+    obj->isGCMarked_ = true;
+    gcGrayStack_.push(obj);
   }
 
 } // namespace lox
