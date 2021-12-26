@@ -69,7 +69,11 @@ namespace lox {
 
     obj = ObjString::allocate(src, length);
     appendObj(obj);
+
+    pushRoot(obj);
     strings_.add(obj);
+    popRoot();
+
     return obj;
   }
 
