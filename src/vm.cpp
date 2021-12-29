@@ -387,6 +387,7 @@ namespace lox {
     }
 
     // Global variables
+    // TODO: Lame Map blackening codes
     for (int i = 0; i < globals_.capacity(); ++i) {
       Map<StringKey, Value>::Entry* e = globals_.getEntry(i);
       if (e->isEmpty()) continue;

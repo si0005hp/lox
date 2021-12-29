@@ -4,6 +4,7 @@
 
 #include "../chunk.h"
 #include "../common.h"
+#include "../lib/map.h"
 #include "../memory.h"
 #include "../utils.h"
 #include "value.h"
@@ -304,6 +305,53 @@ namespace lox {
    private:
     ObjFunction* fn_;
     ObjUpvalue* upvalues_[FLEXIBLE_ARRAY];
+  };
+
+  class ObjClass : public Obj {
+    friend class VM;
+
+   public:
+    virtual void trace(std::ostream& os) const {
+      os << "class " << name_;
+    }
+
+   private:
+    static ObjClass* allocate(ObjString* name) {
+      return new ObjClass(name);
+    }
+
+    ObjClass(ObjString* name)
+      : name_(name) {}
+
+    void gcBlacken(VM& vm) const;
+
+   private:
+    ObjString* name_;
+  };
+
+  typedef Map<StringKey, Value> FieldTable;
+
+  class ObjInstance : public Obj {
+    friend class VM;
+
+   public:
+    virtual void trace(std::ostream& os) const {
+      os << klass_ << " instance";
+    }
+
+   private:
+    static ObjInstance* allocate(ObjClass* klass) {
+      return new ObjInstance(klass);
+    }
+
+    ObjInstance(ObjClass* klass)
+      : klass_(klass) {}
+
+    void gcBlacken(VM& vm) const;
+
+   private:
+    ObjClass* klass_;
+    FieldTable fields_;
   };
 
 } // namespace lox

@@ -33,4 +33,19 @@ namespace lox {
     for (int i = 0; i < fn_->upvalueCount(); i++) vm.gcMarkObject(upvalues_[i]);
   }
 
+  void ObjClass::gcBlacken(VM& vm) const {
+    vm.gcMarkObject(name_);
+  }
+
+  void ObjInstance::gcBlacken(VM& vm) const {
+    vm.gcMarkObject(klass_);
+    for (int i = 0; i < fields_.capacity(); ++i) {
+      Map<StringKey, Value>::Entry* e = fields_.getEntry(i);
+      if (e->isEmpty()) continue;
+
+      vm.gcMarkObject(e->key.value());
+      vm.gcMarkValue(e->value);
+    }
+  }
+
 } // namespace lox
