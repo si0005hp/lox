@@ -80,6 +80,8 @@ namespace lox {
       return node;
     }
 
+    void freeAstNode(Ast* node);
+
    private:
     ParseResult result_;
 

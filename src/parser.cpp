@@ -19,9 +19,15 @@ namespace lox {
 
   Parser::~Parser() {
     for (int i = 0; i < astNodes_.size(); i++) {
-      Memory::deallocate<Ast>(astNodes_[i]);
-      // TODO: Recover allocated bytes
+      freeAstNode(astNodes_[i]);
+
+      // TODO: Recover allocated bytes here
     }
+  }
+
+  void Parser::freeAstNode(Ast* node) {
+    node->~Ast(); // TODO: Calling destructor is lame
+    Memory::deallocate(node);
   }
 
   bool Parser::parse() {

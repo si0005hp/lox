@@ -55,7 +55,8 @@ namespace lox {
 #ifdef DEBUG_LOG_GC
     std::cout << "free " << *obj << " @ " << obj << std::endl;
 #endif
-    Memory::deallocate<Obj>(obj);
+    obj->~Obj(); // TODO: Calling destructor is lame
+    Memory::deallocate(obj);
   }
 
   void VM::appendObj(Obj* obj) {
