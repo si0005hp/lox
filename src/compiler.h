@@ -96,6 +96,8 @@ namespace lox {
     void namedVariable(Token* name, bool isSetOp = false);
     void markInitialized();
 
+    void namedProperty(Expr* receiver, Token* name, bool isSetOp = false);
+
     int resolveLocal(Token* name);
     int resolveUpvalue(Token* name);
     int addUpvalue(SRC, int index, bool isLocal);

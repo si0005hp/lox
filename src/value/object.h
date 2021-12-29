@@ -14,6 +14,8 @@ namespace lox {
   class ObjString;
   class ObjFunction;
   class ObjClosure;
+  class ObjClass;
+  class ObjInstance;
 
   class Obj {
     friend class VM;
@@ -40,6 +42,12 @@ namespace lox {
 
     bool isClosure() const;
     ObjClosure* asClosure();
+
+    bool isClass() const;
+    ObjClass* asClass();
+
+    bool isInstance() const;
+    ObjInstance* asInstance();
 
     virtual bool eq(Obj* other) const {
       // Default identity logic.
@@ -315,6 +323,10 @@ namespace lox {
       os << "class " << name_;
     }
 
+    ObjString* name() const {
+      return name_;
+    }
+
    private:
     static ObjClass* allocate(ObjString* name) {
       return new ObjClass(name);
@@ -337,6 +349,14 @@ namespace lox {
    public:
     virtual void trace(std::ostream& os) const {
       os << klass_ << " instance";
+    }
+
+    ObjClass* klass() const {
+      return klass_;
+    }
+
+    FieldTable& fields() {
+      return fields_;
     }
 
    private:

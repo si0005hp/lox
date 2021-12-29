@@ -145,6 +145,38 @@ namespace lox {
           break;
         }
 
+        case OP_GET_PROPERTY: {
+          if (!peek(0).isInstance()) {
+            runtimeError("Only instances have properties.");
+            return INTERPRET_RUNTIME_ERROR;
+          }
+          ObjInstance* instance = peek(0).asInstance();
+          ObjString* name = readString();
+
+          // If it was the field, push
+          Value value;
+          if (instance->fields().get(name, &value)) {
+            pop(); // Instance
+            push(value);
+            break;
+          }
+          // Otherwise try to find method
+          // TODO: implement
+          break;
+        }
+        case OP_SET_PROPERTY: {
+          if (!peek(0).isInstance()) {
+            runtimeError("Only instances have fields.");
+            return INTERPRET_RUNTIME_ERROR;
+          }
+          ObjInstance* instance = peek(0).asInstance();
+          instance->fields().put(readString(), peek(1));
+
+          pop(); // Instance
+          // Leave assigned value on the stack
+          break;
+        }
+
         case OP_DEFINE_GLOBAL: {
           ObjString* name = readString();
           globals_.put(name, peek(0));

@@ -45,6 +45,8 @@ namespace lox {
   OBJ_TYPE_APIS(String)
   OBJ_TYPE_APIS(Function)
   OBJ_TYPE_APIS(Closure)
+  OBJ_TYPE_APIS(Class)
+  OBJ_TYPE_APIS(Instance)
 
 #undef OBJ_TYPE_APIS
 

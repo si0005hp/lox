@@ -162,7 +162,9 @@ namespace lox {
       emitBytes(name, isSetOp ? OP_SET_UPVALUE : OP_GET_UPVALUE, index);
     } else {
       instruction slot = identifierConstant(name);
+      vm_.pushRoot(currentChunk().getConstant(slot));
       emitBytes(name, isSetOp ? OP_SET_GLOBAL : OP_GET_GLOBAL, slot);
+      vm_.popRoot();
     }
   }
 
@@ -252,7 +254,19 @@ namespace lox {
     for (int i = 0; i < arguments.size(); i++) arguments[i]->accept(this);
   }
 
-  void Compiler::visit(const Get* expr) {}
+  void Compiler::visit(const Get* expr) {
+    namedProperty(expr->object, expr->name);
+  }
+
+  void Compiler::namedProperty(Expr* receiver, Token* name, bool isSetOp) {
+    receiver->accept(this);
+
+    instruction slot = identifierConstant(name);
+    // TODO: Lame
+    vm_.pushRoot(currentChunk().getConstant(slot));
+    emitBytes(name, isSetOp ? OP_SET_PROPERTY : OP_GET_PROPERTY, slot);
+    vm_.popRoot();
+  }
 
   void Compiler::visit(const Grouping* expr) {
     expr->expression->accept(this);
@@ -287,7 +301,11 @@ namespace lox {
     patchJump(expr->op, jumpOffset);
   }
 
-  void Compiler::visit(const Set* expr) {}
+  void Compiler::visit(const Set* expr) {
+    expr->value->accept(this);
+
+    namedProperty(expr->object, expr->name, true);
+  }
 
   void Compiler::visit(const Super* expr) {}
 

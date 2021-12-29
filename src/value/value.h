@@ -29,6 +29,8 @@ namespace lox {
   class ObjString;
   class ObjFunction;
   class ObjClosure;
+  class ObjClass;
+  class ObjInstance;
 
   // TODO: The whole Value abstraction could be better desined.
   class Value {
@@ -58,6 +60,12 @@ namespace lox {
 
     bool isClosure() const;
     ObjClosure* asClosure() const;
+
+    bool isClass() const;
+    ObjClass* asClass() const;
+
+    bool isInstance() const;
+    ObjInstance* asInstance() const;
 
     uint64_t ptr() const {
       return ptr_;
