@@ -7,7 +7,8 @@
 
 namespace lox {
 
-  template <class T>
+  // TODO: Reallocator
+  template <class T, typename Reallocator = Memory>
   class Vector {
    public:
     Vector()
@@ -53,7 +54,7 @@ namespace lox {
     }
 
     void clear() {
-      Memory::deallocate(items_);
+      Reallocator::reallocate(items_, 0, 0);
       count_ = 0;
       capacity_ = 0;
     }
@@ -122,7 +123,8 @@ namespace lox {
         newCapacity *= GROW_FACTOR;
       }
 
-      items_ = Memory::reallocate<T>(items_, sizeof(T) * capacity_, sizeof(T) * newCapacity);
+      items_ = static_cast<T*>(
+        Reallocator::reallocate(items_, sizeof(T) * capacity_, sizeof(T) * newCapacity));
       capacity_ = newCapacity;
     }
 

@@ -180,6 +180,8 @@ namespace lox {
     // Pointer to the Compiler that is currently compiling.
     Compiler* compiler_ = nullptr;
 
-    Vector<Obj*> gcGrayStack_;
+    // Gray stack has to use bare reallocator to avoid calling new GC recursively (causing infinite
+    // loop).
+    Vector<Obj*, Memory::DefaultReallocator> gcGrayStack_;
   };
 } // namespace lox

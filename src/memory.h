@@ -8,6 +8,17 @@ namespace lox {
 
   class Memory {
    public:
+    class DefaultReallocator {
+     public:
+      static void* reallocate(void* p, size_t oldSize, size_t newSize) {
+        if (newSize == 0) {
+          std::free(p);
+          return nullptr;
+        }
+        return std::realloc(p, newSize);
+      }
+    };
+
     static void initialize(VM* vm) {
       vm_ = vm;
     }
@@ -49,11 +60,7 @@ namespace lox {
 #endif
       }
 
-      if (newSize == 0) {
-        std::free(p);
-        return nullptr;
-      }
-      return std::realloc(p, newSize);
+      return DefaultReallocator::reallocate(p, oldSize, newSize);
     }
 
     static size_t totalBytesAllocated() {
