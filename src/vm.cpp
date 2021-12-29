@@ -455,6 +455,7 @@ namespace lox {
     Obj* obj = objects_;
     while (obj) {
       if (obj->isGCMarked_) {
+        obj->isGCMarked_ = false;
         previous = obj;
         obj = obj->next_;
       } else {
