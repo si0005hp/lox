@@ -32,8 +32,6 @@
 //< Debug flags
 #define DEBUG_TRACE_EXECUTION
 #define DEBUG_PRINT_CODE
-#define DEBUG_STRESS_GC
-#define DEBUG_LOG_GC
 //> Debug flags
 
 #else
@@ -45,3 +43,9 @@
 #endif
 
 #define FLEXIBLE_ARRAY (1)
+
+// GC flags
+#ifdef STRESS_GC
+#define DEBUG_STRESS_GC
+#define DEBUG_LOG_GC
+#endif

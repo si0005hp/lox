@@ -1,12 +1,13 @@
 BUILD_TYPE?=Release
 BUILD_DIR=build/$(BUILD_TYPE)
- 
+ADDITIONAL_CXX_FLAGS=
+
 
 all: build
 
 build:
 	@mkdir -p $(BUILD_DIR)
-	cd $(BUILD_DIR) && cmake ../.. -DCMAKE_BUILD_TYPE=$(BUILD_TYPE)
+	cd $(BUILD_DIR) && cmake ../.. -DCMAKE_BUILD_TYPE=$(BUILD_TYPE) -DADDITIONAL_CXX_FLAGS=$(ADDITIONAL_CXX_FLAGS)
 	$(MAKE) -C $(BUILD_DIR) -j
 
 clean:
