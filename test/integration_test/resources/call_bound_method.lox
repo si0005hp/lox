@@ -1,0 +1,12 @@
+class Calc {
+  add(a, b) {
+    print a + b;
+  }
+}
+
+
+var calc = Calc();
+calc.add(3, 5);
+
+var boundAdd = calc.add;
+boundAdd(10, 9);

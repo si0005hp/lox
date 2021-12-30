@@ -1,0 +1,3 @@
+var first = "aaa";
+var second = "bbb";
+print "Hoge " + first + " and " + second;
