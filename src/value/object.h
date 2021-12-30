@@ -191,7 +191,7 @@ namespace lox {
    public:
     virtual void trace(std::ostream& os) const {
       if (name_)
-        os << "<fn " << name_->value() << ">";
+        os << "<fn " << *name_ << ">";
       else
         os << "<script>";
     }
@@ -286,7 +286,7 @@ namespace lox {
 
    public:
     virtual void trace(std::ostream& os) const {
-      fn_->trace(os);
+      os << *fn_;
     }
 
     ObjFunction* fn() const {
@@ -320,7 +320,7 @@ namespace lox {
 
    public:
     virtual void trace(std::ostream& os) const {
-      os << "class " << name_;
+      os << "class " << *name_;
     }
 
     ObjString* name() const {
@@ -348,7 +348,7 @@ namespace lox {
 
    public:
     virtual void trace(std::ostream& os) const {
-      os << klass_ << " instance";
+      os << *klass_->name() << " instance";
     }
 
     ObjClass* klass() const {
