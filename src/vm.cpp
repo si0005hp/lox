@@ -299,6 +299,11 @@ namespace lox {
           break;
         }
 
+        case OP_CLASS: {
+          push(ObjClass::allocate(readString())->asValue());
+          break;
+        }
+
         case OP_RETURN: {
           // Save data for subsequent processes.
           Value result = pop();

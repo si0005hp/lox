@@ -343,7 +343,16 @@ namespace lox {
     for (int i = 0; i < stmts.size(); i++) stmts[i]->accept(this);
   }
 
-  void Compiler::visit(const Class* stmt) {}
+  void Compiler::visit(const Class* stmt) {
+    instruction slot = identifierConstant(stmt->name);
+    vm_.pushRoot(currentChunk().getConstant(slot));
+
+    if (isLocalScope()) declareVariableLocal(stmt->name);
+    emitBytes(stmt->name, OP_CLASS, slot);
+    defineVariable(stmt->name, slot);
+
+    vm_.popRoot();
+  }
 
   void Compiler::visit(const Expression* stmt) {
     stmt->expression->accept(this);
