@@ -52,20 +52,17 @@ namespace lox {
     bool isObj() const;
     Obj* asObj() const;
 
-    bool isString() const;
-    ObjString* asString() const;
+#define OBJ_TYPE_APIS(subtype) \
+  bool is##subtype() const;    \
+  Obj##subtype* as##subtype() const;
 
-    bool isFunction() const;
-    ObjFunction* asFunction() const;
+    OBJ_TYPE_APIS(String)
+    OBJ_TYPE_APIS(Function)
+    OBJ_TYPE_APIS(Closure)
+    OBJ_TYPE_APIS(Class)
+    OBJ_TYPE_APIS(Instance)
 
-    bool isClosure() const;
-    ObjClosure* asClosure() const;
-
-    bool isClass() const;
-    ObjClass* asClass() const;
-
-    bool isInstance() const;
-    ObjInstance* asInstance() const;
+#undef OBJ_TYPE_APIS
 
     uint64_t ptr() const {
       return ptr_;

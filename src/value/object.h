@@ -34,22 +34,6 @@ namespace lox {
 
     virtual void trace(std::ostream& os) const = 0;
 
-    // TODO: lame
-    bool isString() const;
-    ObjString* asString();
-
-    bool isFunction() const;
-    ObjFunction* asFunction();
-
-    bool isClosure() const;
-    ObjClosure* asClosure();
-
-    bool isClass() const;
-    ObjClass* asClass();
-
-    bool isInstance() const;
-    ObjInstance* asInstance();
-
     virtual bool eq(Obj* other) const {
       // Default identity logic.
       return this == other;
@@ -58,6 +42,18 @@ namespace lox {
     bool isGCMarked() const {
       return isGCMarked_;
     }
+
+#define OBJ_TYPE_APIS(subtype) \
+  bool is##subtype() const;    \
+  Obj##subtype* as##subtype();
+
+    OBJ_TYPE_APIS(String)
+    OBJ_TYPE_APIS(Function)
+    OBJ_TYPE_APIS(Closure)
+    OBJ_TYPE_APIS(Class)
+    OBJ_TYPE_APIS(Instance)
+
+#undef OBJ_TYPE_APIS
 
    private:
     virtual void gcBlacken(VM& vm) const {
