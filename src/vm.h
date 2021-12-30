@@ -186,5 +186,7 @@ namespace lox {
     // Gray stack has to use bare reallocator to avoid calling new GC recursively (causing infinite
     // loop).
     Vector<Obj*, Memory::DefaultReallocator> gcGrayStack_;
+
+    ObjString* initString_ = nullptr;
   };
 } // namespace lox

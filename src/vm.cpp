@@ -18,6 +18,7 @@ namespace lox {
   VM::VM(std::ostream& out)
     : out_(out) {
     Memory::initialize(this);
+    initString_ = allocateObj<ObjString>("init", 4);
   }
 
   VM::~VM() {
@@ -385,6 +386,13 @@ namespace lox {
       return call(callee.asClosure(), argCount);
     } else if (callee.isClass()) {
       store(stackTop_ - argCount - 1, allocateObj<ObjInstance>(callee.asClass())->asValue());
+      Method init;
+      if (callee.asClass()->methods().get(initString_, &init)) {
+        return call(init.asClosure(), argCount);
+      } else if (argCount != 0) {
+        runtimeError("Expected 0 arguments but got %d.", argCount);
+        return false;
+      }
       return true;
     } else if (callee.isBoundMethod()) {
       ObjBoundMethod* boundMethod = callee.asBoundMethod();
@@ -479,6 +487,8 @@ namespace lox {
       compiler->gcBlacken(*this);
       compiler = compiler->enclosing_;
     }
+
+    gcMarkObject(initString_);
   }
 
   void VM::gcBlackenObjects() {

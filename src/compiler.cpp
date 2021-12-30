@@ -86,7 +86,11 @@ namespace lox {
   }
 
   void Compiler::emitReturn(SRC) {
-    emitByte(token, OP_NIL);
+    if (function_->type() == TYPE_INITIALIZER)
+      emitBytes(token, OP_GET_LOCAL, 0);
+    else
+      emitByte(token, OP_NIL);
+
     emitByte(token, OP_RETURN);
   }
 
@@ -306,7 +310,12 @@ namespace lox {
 
   void Compiler::visit(const Super* expr) {}
 
-  void Compiler::visit(const This* expr) {}
+  void Compiler::visit(const This* expr) {
+    if (!currentClass_) {
+      error(expr->keyword, "Can't use 'this' outside of a class.");
+    }
+    namedVariable(expr->keyword, false);
+  }
 
   void Compiler::visit(const Unary* expr) {
     expr->right->accept(this);
