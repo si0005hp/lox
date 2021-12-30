@@ -37,6 +37,13 @@ namespace lox {
 
   void ObjClass::gcBlacken(VM& vm) const {
     vm.gcMarkObject(name_);
+    for (int i = 0; i < methods_.capacity(); ++i) {
+      Map<StringKey, Method>::Entry* e = methods_.getEntry(i);
+      if (e->isEmpty()) continue;
+
+      vm.gcMarkObject(e->key.value());
+      vm.gcMarkObject(e->value.asClosure()); // TODO: Fix according to other method type
+    }
   }
 
   void ObjInstance::gcBlacken(VM& vm) const {

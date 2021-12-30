@@ -7,6 +7,7 @@
 #include "../lib/map.h"
 #include "../memory.h"
 #include "../utils.h"
+#include "method.h"
 #include "value.h"
 
 namespace lox {
@@ -315,6 +316,8 @@ namespace lox {
     ObjUpvalue* upvalues_[FLEXIBLE_ARRAY];
   };
 
+  typedef Map<StringKey, Method> MethodTable;
+
   class ObjClass : public Obj {
     friend class VM;
 
@@ -339,6 +342,7 @@ namespace lox {
 
    private:
     ObjString* name_;
+    MethodTable methods_;
   };
 
   typedef Map<StringKey, Value> FieldTable;
