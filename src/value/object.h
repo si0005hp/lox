@@ -382,4 +382,26 @@ namespace lox {
     FieldTable fields_;
   };
 
+  class ObjBoundMethod : public Obj {
+    friend class VM;
+
+   public:
+    virtual void trace(std::ostream& os) const {}
+
+   private:
+    static ObjBoundMethod* allocate(Value receiver, Method method) {
+      return new ObjBoundMethod(receiver, method);
+    }
+
+    ObjBoundMethod(Value receiver, Method method)
+      : receiver_(receiver)
+      , method_(method) {}
+
+    void gcBlacken(VM& vm) const;
+
+   private:
+    Value receiver_;
+    Method method_;
+  };
+
 } // namespace lox
