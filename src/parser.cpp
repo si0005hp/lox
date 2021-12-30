@@ -333,8 +333,12 @@ namespace lox {
 
   Expr* Parser::primary() {
     /* literal */
-    if (match({TOKEN_FALSE, TOKEN_TRUE, TOKEN_NIL, TOKEN_NUMBER, TOKEN_STRING, TOKEN_THIS})) {
+    if (match({TOKEN_FALSE, TOKEN_TRUE, TOKEN_NIL, TOKEN_NUMBER, TOKEN_STRING})) {
       return newAstNode<Literal>(last_);
+    }
+    /* this */
+    if (match({TOKEN_THIS})) {
+      return newAstNode<This>(last_); // TODO: Merge to literal?
     }
     /* variable */
     if (match(TOKEN_IDENTIFIER)) {
