@@ -96,6 +96,8 @@ namespace lox {
     ObjUpvalue* captureUpvalue(Value* location);
     void closeUpvalues(Value* last);
 
+    void defineMethod(ObjString* name);
+
     instruction readByte() {
       return currentChunk().getCode(currentFrame().ip++);
     }

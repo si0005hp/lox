@@ -304,6 +304,10 @@ namespace lox {
           push(allocateObj<ObjClass>(readString())->asValue());
           break;
         }
+        case OP_METHOD: {
+          defineMethod(readString());
+          break;
+        }
 
         case OP_RETURN: {
           // Save data for subsequent processes.
@@ -326,6 +330,11 @@ namespace lox {
         }
       }
     }
+  }
+
+  void VM::defineMethod(ObjString* name) {
+    peek(1).asClass()->methods().put(name, Method(peek(0).asClosure()));
+    pop(); // Pop ObjClosure on top pf the stack
   }
 
   ObjUpvalue* VM::captureUpvalue(Value* local) {

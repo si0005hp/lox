@@ -330,6 +330,10 @@ namespace lox {
       return name_;
     }
 
+    MethodTable& methods() {
+      return methods_;
+    }
+
    private:
     static ObjClass* allocate(ObjString* name) {
       return new ObjClass(name);

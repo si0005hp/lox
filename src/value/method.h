@@ -8,6 +8,8 @@ namespace lox {
    public:
     enum Type { METHOD_CLOSURE, };
 
+    Method() {} // TODO: For Map
+
     Method(ObjClosure* closure)
       : type_(METHOD_CLOSURE) {
       as_.closure = closure; // TODO

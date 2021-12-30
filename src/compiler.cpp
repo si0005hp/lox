@@ -347,10 +347,11 @@ namespace lox {
     emitBytes(stmt->name, OP_CLASS, slot);
     defineVariable(stmt->name, slot);
 
-    namedVariable(stmt->name, false);
+    namedVariable(stmt->name, false); // Push ObjClass onto the stack for method binding
     for (int i = 0; i < stmt->methods.size(); i++) {
       compileMethod(stmt->methods[i]);
     }
+    emitByte(stmt->getStop(), OP_POP); // Pop ObjClass
   }
 
   void Compiler::compileMethod(const Function* method) {
