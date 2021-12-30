@@ -11,17 +11,19 @@
 namespace lox {
 
   Compiler::Compiler(VM& vm, Compiler* parent, const char* source)
-    : Compiler(vm, parent, source, nullptr) {}
+    : Compiler(vm, parent, source, nullptr, TYPE_SCRIPT) {}
 
-  Compiler::Compiler(VM& vm, Compiler* parent, const Function* fn)
-    : Compiler(vm, parent, nullptr, fn) {}
+  Compiler::Compiler(VM& vm, Compiler* parent, const Function* fn, FunctionType type)
+    : Compiler(vm, parent, nullptr, fn, type) {}
 
-  Compiler::Compiler(VM& vm, Compiler* parent, const char* source, const Function* fn)
+  Compiler::Compiler(VM& vm, Compiler* parent, const char* source, const Function* fn,
+                     FunctionType type)
     : lexer_(source)
     , vm_(vm)
     , enclosing_(parent)
     , locals_(Vector<Local>(LOCALS_MAX))
     , upvalues_(Vector<CompilerUpvalue>(UPVALUES_MAX)) {
+    // TOOD: fix initialization logic
     vm_.setCompiler(this);
 
     if (!fn) {
@@ -29,7 +31,7 @@ namespace lox {
     } else {
       ObjString* name = vm_.allocateObj<ObjString>(fn->name->start, fn->name->length);
       vm_.pushRoot(name);
-      function_ = vm_.allocateObj<ObjFunction>(TYPE_FUNCTION, fn->params.size(), name);
+      function_ = vm_.allocateObj<ObjFunction>(type, fn->params.size(), name);
       vm_.popRoot();
     }
 
@@ -351,6 +353,22 @@ namespace lox {
     emitBytes(stmt->name, OP_CLASS, slot);
     defineVariable(stmt->name, slot);
 
+    namedVariable(stmt->name, false);
+    for (int i = 0; i < stmt->methods.size(); i++) {
+      compileMethod(stmt->methods[i]);
+    }
+
+    vm_.popRoot();
+  }
+
+  void Compiler::compileMethod(const Function* method) {
+    instruction slot = identifierConstant(method->name);
+    vm_.pushRoot(currentChunk().getConstant(slot)); // TODO: Necessary?
+
+    compileFunction(method,
+                    stringEquals("init", method->name->start, 4) ? TYPE_INITIALIZER : TYPE_METHOD);
+    emitBytes(method->name, OP_METHOD, slot);
+
     vm_.popRoot();
   }
 
@@ -363,12 +381,12 @@ namespace lox {
     instruction slot = parseVariable(stmt->name);
     if (isLocalScope()) markInitialized();
 
-    compileFunction(stmt);
+    compileFunction(stmt, TYPE_FUNCTION);
     defineVariable(stmt->name, slot);
   }
 
-  void Compiler::compileFunction(const Function* fn) {
-    Compiler fnCompiler(vm_, this, fn);
+  void Compiler::compileFunction(const Function* fn, FunctionType type) {
+    Compiler fnCompiler(vm_, this, fn, type);
     fnCompiler.doCompileFunction(fn);
 
     emitClosure(fn->getStart(), fnCompiler.function_, fnCompiler.upvalues_);

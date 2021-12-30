@@ -39,14 +39,14 @@ namespace lox {
 
    public:
     Compiler(VM& vm, Compiler* parent, const char* source);
-    Compiler(VM& vm, Compiler* parent, const Function* fn);
+    Compiler(VM& vm, Compiler* parent, const Function* fn, FunctionType type);
 
     ObjFunction* compile();
 
     void gcBlacken(VM& vm) const;
 
    private:
-    Compiler(VM& vm, Compiler* parent, const char* source, const Function* fn);
+    Compiler(VM& vm, Compiler* parent, const char* source, const Function* fn, FunctionType type);
 
     void setFirstLocal();
 
@@ -119,10 +119,12 @@ namespace lox {
     void emitLoop(SRC, int loopStart);
 
     static constexpr int MAX_FUNC_PARAMS = 255;
-    void compileFunction(const Function* fn);
+    void compileFunction(const Function* fn, FunctionType type);
     void doCompileFunction(const Function* fn);
     void emitClosure(SRC, ObjFunction* fn, const Vector<CompilerUpvalue>& upvalues);
     void compileArguments(Vector<Expr*> arguments);
+
+    void compileMethod(const Function* method);
 
    private:
     Lexer lexer_;
