@@ -32,6 +32,17 @@ namespace lox {
     bool isLocal = false;
   };
 
+  struct ClassInfo {
+    ClassInfo(ClassInfo* enclosing, Token* name, bool hasSuperclass)
+      : enclosing(enclosing)
+      , name(name)
+      , hasSuperclass(hasSuperclass) {}
+
+    ClassInfo* enclosing;
+    Token* name;
+    bool hasSuperclass;
+  };
+
   class Compiler
     : public Expr::Visitor<void>
     , public Stmt::Visitor<void> {
@@ -141,6 +152,9 @@ namespace lox {
 
     static constexpr int UPVALUES_MAX = 256;
     Vector<CompilerUpvalue> upvalues_; // TODO: Fixed size container
+
+    // Pointer to the Class info that is currently being compiled.
+    ClassInfo* currentClass_ = nullptr;
   };
 
 }; // namespace lox
