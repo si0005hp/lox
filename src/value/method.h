@@ -1,5 +1,7 @@
 #pragma once
 
+#include <iostream>
+
 namespace lox {
 
   class ObjClosure;
@@ -18,6 +20,8 @@ namespace lox {
     ObjClosure* asClosure() const {
       return as_.closure;
     }
+
+    void trace(std::ostream& os) const;
 
    private:
     Type type_;

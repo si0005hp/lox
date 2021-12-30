@@ -58,6 +58,9 @@ namespace lox {
     }
   }
 
-  void ObjBoundMethod::gcBlacken(VM& vm) const {}
+  void ObjBoundMethod::gcBlacken(VM& vm) const {
+    vm.gcMarkValue(receiver_);
+    vm.gcMarkObject(method_.asClosure()); // TODO: Fix according to other method type
+  }
 
 } // namespace lox

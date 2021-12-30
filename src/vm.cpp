@@ -162,7 +162,12 @@ namespace lox {
             break;
           }
           // Otherwise try to find method
-          // TODO: implement
+          Method method;
+          if (instance->klass()->methods().get(name, &method)) {
+            createBoundMethod(method);
+            break;
+          }
+
           runtimeError("Undefined property '%s'.", name->value());
           return INTERPRET_RUNTIME_ERROR;
         }
@@ -332,6 +337,12 @@ namespace lox {
     }
   }
 
+  void VM::createBoundMethod(Method method) {
+    ObjBoundMethod* boundMethod = allocateObj<ObjBoundMethod>(peek(0), method);
+    pop(); // receiver
+    push(boundMethod->asValue());
+  }
+
   void VM::defineMethod(ObjString* name) {
     peek(1).asClass()->methods().put(name, Method(peek(0).asClosure()));
     pop(); // Pop ObjClosure on top pf the stack
@@ -375,6 +386,10 @@ namespace lox {
     } else if (callee.isClass()) {
       store(stackTop_ - argCount - 1, allocateObj<ObjInstance>(callee.asClass())->asValue());
       return true;
+    } else if (callee.isBoundMethod()) {
+      ObjBoundMethod* boundMethod = callee.asBoundMethod();
+      store(stackTop_ - argCount - 1, boundMethod->receiver());
+      return call(boundMethod->method().asClosure(), argCount); // TODO
     }
     runtimeError("Can only call functions and classes.");
     return false;

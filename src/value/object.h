@@ -377,7 +377,17 @@ namespace lox {
     friend class VM;
 
    public:
-    virtual void trace(std::ostream& os) const {}
+    virtual void trace(std::ostream& os) const {
+      method_.trace(os);
+    }
+
+    Value receiver() const {
+      return receiver_;
+    }
+
+    Method method() const {
+      return method_;
+    }
 
    private:
     static ObjBoundMethod* allocate(Value receiver, Method method) {

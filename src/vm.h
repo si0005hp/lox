@@ -97,6 +97,7 @@ namespace lox {
     void closeUpvalues(Value* last);
 
     void defineMethod(ObjString* name);
+    void createBoundMethod(Method method);
 
     instruction readByte() {
       return currentChunk().getCode(currentFrame().ip++);
