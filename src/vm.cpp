@@ -163,7 +163,8 @@ namespace lox {
           }
           // Otherwise try to find method
           // TODO: implement
-          break;
+          runtimeError("Undefined property '%s'.", name->value());
+          return INTERPRET_RUNTIME_ERROR;
         }
         case OP_SET_PROPERTY: {
           if (!peek(0).isInstance()) {
@@ -391,7 +392,18 @@ namespace lox {
   }
 
   void VM::runtimeError(const char* format, ...) const {
-    // TODO: implement
+    va_list args;
+    va_start(args, format);
+    vfprintf(stderr, format, args);
+    va_end(args);
+    fputs("\n", stderr);
+
+    // print stacktrace
+    for (int i = frameCount_ - 1; i >= 0; i--) {
+      const CallFrame& frame = frames_[i];
+      int line = frame.closure->fn()->chunk().getLine(frame.ip - 1);
+      std::cerr << "[line " << line << "] in " << *frame.closure << std::endl;
+    }
   }
 
   ObjString* VM::concatString(ObjString* left, ObjString* right) {
