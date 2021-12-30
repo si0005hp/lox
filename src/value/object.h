@@ -12,13 +12,6 @@
 
 namespace lox {
 
-  class ObjString;
-  class ObjFunction;
-  class ObjClosure;
-  class ObjClass;
-  class ObjInstance;
-  class ObjBoundMethod;
-
   class Obj {
     friend class VM;
 
