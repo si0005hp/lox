@@ -300,7 +300,7 @@ namespace lox {
         }
 
         case OP_CLASS: {
-          push(ObjClass::allocate(readString())->asValue());
+          push(allocateObj<ObjClass>(readString())->asValue());
           break;
         }
 
@@ -362,6 +362,9 @@ namespace lox {
   bool VM::callValue(Value callee, int argCount) {
     if (callee.isClosure()) {
       return call(callee.asClosure(), argCount);
+    } else if (callee.isClass()) {
+      store(stackTop_ - argCount - 1, allocateObj<ObjInstance>(callee.asClass())->asValue());
+      return true;
     }
     runtimeError("Can only call functions and classes.");
     return false;
