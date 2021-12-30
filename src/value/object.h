@@ -17,6 +17,7 @@ namespace lox {
   class ObjClosure;
   class ObjClass;
   class ObjInstance;
+  class ObjBoundMethod;
 
   class Obj {
     friend class VM;
@@ -52,6 +53,7 @@ namespace lox {
     OBJ_TYPE_APIS(Closure)
     OBJ_TYPE_APIS(Class)
     OBJ_TYPE_APIS(Instance)
+    OBJ_TYPE_APIS(BoundMethod)
 
 #undef OBJ_TYPE_APIS
 

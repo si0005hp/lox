@@ -31,6 +31,7 @@ namespace lox {
   class ObjClosure;
   class ObjClass;
   class ObjInstance;
+  class ObjBoundMethod;
 
   // TODO: The whole Value abstraction could be better desined.
   class Value {
@@ -61,6 +62,7 @@ namespace lox {
     OBJ_TYPE_APIS(Closure)
     OBJ_TYPE_APIS(Class)
     OBJ_TYPE_APIS(Instance)
+    OBJ_TYPE_APIS(BoundMethod)
 
 #undef OBJ_TYPE_APIS
 

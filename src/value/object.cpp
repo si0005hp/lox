@@ -18,6 +18,7 @@ namespace lox {
   OBJ_TYPE_APIS(Closure)
   OBJ_TYPE_APIS(Class)
   OBJ_TYPE_APIS(Instance)
+  OBJ_TYPE_APIS(BoundMethod)
 
 #undef OBJ_TYPE_APIS
 
@@ -56,5 +57,7 @@ namespace lox {
       vm.gcMarkValue(e->value);
     }
   }
+
+  void ObjBoundMethod::gcBlacken(VM& vm) const {}
 
 } // namespace lox
