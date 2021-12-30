@@ -164,9 +164,7 @@ namespace lox {
       emitBytes(name, isSetOp ? OP_SET_UPVALUE : OP_GET_UPVALUE, index);
     } else {
       instruction slot = identifierConstant(name);
-      vm_.pushRoot(currentChunk().getConstant(slot));
       emitBytes(name, isSetOp ? OP_SET_GLOBAL : OP_GET_GLOBAL, slot);
-      vm_.popRoot();
     }
   }
 
@@ -264,10 +262,7 @@ namespace lox {
     receiver->accept(this);
 
     instruction slot = identifierConstant(name);
-    // TODO: Lame
-    vm_.pushRoot(currentChunk().getConstant(slot));
     emitBytes(name, isSetOp ? OP_SET_PROPERTY : OP_GET_PROPERTY, slot);
-    vm_.popRoot();
   }
 
   void Compiler::visit(const Grouping* expr) {
@@ -347,7 +342,6 @@ namespace lox {
 
   void Compiler::visit(const Class* stmt) {
     instruction slot = identifierConstant(stmt->name);
-    vm_.pushRoot(currentChunk().getConstant(slot));
 
     if (isLocalScope()) declareVariableLocal(stmt->name);
     emitBytes(stmt->name, OP_CLASS, slot);
@@ -357,19 +351,14 @@ namespace lox {
     for (int i = 0; i < stmt->methods.size(); i++) {
       compileMethod(stmt->methods[i]);
     }
-
-    vm_.popRoot();
   }
 
   void Compiler::compileMethod(const Function* method) {
     instruction slot = identifierConstant(method->name);
-    vm_.pushRoot(currentChunk().getConstant(slot)); // TODO: Necessary?
 
     compileFunction(method,
                     stringEquals("init", method->name->start, 4) ? TYPE_INITIALIZER : TYPE_METHOD);
     emitBytes(method->name, OP_METHOD, slot);
-
-    vm_.popRoot();
   }
 
   void Compiler::visit(const Expression* stmt) {
