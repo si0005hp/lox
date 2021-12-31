@@ -92,6 +92,7 @@ namespace lox {
 
     void emitByte(SRC, instruction inst);
     void emitBytes(SRC, instruction inst1, instruction inst2);
+    void emitBytes(SRC, instruction inst1, instruction inst2, instruction inst3);
     void emitReturn(SRC);
     void emitConstant(SRC, Value value);
 

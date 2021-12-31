@@ -80,10 +80,15 @@ namespace lox {
     currentChunk().write(inst, token->line);
   }
 
-  // TODO: More instrunctions
   void Compiler::emitBytes(SRC, instruction inst1, instruction inst2) {
     emitByte(token, inst1);
     emitByte(token, inst2);
+  }
+
+  void Compiler::emitBytes(SRC, instruction inst1, instruction inst2, instruction inst3) {
+    emitByte(token, inst1);
+    emitByte(token, inst2);
+    emitByte(token, inst3);
   }
 
   void Compiler::emitReturn(SRC) {
@@ -264,9 +269,7 @@ namespace lox {
   void Compiler::invoke(Expr* receiver, Token* name, const Vector<Expr*>& arguments) {
     receiver->accept(this);
     compileArguments(arguments);
-
-    emitBytes(receiver->getStart(), OP_INVOKE, identifierConstant(name));
-    emitByte(receiver->getStart(), arguments.size());
+    emitBytes(receiver->getStart(), OP_INVOKE, identifierConstant(name), arguments.size());
   }
 
   void Compiler::compileArguments(const Vector<Expr*>& arguments) {
