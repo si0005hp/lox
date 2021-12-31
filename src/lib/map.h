@@ -50,6 +50,14 @@ namespace lox {
       entries_[index].value = value;
     }
 
+    // TODO: Optimize
+    void putAll(const Map<K, V>& other) {
+      for (int i = 0; i < other.capacity(); ++i) {
+        Entry* e = other.getEntry(i);
+        if (!e->isEmpty()) put(e->key, e->value);
+      }
+    }
+
     bool remove(const K& key) {
       int index = findIndex(key);
 

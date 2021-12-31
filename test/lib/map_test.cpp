@@ -106,3 +106,18 @@ TEST_F(MapTest, entries) {
   }
   ASSERT_EQ(2, entriesCount);
 }
+
+TEST_F(MapTest, putAll) {
+  Map<IntKey, int> src;
+  src.put(1, 100);
+  src.put(2, 200);
+
+  Map<IntKey, int> dst;
+  dst.putAll(src);
+
+  int v1, v2;
+  ASSERT_TRUE(dst.get(1, &v1));
+  ASSERT_EQ(v1, 100);
+  ASSERT_TRUE(dst.get(2, &v2));
+  ASSERT_EQ(v2, 200);
+}
