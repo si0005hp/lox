@@ -55,12 +55,12 @@ namespace lox {
 
     if (!parser.parse()) return nullptr;
 
-    const Vector<Stmt*>& stmts = parser.result().stmts;
-    for (int i = 0; i < stmts.size(); i++) {
-      stmts[i]->accept(this);
+    const ParseResult& result = parser.result();
+    for (int i = 0; i < result.stmts.size(); i++) {
+      result.stmts[i]->accept(this);
     }
 
-    endCompiler(parser.result().eof);
+    endCompiler(result.eof);
     return hadError_ ? nullptr : function_;
   }
 
