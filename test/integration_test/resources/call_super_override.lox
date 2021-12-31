@@ -1,0 +1,14 @@
+class Base {
+  hello() {
+    print "base";
+  }
+}
+
+class Derived < Base {
+  hello() {
+    super.hello();
+    print "derived";
+  }
+}
+
+Derived().hello();
