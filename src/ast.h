@@ -105,7 +105,7 @@ namespace lox {
   };
 
   struct Call : public Expr {
-    Call(Expr* callee, Vector<Expr*> arguments, Token* stop)
+    Call(Expr* callee, const Vector<Expr*>& arguments, Token* stop)
       : callee(callee)
       , arguments(arguments)
       , stop(stop) {}
@@ -266,7 +266,7 @@ namespace lox {
   };
 
   struct Block : public Stmt {
-    Block(Token* lBrace, Vector<Stmt*> statements, Token* rBrace)
+    Block(Token* lBrace, const Vector<Stmt*>& statements, Token* rBrace)
       : Stmt(lBrace, rBrace)
       , statements(statements) {}
 
@@ -276,7 +276,7 @@ namespace lox {
   };
 
   struct Class : public Stmt {
-    Class(Token* keyword, Token* name, Variable* superclass, Vector<Function*> methods,
+    Class(Token* keyword, Token* name, Variable* superclass, const Vector<Function*>& methods,
           Token* rBrace)
       : Stmt(keyword, rBrace)
       , name(name)
@@ -301,7 +301,8 @@ namespace lox {
   };
 
   struct Function : public Stmt {
-    Function(Token* start, Token* name, Vector<Token*> params, Vector<Stmt*> body, Token* stop)
+    Function(Token* start, Token* name, const Vector<Token*>& params, const Vector<Stmt*>& body,
+             Token* stop)
       : Stmt(start, stop)
       , name(name)
       , params(params)

@@ -123,7 +123,7 @@ namespace lox {
 
     void endScope(SRC);
 
-    void compileBlock(Vector<Stmt*> stmts);
+    void compileBlock(const Vector<Stmt*>& stmts);
 
     int emitJump(SRC, instruction opCode);
     void patchJump(SRC, int offset);
@@ -133,7 +133,7 @@ namespace lox {
     void compileFunction(const Function* fn, FunctionType type);
     void doCompileFunction(const Function* fn);
     void emitClosure(SRC, ObjFunction* fn, const Vector<CompilerUpvalue>& upvalues);
-    void compileArguments(Vector<Expr*> arguments);
+    void compileArguments(const Vector<Expr*>& arguments);
 
     void compileMethod(const Function* method);
 

@@ -55,7 +55,7 @@ namespace lox {
 
     if (!parser.parse()) return nullptr;
 
-    Vector<Stmt*> stmts = parser.result().stmts;
+    const Vector<Stmt*>& stmts = parser.result().stmts;
     for (int i = 0; i < stmts.size(); i++) {
       stmts[i]->accept(this);
     }
@@ -253,7 +253,7 @@ namespace lox {
     emitBytes(expr->callee->getStart(), OP_CALL, expr->arguments.size());
   }
 
-  void Compiler::compileArguments(Vector<Expr*> arguments) {
+  void Compiler::compileArguments(const Vector<Expr*>& arguments) {
     ASSERT(arguments.size() <= MAX_FUNC_PARAMS, "Number of function args must be less than 255.");
     for (int i = 0; i < arguments.size(); i++) arguments[i]->accept(this);
   }
@@ -345,7 +345,7 @@ namespace lox {
     }
   }
 
-  void Compiler::compileBlock(Vector<Stmt*> stmts) {
+  void Compiler::compileBlock(const Vector<Stmt*>& stmts) {
     for (int i = 0; i < stmts.size(); i++) stmts[i]->accept(this);
   }
 
