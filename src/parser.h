@@ -51,7 +51,7 @@ namespace lox {
     Expr* primary();
 
     Expr* finishCall(Expr* expr);
-    Vector<Stmt*> blockBody();
+    void blockBody(Vector<Stmt*>& stmts);
     Function* function(const char* kind);
 
     bool match(TokenType type);

@@ -100,7 +100,8 @@ namespace lox {
     consume(TOKEN_RIGHT_PAREN, "Expect ')' after parameters.");
 
     consume(TOKEN_LEFT_BRACE, "Expect '{' before %s body.", kind);
-    Vector<Stmt*> body = blockBody();
+    Vector<Stmt*> body;
+    blockBody(body);
 
     return newAstNode<Function>(stringEquals("function", kind, 8) ? keyword : name, name, params,
                                 body, last_);
@@ -203,15 +204,15 @@ namespace lox {
 
   Stmt* Parser::block() {
     Token* lBrace = last_;
-    Vector<Stmt*> stmts = blockBody();
+
+    Vector<Stmt*> stmts;
+    blockBody(stmts);
     return newAstNode<Block>(lBrace, stmts, last_);
   }
 
-  Vector<Stmt*> Parser::blockBody() {
-    Vector<Stmt*> stmts;
+  void Parser::blockBody(Vector<Stmt*>& stmts) {
     while (!lookAhead(TOKEN_RIGHT_BRACE) && !isDone()) stmts.push(declaration());
     consume(TOKEN_RIGHT_BRACE, "Expect '}' after block.");
-    return stmts;
   }
 
   Expr* Parser::assignment() {
