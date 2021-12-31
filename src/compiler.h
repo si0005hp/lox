@@ -137,6 +137,8 @@ namespace lox {
 
     void compileMethod(const Function* method);
 
+    void invoke(Expr* receiver, Token* name, const Vector<Expr*>& arguments);
+
    private:
     Lexer lexer_;
     VM& vm_;

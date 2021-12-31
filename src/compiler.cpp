@@ -80,6 +80,7 @@ namespace lox {
     currentChunk().write(inst, token->line);
   }
 
+  // TODO: More instrunctions
   void Compiler::emitBytes(SRC, instruction inst1, instruction inst2) {
     emitByte(token, inst1);
     emitByte(token, inst2);
@@ -248,9 +249,24 @@ namespace lox {
 
   // TODO: Invoke case
   void Compiler::visit(const Call* expr) {
-    expr->callee->accept(this);
-    compileArguments(expr->arguments);
-    emitBytes(expr->callee->getStart(), OP_CALL, expr->arguments.size());
+    if (typeid(*expr->callee) == typeid(Get)) {
+      // Method invoke
+      Get* get = static_cast<Get*>(expr->callee);
+      invoke(get->object, get->name, expr->arguments);
+    } else {
+      // Normal function call
+      expr->callee->accept(this);
+      compileArguments(expr->arguments);
+      emitBytes(expr->callee->getStart(), OP_CALL, expr->arguments.size());
+    }
+  }
+
+  void Compiler::invoke(Expr* receiver, Token* name, const Vector<Expr*>& arguments) {
+    receiver->accept(this);
+    compileArguments(arguments);
+
+    emitBytes(receiver->getStart(), OP_INVOKE, identifierConstant(name));
+    emitByte(receiver->getStart(), arguments.size());
   }
 
   void Compiler::compileArguments(const Vector<Expr*>& arguments) {
