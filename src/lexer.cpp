@@ -204,6 +204,7 @@ namespace lox {
     Memory::deallocate(token);
   }
 
+  // TODO: Optimize (Avoid duplication)
   Token* Lexer::syntheticToken(TokenType type, const char* text) {
     Token* token = newToken();
     return new (token) Token(type, text, std::strlen(text), -1);

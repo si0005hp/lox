@@ -319,6 +319,18 @@ namespace lox {
           push(allocateObj<ObjClass>(readString())->asValue());
           break;
         }
+        case OP_INHERIT: {
+          if (!peek(1).isClass()) {
+            runtimeError("Superclass must be a class.");
+            return INTERPRET_RUNTIME_ERROR;
+          }
+          ObjClass* superclass = peek(1).asClass();
+          ObjClass* subclass = peek(0).asClass();
+
+          subclass->methods().putAll(superclass->methods());
+          pop(); // Subclass.
+          break;
+        }
         case OP_METHOD: {
           defineMethod(readString());
           break;

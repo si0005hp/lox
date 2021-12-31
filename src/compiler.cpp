@@ -382,11 +382,13 @@ namespace lox {
       if (stmt->name == stmt->superclass->name)
         error(stmt->name, "A class can't inherit from itself.");
 
+      namedVariable(stmt->superclass->name, false); // Push superclass
+
       beginScope();
       addLocal(lexer_.syntheticToken(TOKEN_SUPER, "super"));
       markInitialized();
 
-      namedVariable(stmt->name, false); // Push ObjClass onto the stack for method binding
+      namedVariable(stmt->name, false); // Push subclass
       emitByte(stmt->superclass->name, OP_INHERIT);
     }
 
@@ -394,7 +396,7 @@ namespace lox {
     for (int i = 0; i < stmt->methods.size(); i++) {
       compileMethod(stmt->methods[i]);
     }
-    emitByte(stmt->getStop(), OP_POP); // Pop ObjClass
+    emitByte(stmt->getStop(), OP_POP); // Pop subclass
 
     if (stmt->superclass) endScope(stmt->superclass->name);
     currentClass_ = currentClass_->enclosing;
