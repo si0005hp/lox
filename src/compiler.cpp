@@ -125,8 +125,20 @@ namespace lox {
     return constant;
   }
 
+  // TODO: fix
   void Compiler::error(SRC, const char* message) {
-    // TODO: implement
+    hadError_ = true;
+
+    // TODO: duplicate logic: Parser::errorAt
+    std::cerr << "[line " << token->line << "] CompileError";
+    if (token->type == TOKEN_EOF) {
+      std::cerr << " at end";
+    } else if (token->type == TOKEN_ERROR) {
+      // Nothing.
+    } else {
+      std::cerr << " at " << std::string_view(token->start, token->length);
+    }
+    std::cerr << ": " << message << std::endl;
   }
 
   instruction Compiler::parseVariable(Token* var) {

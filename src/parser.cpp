@@ -450,7 +450,7 @@ namespace lox {
     } else if (token.type == TOKEN_ERROR) {
       // Nothing.
     } else {
-      std::cerr << " at " << token.start;
+      std::cerr << " at " << std::string_view(token.start, token.length);
     }
     std::cerr << ": " << message << std::endl;
 

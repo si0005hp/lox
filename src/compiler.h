@@ -143,13 +143,17 @@ namespace lox {
     void preprocessSuper(const Super* super);
 
    private:
+    // TODO: These static fields are supposed to shared in nested compiler tree. Consider if
+    // it's valid design.
+    inline static bool hadError_ = false;
+    // Pointer to the Class info that is currently being compiled.
+    inline static ClassInfo* currentClass_ = nullptr;
+
     Lexer lexer_;
     VM& vm_;
     Compiler* enclosing_ = nullptr;
 
     ObjFunction* function_ = nullptr;
-
-    bool hadError_ = false;
 
     static constexpr int LOCALS_MAX = 256;
     Vector<Local> locals_; // TODO: Fixed size container
@@ -157,9 +161,6 @@ namespace lox {
 
     static constexpr int UPVALUES_MAX = 256;
     Vector<CompilerUpvalue> upvalues_; // TODO: Fixed size container
-
-    // Pointer to the Class info that is currently being compiled.
-    ClassInfo* currentClass_ = nullptr;
   };
 
 }; // namespace lox
