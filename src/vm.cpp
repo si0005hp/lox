@@ -185,6 +185,19 @@ namespace lox {
           break;
         }
 
+        case OP_GET_SUPER: {
+          ObjString* name = readString();
+          ObjClass* superclass = pop().asClass();
+
+          Method method;
+          if (superclass->methods().get(name, &method)) {
+            createBoundMethod(method);
+            break;
+          }
+          runtimeError("Undefined property '%s'.", name->value());
+          return INTERPRET_RUNTIME_ERROR;
+        }
+
         case OP_DEFINE_GLOBAL: {
           ObjString* name = readString();
           globals_.put(name, peek(0));

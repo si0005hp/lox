@@ -362,7 +362,14 @@ namespace lox {
       Token* keyword = last_;
       consume(TOKEN_DOT, "Expect '.' after 'super'.");
       Token* property = consume(TOKEN_IDENTIFIER, "Expect superclass method name.");
-      return newAstNode<Super>(keyword, property);
+      Super* super = newAstNode<Super>(keyword, property);
+
+      // Super invoke (TODO: Separet AST?)
+      if (lookAhead(TOKEN_LEFT_PAREN)) {
+        consume(); // LEFT_PAREN
+        return finishCall(super);
+      }
+      return super;
     }
 
     error("Expect expression.");

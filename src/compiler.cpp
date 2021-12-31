@@ -327,7 +327,17 @@ namespace lox {
     namedProperty(expr->object, expr->name, true);
   }
 
-  void Compiler::visit(const Super* expr) {}
+  void Compiler::visit(const Super* expr) {
+    if (currentClass_ == nullptr) {
+      error(expr->getStart(), "Can't use 'super' outside of a class.");
+    } else if (!currentClass_->hasSuperclass) {
+      error(expr->getStart(), "Can't use 'super' in a class with no superclass.");
+    }
+
+    namedVariable(lexer_.syntheticToken(TOKEN_THIS, "this"));
+    namedVariable(expr->getStart()); // 'super'
+    emitBytes(expr->getStart(), OP_GET_SUPER, identifierConstant(expr->method));
+  }
 
   void Compiler::visit(const This* expr) {
     if (!currentClass_) {
@@ -375,6 +385,7 @@ namespace lox {
     emitBytes(stmt->name, OP_CLASS, slot);
     defineVariable(stmt->name, slot);
 
+    // TODO: Place?
     ClassInfo classInfo(currentClass_, stmt->name, !!stmt->superclass);
     currentClass_ = &classInfo;
 
