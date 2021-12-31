@@ -4,5 +4,6 @@ class Calc {
   }
 }
 
-var boundAdd = Calc().add;
-boundAdd(10, 9);
+
+var calc = Calc();
+calc.add(3, 5);
