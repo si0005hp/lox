@@ -282,6 +282,15 @@ namespace lox {
           }
           break;
         }
+        case OP_INVOKE: {
+          ObjString* name = readString();
+          int argCount = readByte();
+          if (!invoke(name, argCount)) {
+            return INTERPRET_RUNTIME_ERROR;
+          }
+          break;
+        }
+
         case OP_CLOSURE: {
           ObjClosure* closure = allocateObj<ObjClosure>(readConstant().asFunction());
           push(closure->asValue());
@@ -336,6 +345,32 @@ namespace lox {
         }
       }
     }
+  }
+
+  bool VM::invoke(ObjString* name, int argCount) {
+    Value receiver = peek(argCount);
+    if (!receiver.isInstance()) {
+      runtimeError("Only instances have methods.");
+      return false;
+    }
+    ObjInstance* instance = receiver.asInstance();
+
+    Value value;
+    if (instance->fields().get(name, &value)) {
+      store(stackTop_ - argCount - 1, value);
+      return callValue(value, argCount);
+    }
+
+    return invokeFromClass(instance->klass(), name, argCount);
+  }
+
+  bool VM::invokeFromClass(ObjClass* klass, ObjString* name, int argCount) {
+    Method method;
+    if (!klass->methods().get(name, &method)) {
+      runtimeError("Undefined property '%s'.", name->value());
+      return false;
+    }
+    return call(method.asClosure(), argCount);
   }
 
   void VM::createBoundMethod(Method method) {

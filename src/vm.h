@@ -99,6 +99,9 @@ namespace lox {
     void defineMethod(ObjString* name);
     void createBoundMethod(Method method);
 
+    bool invoke(ObjString* name, int argCount);
+    bool invokeFromClass(ObjClass* klass, ObjString* name, int argCount);
+
     instruction readByte() {
       return currentChunk().getCode(currentFrame().ip++);
     }

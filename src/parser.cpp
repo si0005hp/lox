@@ -310,8 +310,9 @@ namespace lox {
       } else if (match(TOKEN_DOT)) {
         Token* name = consume(TOKEN_IDENTIFIER, "Expect property name after '.'.");
         expr = newAstNode<Get>(expr, name);
-        // Method invoke
+        // Method invoke (TODO: Separet AST?)
         if (lookAhead(TOKEN_LEFT_PAREN)) {
+          consume(); // LEFT_PAREN
           expr = finishCall(expr);
         }
       } else {
