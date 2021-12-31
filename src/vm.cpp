@@ -303,6 +303,16 @@ namespace lox {
           }
           break;
         }
+        case OP_SUPER_INVOKE: {
+          ObjString* name = readString();
+          int argCount = readByte();
+
+          ObjClass* superclass = pop().asClass();
+          if (!invokeFromClass(superclass, name, argCount)) {
+            return INTERPRET_RUNTIME_ERROR;
+          }
+          break;
+        }
 
         case OP_CLOSURE: {
           ObjClosure* closure = allocateObj<ObjClosure>(readConstant().asFunction());

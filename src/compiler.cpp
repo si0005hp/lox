@@ -252,12 +252,11 @@ namespace lox {
     }
   }
 
-  // TODO: Invoke case
   void Compiler::visit(const Call* expr) {
     if (typeid(*expr->callee) == typeid(Get)) {
-      // Method invoke
-      Get* get = static_cast<Get*>(expr->callee);
-      invoke(get->object, get->name, expr->arguments);
+      invoke(static_cast<Get*>(expr->callee), expr->arguments);
+    } else if (typeid(*expr->callee) == typeid(Super)) {
+      superInvoke(static_cast<Super*>(expr->callee), expr->arguments);
     } else {
       // Normal function call
       expr->callee->accept(this);
@@ -266,10 +265,18 @@ namespace lox {
     }
   }
 
-  void Compiler::invoke(Expr* receiver, Token* name, const Vector<Expr*>& arguments) {
-    receiver->accept(this);
+  void Compiler::invoke(const Get* get, const Vector<Expr*>& arguments) {
+    get->object->accept(this);
     compileArguments(arguments);
-    emitBytes(receiver->getStart(), OP_INVOKE, identifierConstant(name), arguments.size());
+    emitBytes(get->object->getStart(), OP_INVOKE, identifierConstant(get->name), arguments.size());
+  }
+
+  void Compiler::superInvoke(const Super* super, const Vector<Expr*>& arguments) {
+    preprocessSuper(super);
+    compileArguments(arguments);
+    namedVariable(super->getStart()); // 'super'
+    emitBytes(super->getStart(), OP_SUPER_INVOKE, identifierConstant(super->method),
+              arguments.size());
   }
 
   void Compiler::compileArguments(const Vector<Expr*>& arguments) {
@@ -328,15 +335,19 @@ namespace lox {
   }
 
   void Compiler::visit(const Super* expr) {
+    preprocessSuper(expr);
+    namedVariable(expr->getStart()); // 'super'
+    emitBytes(expr->getStart(), OP_GET_SUPER, identifierConstant(expr->method));
+  }
+
+  void Compiler::preprocessSuper(const Super* super) {
     if (currentClass_ == nullptr) {
-      error(expr->getStart(), "Can't use 'super' outside of a class.");
+      error(super->getStart(), "Can't use 'super' outside of a class.");
     } else if (!currentClass_->hasSuperclass) {
-      error(expr->getStart(), "Can't use 'super' in a class with no superclass.");
+      error(super->getStart(), "Can't use 'super' in a class with no superclass.");
     }
 
     namedVariable(lexer_.syntheticToken(TOKEN_THIS, "this"));
-    namedVariable(expr->getStart()); // 'super'
-    emitBytes(expr->getStart(), OP_GET_SUPER, identifierConstant(expr->method));
   }
 
   void Compiler::visit(const This* expr) {
@@ -385,7 +396,6 @@ namespace lox {
     emitBytes(stmt->name, OP_CLASS, slot);
     defineVariable(stmt->name, slot);
 
-    // TODO: Place?
     ClassInfo classInfo(currentClass_, stmt->name, !!stmt->superclass);
     currentClass_ = &classInfo;
 
