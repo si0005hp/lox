@@ -434,7 +434,7 @@ namespace lox {
   }
 
   void VM::closeUpvalues(Value* last) {
-    while (openUpvalues_ != nullptr && openUpvalues_->location() > last) {
+    while (openUpvalues_ != nullptr && openUpvalues_->location() >= last) {
       ObjUpvalue* upvalue = openUpvalues_;
       upvalue->doClose();
       openUpvalues_ = upvalue->next();
