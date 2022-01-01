@@ -31,7 +31,7 @@ namespace lox {
       return code_.size();
     }
 
-    instruction addConstant(Value value) {
+    int addConstant(Value value) {
       constants_.push(value);
       return constants_.size() - 1;
     }

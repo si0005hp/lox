@@ -96,12 +96,12 @@ namespace lox {
     void emitReturn(SRC);
     void emitConstant(SRC, Value value);
 
-    instruction makeConstant(SRC, Value value);
-    instruction identifierConstant(SRC);
-    instruction addConstant(Value value);
+    int makeConstant(SRC, Value value);
+    int identifierConstant(SRC);
+    int addConstant(Value value);
     void error(SRC, const char* message);
 
-    instruction parseVariable(Token* var);
+    int parseVariable(Token* var);
     void declareVariableLocal(Token* var);
     void addLocal(Token* var);
     void defineVariable(Token* var, instruction global = -1);

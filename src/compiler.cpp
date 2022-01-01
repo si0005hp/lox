@@ -104,8 +104,8 @@ namespace lox {
     emitBytes(token, OP_CONSTANT, makeConstant(token, value));
   }
 
-  instruction Compiler::makeConstant(SRC, Value value) {
-    instruction constant = addConstant(value);
+  int Compiler::makeConstant(SRC, Value value) {
+    int constant = addConstant(value);
     if (constant > UINT8_MAX) {
       error(token, "Too many constants in one chunk.");
       return 0;
@@ -113,13 +113,13 @@ namespace lox {
     return constant;
   }
 
-  instruction Compiler::identifierConstant(Token* idt) {
+  int Compiler::identifierConstant(Token* idt) {
     return makeConstant(idt, vm_.allocateObj<ObjString>(idt->start, idt->length)->asValue());
   }
 
-  instruction Compiler::addConstant(Value value) {
+  int Compiler::addConstant(Value value) {
     vm_.pushRoot(value);
-    instruction constant = currentChunk().addConstant(value);
+    int constant = currentChunk().addConstant(value);
     vm_.popRoot();
 
     return constant;
@@ -141,7 +141,7 @@ namespace lox {
     std::cerr << ": " << message << std::endl;
   }
 
-  instruction Compiler::parseVariable(Token* var) {
+  int Compiler::parseVariable(Token* var) {
     if (isLocalScope()) {
       declareVariableLocal(var);
       return -1; // dummy
