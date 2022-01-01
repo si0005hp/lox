@@ -33,7 +33,7 @@ INTEGRATION_TEST(0\n1\n2\n3\n4\n, while)
 INTEGRATION_TEST(20\n, while2)
 INTEGRATION_TEST(negative\n, if)
 INTEGRATION_TEST(hogefuga\n, concat)
-// INTEGRATION_TEST(Hoge aaa and bbb\n, concat2) TODO: Fix this
+INTEGRATION_TEST(Hoge aaa and bbb\n, concat2)
 INTEGRATION_TEST(<fn myFunc>\n, function)
 INTEGRATION_TEST(Hello world\n, function_call)
 INTEGRATION_TEST(nil\nnil\n8\n, function_return)

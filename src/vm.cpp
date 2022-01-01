@@ -515,11 +515,11 @@ namespace lox {
     int length = left->length() + right->length();
     char* chars = Memory::allocate<char>(length + 1);
     memcpy(chars, left->value(), left->length());
-    memcpy(chars + right->length(), right->value(), right->length());
+    memcpy(chars + left->length(), right->value(), right->length());
     chars[length] = '\0';
 
     ObjString* result = allocateObj<ObjString>(chars, length);
-    Memory::reallocate(chars, sizeof(char) * length, 0);
+    Memory::reallocate(chars, sizeof(char) * length, 0); // TODO: Not decrease allocated bytes?
     popRoot();
     popRoot();
     return result;
