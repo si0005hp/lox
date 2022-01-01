@@ -314,7 +314,7 @@ namespace lox {
 
    public:
     virtual void trace(std::ostream& os) const {
-      os << "class " << *name_;
+      os << *name_;
     }
 
     ObjString* name() const {
