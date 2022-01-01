@@ -87,7 +87,7 @@ namespace lox {
     instruction inst;
     while (true) {
 #ifdef DEBUG_TRACE_EXECUTION
-      traceStack();
+      // traceStack();
       Disassembler::disassembleInstruction(currentChunk(), currentFrame().ip);
 #endif
 

@@ -141,7 +141,18 @@ namespace lox {
     }
 
     void push(Value value) {
-      stack_[stackTop_++] = value;
+      // dbg(stackTop_);
+      // stack_[stackTop_++] = value;
+      // dbg(stackTop_);
+      dbg(value);
+
+      dbg(stackTop_);
+      stack_[stackTop_] = value;
+      if (stackTop_ < 256) {
+        dbg("inc");
+        stackTop_++;
+      }
+      dbg(stackTop_);
     }
 
     Value pop() {
