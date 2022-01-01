@@ -141,6 +141,8 @@ namespace lox {
     }
 
     void push(Value value) {
+      // TODO: Consider the case stackTop_ exceeds the limit.
+      // https://github.com/si0005hp/lox/tree/weired-stacktop-bug
       stack_[stackTop_++] = value;
     }
 
@@ -172,7 +174,7 @@ namespace lox {
     std::array<CallFrame, FRAMES_MAX> frames_;
     int frameCount_ = 0;
 
-    static constexpr int STACK_MAX = 256;
+    static constexpr int STACK_MAX = FRAMES_MAX * 256;
     std::array<Value, STACK_MAX> stack_;
     int stackTop_ = 0;
 
