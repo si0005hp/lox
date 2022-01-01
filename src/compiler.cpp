@@ -130,13 +130,13 @@ namespace lox {
     hadError_ = true;
 
     // TODO: duplicate logic: Parser::errorAt
-    std::cerr << "[line " << token->line << "] CompileError";
+    std::cerr << "[line " << token->line << "] Error";
     if (token->type == TOKEN_EOF) {
       std::cerr << " at end";
     } else if (token->type == TOKEN_ERROR) {
       // Nothing.
     } else {
-      std::cerr << " at " << std::string_view(token->start, token->length);
+      std::cerr << " at '" << std::string_view(token->start, token->length) << "'";
     }
     std::cerr << ": " << message << std::endl;
   }
