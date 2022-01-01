@@ -155,8 +155,8 @@ namespace lox {
 
     ObjFunction* function_ = nullptr;
 
-    static constexpr int LOCALS_MAX = 256;
-    Vector<Local> locals_; // TODO: Fixed size container
+    static constexpr int LOCALS_MAX = 256; // TODO: Fix magic number
+    Vector<Local> locals_;                 // TODO: Fixed size container
     int scopeDepth_ = 0;
 
     static constexpr int UPVALUES_MAX = 256;

@@ -162,8 +162,8 @@ namespace lox {
   }
 
   void Compiler::addLocal(Token* var) {
-    if (locals_.size() > LOCALS_MAX) {
-      error(var, "Too many local variables.");
+    if (locals_.size() >= LOCALS_MAX) {
+      error(var, "Too many local variables in function.");
       return;
     }
     locals_.emplace(var);
