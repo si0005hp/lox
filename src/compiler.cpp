@@ -412,7 +412,7 @@ namespace lox {
     currentClass_ = &classInfo;
 
     if (stmt->superclass) {
-      if (stmt->name == stmt->superclass->name)
+      if (*stmt->name == *stmt->superclass->name)
         error(stmt->name, "A class can't inherit from itself.");
 
       namedVariable(stmt->superclass->name, false); // Push superclass
