@@ -12,6 +12,8 @@ namespace lox {
     Token* eof;
   };
 
+  class ParseError {};
+
   class Parser {
    public:
     Parser(Lexer& lexer);
@@ -64,7 +66,7 @@ namespace lox {
     bool isDone();
 
     void error(const char* format, ...);
-    void errorAt(const Token& token, const char* format, ...);
+    void error(const Token& token, const char* format, ...);
     void synchronize();
 
     // https://stackoverflow.com/a/1111470
@@ -94,7 +96,7 @@ namespace lox {
     Token* last_;
 
     bool hadError_;
-    bool panicMode_;
+    bool panicMode_; // TODO: delete?
   };
 
 }; // namespace lox

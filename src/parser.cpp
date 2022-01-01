@@ -42,22 +42,20 @@ namespace lox {
   }
 
   Stmt* Parser::declaration() {
-    Stmt* decl;
-    if (match(TOKEN_CLASS)) {
-      decl = classDeclaration();
-    } else if (match(TOKEN_FUN)) {
-      decl = funcDeclaration();
-    } else if (match(TOKEN_VAR)) {
-      decl = varDeclaration();
-    } else {
-      decl = statement();
-    }
-
-    if (hadError_) {
+    try {
+      if (match(TOKEN_CLASS)) {
+        return classDeclaration();
+      } else if (match(TOKEN_FUN)) {
+        return funcDeclaration();
+      } else if (match(TOKEN_VAR)) {
+        return varDeclaration();
+      } else {
+        return statement();
+      }
+    } catch (const ParseError& e) {
       synchronize();
       return nullptr;
     }
-    return decl;
   }
 
   Stmt* Parser::classDeclaration() {
@@ -228,7 +226,7 @@ namespace lox {
         Get* get = static_cast<Get*>(lhs);
         return newAstNode<Set>(get->object, get->name, rhs);
       }
-      errorAt(*op, "Invalid assignment target.");
+      error(*op, "Invalid assignment target.");
     }
     return lhs;
   }
@@ -373,7 +371,8 @@ namespace lox {
     }
 
     error("Expect expression.");
-    return nullptr;
+    // return nullptr;
+    throw ParseError();
   }
 
   bool Parser::match(TokenType type) {
@@ -400,7 +399,7 @@ namespace lox {
     while (read_.count() < count) {
       Token* token = lexer_.readToken();
       if (token->type == TOKEN_ERROR)
-        errorAt(*token, token->start);
+        error(*token, token->start);
       else
         read_.enqueue(token);
     }
@@ -416,7 +415,7 @@ namespace lox {
     if (lookAhead(type)) return consume();
 
     error(format);
-    return nullptr;
+    throw ParseError();
   }
 
   const Token& Parser::current() {
@@ -429,10 +428,10 @@ namespace lox {
   }
 
   void Parser::error(const char* format, ...) {
-    errorAt(current(), format);
+    error(current(), format);
   }
 
-  void Parser::errorAt(const Token& token, const char* format, ...) {
+  void Parser::error(const Token& token, const char* format, ...) {
     if (panicMode_) return;
     panicMode_ = true;
 
